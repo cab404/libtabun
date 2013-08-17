@@ -54,6 +54,7 @@ public class User {
     public User(String php_session_id) {
         this();
         cookies.put("PHPSESSID", php_session_id);
+        ResponseFactory.read(execute(RequestFactory.get("/").build()), new KeyFetcher());
     }
 
     public boolean isLoggedIn() {
