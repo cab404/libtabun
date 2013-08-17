@@ -48,10 +48,28 @@ public class User {
         ResponseFactory.read(resp, key_from_response);
     }
 
+    /**
+     * Вход с phpsessid. Отличная вещь для Андроидской системы авторизации
+     */
+    public User(String php_session_id) {
+        this();
+        cookies.put("PHPSESSID", php_session_id);
+    }
+
     public boolean isLoggedIn() {
         return isLoggedIn;
     }
 
+    /**
+     * Возвращает ID PHP-сессии.
+     */
+    public String getSessionID() {
+        return cookies.get("PHPSESSID");
+    }
+
+    /**
+     * Вход по логину и паролю.
+     */
     public User(String login, String password) {
         this();
         this.login = login;
