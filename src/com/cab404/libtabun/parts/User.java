@@ -39,7 +39,7 @@ public class User {
         // Получаем ключ страницы. Нужен для того, чтобы нас не посчитали за XSS.
         HttpResponse resp = execute(
                 RequestFactory
-                        .get("/")
+                        .get("/404")
                         .build()
         );
         KeyFetcher key_from_response = new KeyFetcher();
@@ -54,7 +54,6 @@ public class User {
     public User(String php_session_id) {
         this();
         cookies.put("PHPSESSID", php_session_id);
-        ResponseFactory.read(execute(RequestFactory.get("/").build()), new KeyFetcher());
     }
 
     public boolean isLoggedIn() {
@@ -89,7 +88,7 @@ public class User {
                 execute(
                         RequestFactory
                                 .post("/login/ajax-login/")
-                                .addReferer("/")
+                                .addReferer(key.address)
                                 .setBody(packet)
                                 .XMLRequest()
                                 .build()
