@@ -146,6 +146,13 @@ public class U {
         return out;
     }
 
+    /**
+     * Андроид, почему ты не любишь плюсы?
+     */
+    public static int parseInt(String in) {
+        return Integer.parseInt(in.replace("+",""));
+    }
+
     public static Calendar convertDatetime(String datetime) {
         String timezone = datetime.substring(18);
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(timezone));

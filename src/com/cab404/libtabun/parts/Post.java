@@ -307,8 +307,12 @@ public class Post extends Part {
                         .XMLRequest()
                         .build()
         ));
-
-        JSONObject status = MessageFactory.processJSONwithMessage(response);
+        JSONObject status;
+        try {
+            status = MessageFactory.processJSONwithMessage(response);
+        } catch (Throwable ex) {
+            return 0;
+        }
         for (Object obj : ((JSONArray) status.get("aComments")).toArray()) {
             Comment.CommentParser comment_parser = new Comment.CommentParser();
             String html = (String) ((JSONObject) obj).get("html");
@@ -321,7 +325,7 @@ public class Post extends Part {
             comments.add(comment_parser.comment);
         }
 
-        this.max_comment_id = Integer.parseInt(String.valueOf(status.get("iMaxIdComment")));
+        this.max_comment_id = Math.max(Integer.parseInt(String.valueOf(status.get("iMaxIdComment"))), max_comment_id);
         return ((JSONArray) status.get("aComments")).toArray().length;
     }
 

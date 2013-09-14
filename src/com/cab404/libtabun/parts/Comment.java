@@ -33,7 +33,7 @@ public class Comment extends Part {
                 case 0:
                     // Находим заголовок
                     if (line.contains("<section id=\"comment_id")) {
-                        comment.id = Integer.parseInt(U.sub(line, "_id_", "\""));
+                        comment.id = U.parseInt(U.sub(line, "_id_", "\""));
                         part++;
                     }
                     break;
@@ -67,14 +67,14 @@ public class Comment extends Part {
                 case 5:
                     // Находим рейтинг
                     if (line.contains("vote_total_comment")) {
-                        comment.votes = Integer.parseInt(U.sub(line, ">", "<"));
+                        comment.votes = U.parseInt(U.sub(line, ">", "<"));
                         part++;
                     }
                     break;
                 case 6:
                     // Пытаемся найти родительский комментарий
                     if (line.contains("goToParentComment"))
-                        comment.parent = Integer.parseInt(U.sub(line, ",", ");"));
+                        comment.parent = U.parseInt(U.sub(line, ",", ");"));
                     if (line.contains("</section>"))
                         return false;
                     break;

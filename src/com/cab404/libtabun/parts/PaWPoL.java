@@ -11,7 +11,7 @@ import javolution.util.FastList;
  *
  * @author cab404
  */
-class PaWPoL extends Part {
+public class PaWPoL extends Part {
     FastList<Post> posts;
 
     public static class PostLabel extends Part {
@@ -40,7 +40,7 @@ class PaWPoL extends Part {
                 case 1:
                     // Находим название и ID
                     if (line.contains("/blog/")) {
-                        pl.id = Integer.parseInt(U.bsub(line, "/", ".html"));
+                        pl.id = U.parseInt(U.bsub(line, "/", ".html\">"));
                         pl.name = U.sub(line, ">", "<");
                         part++;
                     }
@@ -51,7 +51,7 @@ class PaWPoL extends Part {
                 case 3:
                     // Кол-во голосов
                     try {
-                        pl.votes = Integer.parseInt(line.trim()) + "";
+                        pl.votes = U.parseInt(line.trim()) + "";
                     } catch (NumberFormatException e) {
                         pl.votes = "?";
                     }
@@ -93,8 +93,8 @@ class PaWPoL extends Part {
                 case 10:
                     // Кол-во комментариев
                     if (!line.trim().equals("</a>")) {
-                        if (line.contains("<span>")) pl.comments = Integer.parseInt(U.sub(line, ">", "<"));
-                        if (line.contains("class=\"count\"")) pl.comments_new = Integer.parseInt(U.sub(line, ">", "<"));
+                        if (line.contains("<span>")) pl.comments = U.parseInt(U.sub(line, ">", "<"));
+                        if (line.contains("class=\"count\"")) pl.comments_new = U.parseInt(U.sub(line, ">", "<"));
                     } else return false;
             }
             return true;
