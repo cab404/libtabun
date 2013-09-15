@@ -19,6 +19,14 @@ class Letter extends Part {
             int id;
 
 
+            public class LetterLabelParser implements ResponseFactory.Parser {
+
+                @Override
+                public boolean line(String line) {
+
+                    return true;
+                }
+            }
         }
 
         public class LetterListParser implements ResponseFactory.Parser {
