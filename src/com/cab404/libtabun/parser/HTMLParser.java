@@ -1,5 +1,6 @@
 package com.cab404.libtabun.parser;
 
+import com.cab404.libtabun.U;
 import javolution.util.FastList;
 import javolution.util.FastMap;
 
@@ -19,11 +20,11 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
     }
 
     public static class Tag {
-        public FastMap<String, String> props;
         public int start, end;
         public String name, text;
         public boolean isClosing;    // Тег типа </x>
         public boolean isStandalone; // Тег типа <x/>
+        public FastMap<String, String> props;
 
         public Tag() {
             props = new FastMap<>();
@@ -34,10 +35,10 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
     public String html;
 
     Pattern
-            tag_pattern = Pattern.compile("<.+?>"),
-            property = Pattern.compile("(?<=\\s)(?!\\s)(.*?=\".*?\")"),
-            closing = Pattern.compile("</.+?>"),
-            alone = Pattern.compile("<.+?/>"),
+            tag_pattern = Pattern.compile("(?s:<.*?>)"),
+            property = Pattern.compile("(?<=\\s)(?!\\s)(?s:.*?=\".*?\")"),
+            closing = Pattern.compile("<?s:/.+?>"),
+            alone = Pattern.compile("<?s:.+?/>"),
             name = Pattern.compile("(?<=</|<!|<)(\\w+?)(?=[>\\s])");
 
 
@@ -46,7 +47,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         Matcher matcher = tag_pattern.matcher(parse);
 
         tags = new FastList<>();
-//        String offset = "";
+        String offset = "";
         // Ищем теги
         while (matcher.find()) {
             Tag out = new Tag();
@@ -59,7 +60,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
             // Закрытый/Одиночный тег
             out.isClosing = closing.matcher(out.text).matches();
             out.isStandalone = alone.matcher(out.text).matches();
-//            if (out.isClosing) offset = offset.substring(4);
+            if (out.isClosing) offset = offset.substring(4);
 
             // Ищем имя тега
             Matcher n = name.matcher(out.text);
@@ -68,15 +69,15 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
 
             // Свойства тега
             Matcher properties = property.matcher(out.text);
-//            U.v(offset + out.name);
+            U.v(offset + out.name);
 
             while (properties.find()) {
                 String[] kw = out.text.substring(properties.start(), properties.end()).split("=", 2);
                 out.props.put(kw[0], kw[1].substring(1, kw[1].length() - 1));
-//                U.v(offset + "\t" + kw[0] + ":\t" + kw[1].substring(1, kw[1].length() - 1));
+                U.v(offset + "\t" + kw[0] + ":\t" + kw[1].substring(1, kw[1].length() - 1));
             }
 
-//            if (!out.isClosing && !out.isStandalone) offset += "....";
+            if (!out.isClosing && !out.isStandalone) offset += "....";
 
             tags.add(out);
         }
