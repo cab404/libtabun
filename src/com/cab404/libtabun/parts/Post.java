@@ -92,12 +92,6 @@ public class Post extends Part {
                     tags[i] = raw.getContents(raw_tags.get(i));
                 }
 
-
-                U.v(text);
-
-
-                U.v(id);
-
             }
             if (reading) text += line + "\n";
             return true;

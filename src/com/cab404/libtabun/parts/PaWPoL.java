@@ -1,7 +1,8 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.U;
+import com.cab404.libtabun.facility.HTMLParser;
+import com.cab404.libtabun.facility.ResponseFactory;
 import javolution.util.FastList;
 
 /**
@@ -16,87 +17,68 @@ public class PaWPoL extends Part {
 
     public static class PostLabel extends Part {
         public String name, votes, author;
-        public String blog_name, content;
-        public int comments, comments_new = 0;
+        public String content, time;
+        public String[] tags;
+        public Blog blog;
+        public int comments = 0, comments_new = 0;
 
 
         public PostLabel() {
             type = "Topic";
-            name = votes = author = blog_name = content = "";
+            name = votes = author = time = content = "";
         }
     }
 
     public static class PostLabelParser implements ResponseFactory.Parser {
-        int part = 0;
+        boolean writing = false;
+        String text = "";
         public PostLabel pl = new PostLabel();
 
         @Override
         public boolean line(String line) {
-            switch (part) {
-                case 0:
-                    // Находим заголовок
-                    if (line.contains("topic-type-topic")) part++;
-                    break;
-                case 1:
-                    // Находим название и ID
-                    if (line.contains("/blog/")) {
-                        pl.id = U.parseInt(U.bsub(line, "/", ".html\">"));
-                        pl.name = U.sub(line, ">", "<");
-                        part++;
-                    }
-                    break;
-                case 2:
-                    if (line.contains("vote_total_topic")) part++;
-                    break;
-                case 3:
-                    // Кол-во голосов
-                    try {
-                        pl.votes = U.parseInt(line.trim()) + "";
-                    } catch (NumberFormatException e) {
-                        pl.votes = "?";
-                    }
-                    part++;
-                    break;
-                case 4:
-                    // Автор
-                    if (line.contains("rel=\"author\"")) {
-                        pl.author = U.sub(line, ">", "<");
-                        part++;
-                    }
-                    break;
-                case 5:
-                    // Название блога
-                    pl.blog_name = U.sub(line, ">", "<");
-                    part++;
-                    break;
-                case 6:
-                    // Заголовок начала текста
-                    if (line.contains("<div class=\"topic-content text\">")) part++;
-                    break;
-                case 7:
-                    // Текст
-                    if (line.trim().equals("</div>")) part++;
-                    else {
-                        pl.content += line;
-                    }
-                    break;
-                case 8:
-                    // Дата
-                    if (line.contains("time datetime")) {
-                        pl.date = U.convertDatetime(U.sub(line, "=\"", "\""));
-                        part++;
-                    }
-                    break;
-                case 9:
-                    if (line.contains("comments-green-filled")) part++;
-                    break;
-                case 10:
-                    // Кол-во комментариев
-                    if (!line.trim().equals("</a>")) {
-                        if (line.contains("<span>")) pl.comments = U.parseInt(U.sub(line, ">", "<"));
-                        if (line.contains("class=\"count\"")) pl.comments_new = U.parseInt(U.sub(line, ">", "<"));
-                    } else return false;
+            if (!writing) if (line.trim().equals("<article class=\"topic topic-type-topic js-topic\">")) writing = true;
+            else ;
+            else if (line.trim().equals("</article> <!-- /.topic -->")) {
+                text += line + "\n";
+
+                HTMLParser raw = new HTMLParser(text);
+
+                pl.id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
+                pl.content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
+                pl.name = U.removeAllTags(raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap"))).trim();
+
+                int blog_tag;
+                try {
+                    blog_tag = raw.getTagIndexByProperty("class", "topic-blog");
+                } catch (Error e) {
+                    blog_tag = raw.getTagIndexByProperty("class", "topic-blog private-blog");
+                }
+                pl.blog = new Blog();
+                pl.blog.name = raw.getContents(blog_tag);
+                pl.blog.url_name = U.bsub(raw.tags.get(blog_tag).props.get("href"), "/blog/", "/");
+
+                int time_tag = raw.getTagIndexForName("time");
+                pl.time = raw.getContents(time_tag).trim();
+                pl.date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
+                pl.votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + pl.id)).trim();
+
+                FastList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
+                pl.tags = new String[raw_tags.size()];
+                for (int i = 0; i != raw_tags.size(); i++) {
+                    pl.tags[i] = raw.getContents(raw_tags.get(i));
+                }
+
+                String comments = U.removeAllTags(raw.getContents(raw.getTagIndexByProperty("class", "topic-info-comments"))).trim();
+                pl.comments = U.parseInt(comments.split("\\Q+\\E")[0]);
+                try {
+                    pl.comments_new = U.parseInt(comments.split("\\Q+\\E")[1]);
+                } catch (Exception ex) {
+                    pl.comments_new = 0;
+                }
+                U.v(pl.comments_new);
+                return false;
             }
+            if (writing) text += line + "\n";
             return true;
         }
     }
