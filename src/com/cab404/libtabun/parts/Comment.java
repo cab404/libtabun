@@ -1,6 +1,7 @@
 package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.*;
+import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -26,6 +27,7 @@ public class Comment extends Part {
     public static class CommentParser implements ResponseFactory.Parser {
         public Comment comment = new Comment();
         int part = 0;
+        String text = "";
 
         @Override
         public boolean line(String line) {
@@ -34,49 +36,41 @@ public class Comment extends Part {
                     // Находим заголовок
                     if (line.contains("<section id=\"comment_id")) {
                         comment.id = U.parseInt(U.sub(line, "_id_", "\""));
+                        text += line + '\n';
                         part++;
                     }
                     break;
+
                 case 1:
-                    // Находим текст
-                    if (line.contains("<div class=\" text\">")) {
-                        part++;
-                    }
-                    break;
-                case 2:
-                    // Записываем текст
-                    // Изменить эту фигню на что-нибудь более правдоподобное. А то ведь и табуляцию сменить могут.
-                    if (line.equals("\t\t\t</div>")) part++;
-                    else comment.body += line.replace("\t", "");
-                    break;
-                case 3:
-                    // Находим автора
-                    if (line.contains("http://tabun.everypony.ru/profile/")) {
-                        comment.author = U.sub(line, "http://tabun.everypony.ru/profile/", "/");
-                        comment.avatar = U.sub(line, "img src=\"", "\"");
-                        part++;
-                    }
-                    break;
-                case 4:
-                    // Находим дату публикации
-                    if (line.contains("<time datetime")) {
-                        comment.time = U.sub(line, "datetime=\"", "\"");
-                        part++;
-                    }
-                    break;
-                case 5:
-                    // Находим рейтинг
-                    if (line.contains("vote_total_comment")) {
-                        comment.votes = U.parseInt(U.sub(line, ">", "<"));
-                        part++;
-                    }
-                    break;
-                case 6:
-                    // Пытаемся найти родительский комментарий
-                    if (line.contains("goToParentComment"))
-                        comment.parent = U.parseInt(U.sub(line, ",", ");"));
-                    if (line.contains("</section>"))
+                    if (line.contains("</section>")) {
+                        text += line;
+
+                        HTMLParser parser = new HTMLParser(text);
+
+                        comment.body = parser.getContents(parser.getTagIndexByProperty("class", " text")).replaceAll("\t", "");
+                        // Тут чуточку сложнее.
+                        comment.time = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-date")).getTagByName("time").props.get("datetime");
+
+                        // Достаём автора и аватарку.
+                        HTMLParser author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-author "));
+                        {
+                            comment.author = U.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
+                            comment.avatar = parser.getTagByName("img").props.get("src");
+                        }
+
+                        // Попытка достать род. комментарий:
+                        try {
+                            HTMLParser comment_parent_goto = parser.getParserForIndex(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
+                            comment.parent = U.parseInt(U.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
+                        } catch (Error e) {
+                            comment.parent = 0;
+                        }
+
+                        comment.votes = U.parseInt(parser.getContents(parser.getTagByProperty("class", "vote-count")).trim());
+
                         return false;
+                    } else text += line + '\n';
+
                     break;
 
             }
@@ -138,7 +132,7 @@ public class Comment extends Part {
         );
     }
 
-    public static Comment getByID(User user, int comment_id){
+    public static Comment getByID(User user, int comment_id) {
         Post post = new Post(user, Comment.getPostNum(user, comment_id));
         post.fetchNewComments(user, comment_id - 1);
         return post.getCommentByID(comment_id);

@@ -67,7 +67,7 @@ public class Letter extends Part {
                 HTMLParser parser = list.getParserForIndex(list.getIndexForTag(tr));
 
                 // Достаём всё из заголовка
-                int title = parser.getTagByProperty("class", "js-title-talk");
+                int title = parser.getTagIndexByProperty("class", "js-title-talk");
 
                 label.name = parser.getContents(title);
                 label.id = U.parseInt(U.bsub(parser.tags.get(title).props.get("href"), "read/", "/"));
@@ -78,7 +78,7 @@ public class Letter extends Part {
                         parser
                                 .getParserForIndex(
                                         parser
-                                                .getTagByProperty("class", "cell-recipients")
+                                                .getTagIndexByProperty("class", "cell-recipients")
                                 )
                                 .getAllTagsByProperty("class", "username ");
                 label.people = new String[contacts.size()];
@@ -92,7 +92,7 @@ public class Letter extends Part {
                 label.date =
                         U.removeAllTags(
                                 parser.getContents(
-                                        parser.getTagByProperty("class", "cell-date ta-r")
+                                        parser.getTagIndexByProperty("class", "cell-date ta-r")
                                 ).split("\\Q<br/>\\E")[0]).trim();
 
 

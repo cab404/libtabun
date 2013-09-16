@@ -103,16 +103,25 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         return _return;
     }
 
-    public int getTagByProperty(String key, String value) {
+    public Tag getTagByName(String name) {
+        for (Tag tag : this) if (tag.name.equals(name)) return tag;
+        throw new Error("Tag not found");
+    }
+
+    public Tag getTagByProperty(String key, String value) {
+        return tags.get(getTagIndexByProperty(key, value));
+    }
+
+    public int getTagIndexByProperty(String key, String value) {
         for (int i = 0; i != tags.size(); i++) {
             if (value.equals(tags.get(i).props.get(key))) return i;
         }
-        return -1;
+        throw new Error("Tag not found");
     }
 
     public int getIndexForTag(Tag tag) {
         for (int i = 0; i != tags.size(); i++) if (tags.get(i) == tag) return i;
-        return -1;
+        throw new Error("Tag not found");
     }
 
     public String getContents(Tag tag) {
