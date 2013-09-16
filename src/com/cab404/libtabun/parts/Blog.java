@@ -1,9 +1,8 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.U;
-import com.cab404.libtabun.parts.User;
 import javolution.util.FastList;
 
 /**
