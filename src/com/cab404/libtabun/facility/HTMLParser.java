@@ -124,6 +124,11 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         throw new Error("Tag not found");
     }
 
+    public int getTagIndexForName(String name) {
+        for (int i = 0; i != tags.size(); i++) if (tags.get(i).name.equals(name)) return i;
+        throw new Error("Tag not found");
+    }
+
     public String getContents(Tag tag) {
         return getContents(getIndexForTag(tag));
     }

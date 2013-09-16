@@ -197,7 +197,7 @@ public class User {
                                         "blog_id", post.blog.id + "",
                                         "topic_title", post.name,
                                         "topic_text", post.body,
-                                        "topic_tags", post.tags,
+                                        "topic_tags", U.join(post.tags, ", "),
                                         "topic_type", "topic",
                                         "submit_topic_publish", ""
                                 )
