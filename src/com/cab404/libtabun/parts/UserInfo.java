@@ -9,9 +9,6 @@ import javolution.util.FastList;
  * @author cab404
  */
 public class UserInfo {
-    /**
-     * Так понятнее
-     */
     public float skill, votes;
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
 
@@ -23,6 +20,17 @@ public class UserInfo {
         personal = new FastList<>();
         contacts = new FastList<>();
         name = nick = about = small_icon = big_icon = mid_icon = photo = "";
+    }
+
+    public void fillImages(){
+        String uni = "";
+        if (!small_icon.isEmpty()) uni = small_icon.replace("24x24","***");
+        if (!mid_icon.isEmpty()) uni = small_icon.replace("48x48","***");
+        if (!big_icon.isEmpty()) uni = small_icon.replace("100x100","***");
+
+        small_icon = uni.replace("***","24x24");
+        mid_icon = uni.replace("***","48x48");
+        big_icon = uni.replace("***","100x100");
     }
 
     public UserInfo(User user, String username) {

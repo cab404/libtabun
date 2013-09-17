@@ -142,7 +142,8 @@ public class U {
 
     public static String join(String[] strings, String delimeter) {
         String out = "";
-        for (String string : strings) out += string + delimeter;
+        for (int i = 0; i < strings.length - 1; i++) out += strings[i] + delimeter;
+        out += strings[strings.length - 1];
         return out;
     }
 
@@ -150,7 +151,7 @@ public class U {
      * Андроид, почему ты не любишь плюсы?
      */
     public static int parseInt(String in) {
-        return Integer.parseInt(in.replace("+",""));
+        return Integer.parseInt(in.replace("+", ""));
     }
 
     public static Calendar convertDatetime(String datetime) {

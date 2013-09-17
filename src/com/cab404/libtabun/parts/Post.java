@@ -10,7 +10,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Post extends Part {
-    public String name, author, time, body, votes;
+    public String name, time, body, votes;
+    public UserInfo author;
     public String[] tags;
     public FastList<Comment> comments;
     private int max_comment_id = 0;
@@ -22,7 +23,7 @@ public class Post extends Part {
     public Post() {
         comments = new FastList<>();
         blog = new Blog();
-        name = author = time = body = votes = "";
+        name = time = body = votes = "";
         type = "Topic";
     }
 
@@ -85,13 +86,21 @@ public class Post extends Part {
                 time = raw.getContents(time_tag).trim();
                 date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
                 votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + id)).trim();
-
+                try {
+                    U.parseInt(votes);
+                } catch (Exception e) {
+                    votes = "±?";
+                }
                 FastList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
                 tags = new String[raw_tags.size()];
                 for (int i = 0; i != raw_tags.size(); i++) {
                     tags[i] = raw.getContents(raw_tags.get(i));
                 }
 
+                author = new UserInfo();
+                author.nick = raw.getContents(raw.getTagIndexByProperty("rel", "author"));
+                author.small_icon = raw.getTagByProperty("alt", "avatar").props.get("src");
+                author.fillImages();
             }
             if (reading) text += line + "\n";
             return true;

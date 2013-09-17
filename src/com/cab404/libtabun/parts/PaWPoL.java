@@ -13,10 +13,10 @@ import javolution.util.FastList;
  * @author cab404
  */
 public class PaWPoL extends Part {
-    FastList<Post> posts;
 
     public static class PostLabel extends Part {
-        public String name, votes, author;
+        public String name, votes;
+        public UserInfo author;
         public String content, time;
         public String[] tags;
         public Blog blog;
@@ -25,7 +25,7 @@ public class PaWPoL extends Part {
 
         public PostLabel() {
             type = "Topic";
-            name = votes = author = time = content = "";
+            name = votes = time = content = "";
         }
     }
 
@@ -61,21 +61,32 @@ public class PaWPoL extends Part {
                 pl.time = raw.getContents(time_tag).trim();
                 pl.date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
                 pl.votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + pl.id)).trim();
-
+                try {
+                    U.parseInt(pl.votes);
+                } catch (Exception e) {
+                    pl.votes = "±?";
+                }
                 FastList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
                 pl.tags = new String[raw_tags.size()];
                 for (int i = 0; i != raw_tags.size(); i++) {
                     pl.tags[i] = raw.getContents(raw_tags.get(i));
                 }
 
-                String comments = U.removeAllTags(raw.getContents(raw.getTagIndexByProperty("class", "topic-info-comments"))).trim();
-                pl.comments = U.parseInt(comments.split("\\Q+\\E")[0]);
+                String comments = U.removeAllTags(raw.getContents(raw.getTagIndexByProperty("class", "topic-info-comments")));
+                comments = comments.trim().replace("\n", "").replace(" ", "").replace("\t", "");
+                pl.comments = U.parseInt(comments.trim().split("\\Q+\\E")[0]);
                 try {
                     pl.comments_new = U.parseInt(comments.split("\\Q+\\E")[1]);
                 } catch (Exception ex) {
                     pl.comments_new = 0;
                 }
-                U.v(pl.comments_new);
+
+
+                pl.author = new UserInfo();
+                pl.author.nick = raw.getContents(raw.getTagIndexByProperty("rel", "author"));
+                pl.author.small_icon = raw.getTagByProperty("alt", "avatar").props.get("src");
+                pl.author.fillImages();
+
                 return false;
             }
             if (writing) text += line + "\n";
