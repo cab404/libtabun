@@ -109,7 +109,8 @@ public class Post extends Part {
 
     /**
      * Парсер комментариев в списках - комментарии пользователя, посты, письма.
-     * Но для писем и постов удобнее и быстрее загружать через JSON.
+     * <s>Но для писем и постов удобнее и быстрее загружать через JSON.</s>
+     * Нифига не быстрее.
      */
     public static class ActiveCommentListParser implements ResponseFactory.Parser {
         int part = 0;
