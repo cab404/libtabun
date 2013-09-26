@@ -68,11 +68,12 @@ public class Comment extends Part {
 
                         comment.votes = U.parseInt(parser.getContents(parser.getTagByProperty("class", "vote-count")).trim());
 
+
+
                         return false;
                     } else text += line + '\n';
 
                     break;
-
             }
 
             return true;
@@ -141,5 +142,4 @@ public class Comment extends Part {
     public boolean removeFromFavourites(User user) {
         return favourites(user, 0);
     }
-
 }

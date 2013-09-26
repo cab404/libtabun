@@ -196,7 +196,7 @@ public class User {
                                         "security_ls_key", key.key,
                                         "blog_id", post.blog.id + "",
                                         "topic_title", post.name,
-                                        "topic_text", post.body,
+                                        "topic_text", post.content,
                                         "topic_tags", U.join(post.tags, ", "),
                                         "topic_type", "topic",
                                         "submit_topic_publish", ""

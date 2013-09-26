@@ -9,21 +9,17 @@ import javolution.util.FastList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class Post extends Part {
-    public String name, time, body, votes;
-    public UserInfo author;
-    public String[] tags;
-    public FastList<Comment> comments;
+public class Post extends PaWPoL.PostLabel {
+    public FastList<Comment> comment_list;
     private int max_comment_id = 0;
-    public Blog blog;
 
     /**
      * Создаёт пустой пост ниоткуда. Заполнять самим.
      */
     public Post() {
-        comments = new FastList<>();
+        comment_list = new FastList<>();
         blog = new Blog();
-        name = time = body = votes = "";
+        name = time = content = votes = "";
         type = "Topic";
     }
 
@@ -69,7 +65,7 @@ public class Post extends Part {
                 HTMLParser raw = new HTMLParser(text);
 
                 id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
-                text = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
+                content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
                 name = raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap")).trim();
 
                 int blog_tag;
@@ -263,7 +259,7 @@ public class Post extends Part {
     /**
      * Загружает новые комментарии, и говорит, сколько вышло.
      */
-    public int fetchNewComments(User user, int max_comment_id) {
+    public int fetchNewComments(User user, int max_comment_id, CommentListener cl) {
 
         String body = "&idCommentLast=" + max_comment_id;
         body += "&idTarget=" + id;
@@ -292,21 +288,30 @@ public class Post extends Part {
             }
 
             comment_parser.comment.key = key;
-            comments.add(comment_parser.comment);
+            comment_list.add(comment_parser.comment);
+            if (cl != null) cl.onCommentLoad(comment_parser.comment);
         }
 
         this.max_comment_id = Math.max(Integer.parseInt(String.valueOf(status.get("iMaxIdComment"))), max_comment_id);
         return ((JSONArray) status.get("aComments")).toArray().length;
     }
 
+    public int fetchNewComments(User user, int max_comment_id) {
+        return fetchNewComments(user, max_comment_id, null);
+    }
+
     public int fetchNewComments(User user) {
-        return fetchNewComments(user, max_comment_id);
+        return fetchNewComments(user, max_comment_id, null);
     }
 
     public Comment getCommentByID(int id) {
-        for (Comment comment : comments) {
+        for (Comment comment : comment_list) {
             if (comment.id == id) return comment;
         }
         return null;
+    }
+
+    public interface CommentListener {
+        public void onCommentLoad(Comment comment);
     }
 }
