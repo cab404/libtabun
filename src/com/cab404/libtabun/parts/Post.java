@@ -57,6 +57,7 @@ public class Post extends PaWPoL.PostLabel {
 
         @Override
         public boolean line(String line) {
+            U.v(line);
             if (!reading)
                 if (line.trim().equals("<article class=\"topic topic-type-topic js-topic\">")) reading = true;
                 else ;
@@ -97,6 +98,7 @@ public class Post extends PaWPoL.PostLabel {
                 author.nick = raw.getContents(raw.getTagIndexByProperty("rel", "author"));
                 author.small_icon = raw.getTagByProperty("alt", "avatar").props.get("src");
                 author.fillImages();
+                return false;
             }
             if (reading) text += line + "\n";
             return true;
