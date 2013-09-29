@@ -10,7 +10,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Post extends PaWPoL.PostLabel {
+    public static enum Type {
+        QUIZ, SIMPLE
+    }
+
     public FastList<Comment> comment_list;
+    public Type topic_type;
     private int max_comment_id = 0;
 
     /**
@@ -58,16 +63,34 @@ public class Post extends PaWPoL.PostLabel {
         @Override
         public boolean line(String line) {
             U.v(line);
-            if (!reading)
-                if (line.trim().equals("<article class=\"topic topic-type-topic js-topic\">")) reading = true;
-                else ;
-            else if (line.trim().equals("</article> <!-- /.topic -->")) {
+            if (!reading) {
+                if (line.trim().equals("<article class=\"topic topic-type-topic js-topic\">")) {
+                    topic_type = Type.SIMPLE;
+                    reading = true;
+                }
+
+                if (line.trim().equals("<article class=\"topic topic-type-question js-topic\">")) {
+                    topic_type = Type.QUIZ;
+                    reading = true;
+                }
+            } else if (line.trim().equals("</article> <!-- /.topic -->")) {
                 text += line;
                 HTMLParser raw = new HTMLParser(text);
 
                 id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
                 content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
                 name = raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap")).trim();
+
+                String vote_info = raw.getTagByProperty("id", "vote_area_topic_" + id).props.get("class");
+                vote_enabled = vote_info.contains("vote_not_self") && vote_info.contains("not_voted") && vote_info.contains("vote_not_expired");
+                if (!vote_enabled) {
+                    if (vote_info.contains("voted_up"))
+                        your_vote = 1;
+                    if (vote_info.contains("voted_down"))
+                        your_vote = -1;
+                    if (vote_info.contains("voted-zero"))
+                        your_vote = 0;
+                }
 
                 int blog_tag;
                 try {
@@ -324,6 +347,9 @@ public class Post extends PaWPoL.PostLabel {
         } catch (Throwable ex) {
             return 0;
         }
+
+        if (status == null) return 0;
+
         for (Object obj : ((JSONArray) status.get("aComments")).toArray()) {
             Comment.CommentParser comment_parser = new Comment.CommentParser();
             String html = (String) ((JSONObject) obj).get("html");

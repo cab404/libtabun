@@ -54,14 +54,10 @@ public class Comment extends Part {
                         // Достаём автора и аватарку.
 
                         HTMLParser author;
-                        try {
-                            author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-author "));
-                        } catch (Error e) {
-                            author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-author comment-topic-author"));
-                        }
+                        author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-info"));
                         {
                             comment.author = U.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
-                            comment.avatar = parser.getTagByName("img").props.get("src");
+                            comment.avatar = author.getTagByProperty("alt", "avatar").props.get("src");
                         }
 
                         // Попытка достать род. комментарий:

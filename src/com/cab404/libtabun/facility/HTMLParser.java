@@ -129,18 +129,36 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         throw new Error("Tag not found");
     }
 
+    public int getClosingTag(int opening_tag_index) {
+        int level = 0, check_index;
+
+        Tag tag = tags.get(opening_tag_index);
+
+        for (check_index = opening_tag_index; check_index < tags.size(); check_index++) {
+            Tag check = tags.get(check_index);
+
+            if (check.isClosing) level--;
+            else if (!check.isStandalone) level++;
+
+            if (level == 0 && check.isClosing && check.name.equals(tag.name))
+                return check_index;
+        }
+
+        throw new Error("Tag not found");
+    }
+
     public String getContents(Tag tag) {
         return getContents(getIndexForTag(tag));
     }
 
     public String getContents(int index) {
-        int level = 0, findex;
+        int level = 0, check_index;
 
         // Рисуем кружочки.
         Tag tag = tags.get(index);
         // Рисуем остальную сову.
-        for (findex = index; findex != tags.size(); findex++) {
-            Tag check = tags.get(findex);
+        for (check_index = index; check_index < tags.size(); check_index++) {
+            Tag check = tags.get(check_index);
 
             if (check.isClosing) level--;
             else if (!check.isStandalone) level++;
