@@ -52,7 +52,13 @@ public class Comment extends Part {
                         comment.time = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-date")).getTagByName("time").props.get("datetime");
 
                         // Достаём автора и аватарку.
-                        HTMLParser author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-author "));
+
+                        HTMLParser author;
+                        try {
+                            author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-author "));
+                        } catch (Error e) {
+                            author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-author comment-topic-author"));
+                        }
                         {
                             comment.author = U.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
                             comment.avatar = parser.getTagByName("img").props.get("src");
@@ -67,7 +73,6 @@ public class Comment extends Part {
                         }
 
                         comment.votes = U.parseInt(parser.getContents(parser.getTagByProperty("class", "vote-count")).trim());
-
 
 
                         return false;

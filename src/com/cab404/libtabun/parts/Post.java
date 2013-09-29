@@ -35,7 +35,7 @@ public class Post extends PaWPoL.PostLabel {
     public void fetchHeader(User user) {
         ResponseFactory.read(
                 user.execute(RequestFactory.get("/blog/" + id + ".html").build()),
-                new PostParser()
+                new PostHeaderParser()
         );
     }
 
@@ -43,13 +43,13 @@ public class Post extends PaWPoL.PostLabel {
      * Выдаёт новый парсер для чтения поста в данный объект
      */
     public ResponseFactory.Parser getParser() {
-        return new PostParser();
+        return new PostHeaderParser();
     }
 
     /**
      * Парсер заголовка поста
      */
-    private class PostParser implements ResponseFactory.Parser {
+    private class PostHeaderParser implements ResponseFactory.Parser {
         private int part = 0;
         private boolean reading = false;
         private String text = "";
@@ -110,9 +110,8 @@ public class Post extends PaWPoL.PostLabel {
      * <s>Но для писем и постов удобнее и быстрее загружать через JSON.</s>
      * Нифига не быстрее.
      */
-    public static class ActiveCommentListParser implements ResponseFactory.Parser {
+    public class ActiveCommentListParser implements ResponseFactory.Parser {
         int part = 0;
-        public FastList<Comment> comments = new FastList<>();
         private int count_comments_dec = -1;
         private int count_comments = -1;
         private Comment.CommentParser parser = new Comment.CommentParser();
@@ -129,7 +128,7 @@ public class Post extends PaWPoL.PostLabel {
             else {
                 if (count_comments_dec != 0) {
                     if (!parser.line(line)) {
-                        comments.add(parser.comment);
+                        comment_list.add(parser.comment);
                         onCommentLoad(parser.comment, count_comments_dec, count_comments);
                         parser = new Comment.CommentParser();
                         count_comments_dec--;
@@ -144,6 +143,50 @@ public class Post extends PaWPoL.PostLabel {
         }
 
         public void onCommentLoad(Comment comment, int left, int total) {
+        }
+    }
+
+    public static enum PartType {
+        COMMENT, HEADER
+    }
+
+    public static interface LoadingEventListener {
+        public void onLoadingEvent(PartType type, Object part);
+    }
+
+    public class PostParser implements ResponseFactory.Parser {
+        int part = 0;
+        LoadingEventListener listener;
+
+        public PostParser(LoadingEventListener listener) {
+            this.listener = listener;
+        }
+
+        PostHeaderParser head = new PostHeaderParser();
+        ActiveCommentListParser comments = new ActiveCommentListParser() {
+            @Override public void onCommentLoad(Comment comment, int left, int total) {
+                listener.onLoadingEvent(PartType.COMMENT, comment);
+                max_comment_id = Math.max(comment.id, max_comment_id);
+            }
+        };
+
+        @Override public boolean line(String line) {
+            switch (part) {
+                case 0:
+                    if (!head.line(line)) {
+                        listener.onLoadingEvent(PartType.HEADER, null);
+                        part++;
+                    }
+                    break;
+                case 1:
+                    if (!comments.line(line)) {
+                        part++;
+                    }
+                    break;
+                case 2:
+                    return false;
+            }
+            return true;
         }
     }
 
@@ -296,6 +339,20 @@ public class Post extends PaWPoL.PostLabel {
 
         this.max_comment_id = Math.max(Integer.parseInt(String.valueOf(status.get("iMaxIdComment"))), max_comment_id);
         return ((JSONArray) status.get("aComments")).toArray().length;
+    }
+
+    /**
+     * Загружает и комментарии и заголовок сразу со странички.
+     */
+    public void initialFetch(User user, LoadingEventListener l) {
+        ResponseFactory.read(
+                user.execute(RequestFactory.get("/blog/" + id + ".html").build()),
+                new PostParser(l)
+        );
+    }
+
+    public int fetchNewComments(User user, CommentListener cl) {
+        return fetchNewComments(user, max_comment_id, cl);
     }
 
     public int fetchNewComments(User user, int max_comment_id) {
