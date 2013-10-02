@@ -62,7 +62,6 @@ public class Post extends PaWPoL.PostLabel {
 
         @Override
         public boolean line(String line) {
-            U.v(line);
             if (!reading) {
                 if (line.trim().equals("<article class=\"topic topic-type-topic js-topic\">")) {
                     topic_type = Type.SIMPLE;
@@ -81,16 +80,19 @@ public class Post extends PaWPoL.PostLabel {
                 content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
                 name = raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap")).trim();
 
-                String vote_info = raw.getTagByProperty("id", "vote_area_topic_" + id).props.get("class");
-                vote_enabled = vote_info.contains("vote_not_self") && vote_info.contains("not_voted") && vote_info.contains("vote_not_expired");
+                String vote_info = raw.getTagByProperty("id", "vote_area_topic_" + id).props.get("class").replace("\t", "");
+                vote_enabled = vote_info.contains("vote-not-self") && vote_info.contains("not-voted") && vote_info.contains("vote-not-expired");
+
                 if (!vote_enabled) {
-                    if (vote_info.contains("voted_up"))
+                    if (vote_info.contains("voted-up"))
                         your_vote = 1;
-                    if (vote_info.contains("voted_down"))
+                    if (vote_info.contains("voted-down"))
                         your_vote = -1;
                     if (vote_info.contains("voted-zero"))
                         your_vote = 0;
                 }
+
+                isInFavs = raw.getTagByProperty("id", "fav_topic_" + id).props.get("class").equals("favourite active");
 
                 int blog_tag;
                 try {
@@ -295,15 +297,19 @@ public class Post extends PaWPoL.PostLabel {
 
         JSONObject status = MessageFactory.processJSONwithMessage(response);
 
-        return (boolean) status.get("bStateError");
+        boolean err = (boolean) status.get("bStateError");
+
+        if (!err) {
+            getCommentByID(comment).votes = U.parseInt(String.valueOf(status.get("iRating")));
+        }
+
+        return err;
     }
 
     /**
      * Голосует за пост
      */
     public boolean voteForPost(User user, int vote) {
-
-        U.v(key);
 
         String body = "";
         body += "&value=" + vote;
@@ -320,8 +326,15 @@ public class Post extends PaWPoL.PostLabel {
         ));
 
         JSONObject status = MessageFactory.processJSONwithMessage(response);
-
-        return (boolean) status.get("bStateError");
+        boolean err = (boolean) status.get("bStateError");
+        if (!err) {
+            votes = String.valueOf(status.get("iRating"));
+            if (!votes.startsWith("-"))
+                votes = "+" + votes;
+            your_vote = vote;
+            vote_enabled = false;
+        }
+        return err;
     }
 
     /**

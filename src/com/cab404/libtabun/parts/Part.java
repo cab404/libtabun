@@ -10,9 +10,6 @@ abstract class Part {
     String type;
     Calendar date;
 
-    boolean vote_enabled = false, voted = false;
-    int your_vote = 0;
-
 
     public int id;
 }

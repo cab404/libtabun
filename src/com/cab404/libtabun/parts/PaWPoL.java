@@ -20,6 +20,11 @@ public class PaWPoL extends Part {
         public String content, time;
         public String[] tags;
         public Blog blog;
+
+        public boolean vote_enabled = false, voted = false;
+        public boolean isInFavs = false;
+        public int your_vote = 0;
+
         public int comments = 0, comments_new = 0;
 
 

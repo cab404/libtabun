@@ -103,7 +103,6 @@ public class User {
 
         isLoggedIn = !(boolean) parsed.get("bStateError");
         U.w(isLoggedIn ? "Logged in!" : "Error!");
-
     }
 
     void addCookies(String input) {
@@ -111,7 +110,6 @@ public class User {
         String[] split = cookie.split("=");
         if (split.length == 2)
             cookies.put(split[0], split[1]);
-
     }
 
     Header cookies() {
@@ -139,7 +137,6 @@ public class User {
                 addCookies(header.getValue());
 
             return response;
-
         } catch (IOException e) {
             U.w(e);
             return null;
@@ -161,15 +158,17 @@ public class User {
         body += "&id" + target.type + "=" + target.id;
         body += "&security_ls_key=" + target.key.key;
 
-        String request = ResponseFactory.read(
+        String response = ResponseFactory.read(
                 execute(
-                        RequestFactory.post("/ajax/favourite/comment/")
+                        RequestFactory.post("/ajax/favourite/" + target.type.toLowerCase() + "/")
                                 .addReferer(target.key.address)
                                 .setBody(body)
                                 .XMLRequest()
                                 .build()));
 
-        JSONObject object = MessageFactory.processJSONwithMessage(request);
+        U.v(response);
+        U.v(body);
+        JSONObject object = MessageFactory.processJSONwithMessage(response);
 
         return (boolean) object.get("bStateError");
     }
@@ -204,7 +203,6 @@ public class User {
                                 .build()
                 ), psto.getParser());
         return psto;
-
     }
 
     public StreamElement[] loadStream() {
@@ -274,5 +272,4 @@ public class User {
             return true;
         }
     }
-
 }
