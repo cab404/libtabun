@@ -4,6 +4,7 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import java.util.Iterator;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
     public Iterator<Tag> iterator() {
         return tags.iterator();
     }
+
 
     public static class Tag {
         public int start, end;
@@ -91,6 +93,22 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         FastList<Tag> _return = new FastList<>();
         for (Tag tag : this) {
             if (value.equals(tag.props.get(key))) _return.add(tag);
+        }
+        return _return;
+    }
+
+    public Vector<Integer> getAllIDsByName(String div) {
+        Vector<Integer> _return = new Vector<>();
+        for (int i = 0; i != tags.size(); i++) {
+            if (div.equals(tags.get(i).name)) _return.add(i);
+        }
+        return _return;
+    }
+
+    public Vector<Integer> getAllIDsByProperty(String key, String value) {
+        Vector<Integer> _return = new Vector<>();
+        for (int i = 0; i != tags.size(); i++) {
+            if (value.equals(tags.get(i).props.get(key))) _return.add(i);
         }
         return _return;
     }

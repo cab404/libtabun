@@ -95,7 +95,6 @@ public class U {
             return null;
         }
         return source.substring(sIndex, eIndex);
-
     }
 
     /**
@@ -154,6 +153,11 @@ public class U {
         return Integer.parseInt(in.replace("+", ""));
     }
 
+    public static float parseFloat(String in) {
+        return Float.parseFloat(in.replace("+", ""));
+    }
+
+
     public static Calendar convertDatetime(String datetime) {
         String timezone = datetime.substring(18);
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(timezone));
@@ -173,6 +177,4 @@ public class U {
     public static String removeAllTags(String toProcess) {
         return toProcess.replaceAll("<.*?>", "");
     }
-
-
 }
