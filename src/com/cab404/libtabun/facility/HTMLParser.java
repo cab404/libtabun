@@ -20,6 +20,10 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         return tags.iterator();
     }
 
+    public Tag get(int id) {
+        return tags.get(id);
+    }
+
 
     public static class Tag {
         public int start, end;
@@ -196,6 +200,8 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         int level = 0, findex;
 
         Tag tag = tags.get(index);
+        if (tag.isClosing) throw new Error("Попытка достать парсер для закрывающего тега!");
+        if (tag.isStandalone) throw new Error("Попытка достать парсер для standalone-тега!");
         for (findex = index; findex != tags.size(); findex++) {
             Tag check = tags.get(findex);
             _return.tags.add(check);

@@ -66,11 +66,11 @@ public class UserInfo {
                         HTMLParser head_info = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile"));
 
                         HTMLParser vote_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "vote-profile"));
+                        id = U.parseInt(vote_part.tags.get(1).props.get("id").replace("vote_area_user_", ""));
                         votes = U.parseFloat(vote_part.getContents(vote_part.getTagIndexByProperty("id", "vote_total_user_" + id)));
-                        id = U.parseInt(vote_part.getTagByName("div").props.get("id").replace("vote_area_user_", ""));
 
                         HTMLParser strength_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "strength"));
-                        strength = U.parseFloat(vote_part.getContents(vote_part.getTagIndexByProperty("id", "user_skill_" + id)));
+                        strength = U.parseFloat(strength_part.getContents(strength_part.getTagIndexByProperty("id", "user_skill_" + id)));
 
                         nick = head_info.getContents(head_info.getTagByProperty("itemprop", "nickname"));
                         name = head_info.getContents(head_info.getTagByProperty("itemprop", "name"));
@@ -90,14 +90,20 @@ public class UserInfo {
                         HTMLParser lists = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-left"));
 
                         // И сказал cab404 хтмлпарсерам - плодитесь и размножайтесь.
-                        for (int id : lists.getAllIDsByProperty("class", "profile-dotted-list")) {
-                            HTMLParser dotted = lists.getParserForIndex(id);
-                            for (int kv : dotted.getAllIDsByName("div")) {
-                                if (!dotted.tags.get(kv).isClosing) {
-                                    HTMLParser li = lists.getParserForIndex(kv);
-                                    String key = li.getContents(li.getTagIndexForName("span"));
-                                    String value = li.getContents(li.getTagIndexForName("strong"));
+                        for (int list_id : lists.getAllIDsByName("ul")) {
+                            if (lists.get(list_id).isClosing) continue;
+                            HTMLParser list = lists.getParserForIndex(list_id);
+                            for (int entry_id : list.getAllIDsByName("li")) {
+                                if (list.get(entry_id).isClosing) continue;
+                                HTMLParser entry = list.getParserForIndex(entry_id);
+
+                                try {
+                                    String key = entry.getContents(entry.getTagIndexForName("span")).replaceAll(":", "");
+                                    String value = entry.getContents(entry.getTagIndexForName("strong"));
+
                                     personal.add(new Userdata(key, value));
+                                } catch (Error e) {
+                                    break;
                                 }
                             }
                         }
@@ -107,7 +113,7 @@ public class UserInfo {
                     {
                         HTMLParser contact_p = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-right"));
                         for (int i : contact_p.getAllIDsByName("li")) {
-                            if (!contact_p.tags.get(i).isClosing) {
+                            if (!contact_p.get(i).isClosing) {
                                 String foo = contact_p.getContents(i);
                                 String key = U.sub(foo, "title=\"", "\"");
                                 String value = U.removeAllTags(foo);

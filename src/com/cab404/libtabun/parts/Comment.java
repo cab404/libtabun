@@ -16,6 +16,7 @@ public class Comment extends Part {
     public String author = "", body = "", time = "";
     public int votes, parent = 0;
     public String avatar;
+    public boolean MODERASTIA = false;
 
     public Comment() {
         type = "Comment";
@@ -46,6 +47,14 @@ public class Comment extends Part {
                         text += line;
 
                         HTMLParser parser = new HTMLParser(text);
+
+                        try {
+                            parser.getTagIndexByProperty("class", " text");
+                        } catch (java.lang.Error e) {
+                            comment.MODERASTIA = true;
+                            return false;
+                        }
+
 
                         comment.body = parser.getContents(parser.getTagIndexByProperty("class", " text")).replaceAll("\t", "");
                         // Тут чуточку сложнее.
