@@ -95,7 +95,6 @@ public class U {
             return null;
         }
         return source.substring(sIndex, eIndex);
-
     }
 
     /**
@@ -142,7 +141,8 @@ public class U {
 
     public static String join(String[] strings, String delimeter) {
         String out = "";
-        for (String string : strings) out += string + delimeter;
+        for (int i = 0; i < strings.length - 1; i++) out += strings[i] + delimeter;
+        out += strings[strings.length - 1];
         return out;
     }
 
@@ -150,8 +150,13 @@ public class U {
      * Андроид, почему ты не любишь плюсы?
      */
     public static int parseInt(String in) {
-        return Integer.parseInt(in.replace("+",""));
+        return Integer.parseInt(in.replace("+", ""));
     }
+
+    public static float parseFloat(String in) {
+        return Float.parseFloat(in.replace("+", ""));
+    }
+
 
     public static Calendar convertDatetime(String datetime) {
         String timezone = datetime.substring(18);
@@ -172,6 +177,4 @@ public class U {
     public static String removeAllTags(String toProcess) {
         return toProcess.replaceAll("<.*?>", "");
     }
-
-
 }

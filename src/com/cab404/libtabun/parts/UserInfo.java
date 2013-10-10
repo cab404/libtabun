@@ -1,6 +1,7 @@
 package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.U;
+import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 import javolution.util.FastList;
@@ -9,11 +10,9 @@ import javolution.util.FastList;
  * @author cab404
  */
 public class UserInfo {
-    /**
-     * Так понятнее
-     */
-    public float skill, votes;
+    public float strength, votes;
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
+    public int id;
 
     public FastList<Userdata> personal;
     public FastList<Contact> contacts;
@@ -23,6 +22,17 @@ public class UserInfo {
         personal = new FastList<>();
         contacts = new FastList<>();
         name = nick = about = small_icon = big_icon = mid_icon = photo = "";
+    }
+
+    public void fillImages() {
+        String uni = "";
+        if (!small_icon.isEmpty()) uni = small_icon.replace("24x24", "***");
+        if (!mid_icon.isEmpty()) uni = small_icon.replace("48x48", "***");
+        if (!big_icon.isEmpty()) uni = small_icon.replace("100x100", "***");
+
+        small_icon = uni.replace("***", "24x24");
+        mid_icon = uni.replace("***", "48x48");
+        big_icon = uni.replace("***", "100x100");
     }
 
     public UserInfo(User user, String username) {
@@ -38,71 +48,81 @@ public class UserInfo {
     }
 
     public class UserInfoParser implements ResponseFactory.Parser {
-        int part = 0;
+        int prt = 0;
         String temp = "";
 
         @Override
         public boolean line(String line) {
-            switch (part) {
+            switch (prt) {
                 case 0:
-                    if (line.trim().equals("<div class=\"profile\">")) part++;
+                    if (line.trim().equals("</div> <!-- /container -->")) prt++;
+                    else temp += line;
                     break;
-                case 1:
-                    if (line.trim().contains("vote_total")) {
-                        votes = Float.parseFloat(U.sub(line, ">", "<"));
-                        part++;
+                case 1: {
+                    HTMLParser parser = new HTMLParser(temp);
+
+                    // Достаём более-менее основную инфу.
+                    {
+                        HTMLParser head_info = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile"));
+
+                        HTMLParser vote_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "vote-profile"));
+                        id = U.parseInt(vote_part.tags.get(1).props.get("id").replace("vote_area_user_", ""));
+                        votes = U.parseFloat(vote_part.getContents(vote_part.getTagIndexByProperty("id", "vote_total_user_" + id)));
+
+                        HTMLParser strength_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "strength"));
+                        strength = U.parseFloat(strength_part.getContents(strength_part.getTagIndexByProperty("id", "user_skill_" + id)));
+
+                        nick = head_info.getContents(head_info.getTagByProperty("itemprop", "nickname"));
+                        name = head_info.getContents(head_info.getTagByProperty("itemprop", "name"));
                     }
-                    break;
-                case 2:
-                    if (line.trim().contains("user_skill")) {
-                        skill = Float.parseFloat(U.sub(line, ">", "<"));
-                        part++;
+
+                    // Достаём второстепенную инфу.
+                    {
+                        HTMLParser about_p = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-info-about"));
+
+                        about = about_p.getContents(about_p.getTagIndexByProperty("class", "text"));
+                        big_icon = about_p.getTagByProperty("alt", "avatar").props.get("src");
+                        fillImages();
                     }
-                    break;
-                case 3:
-                    if (line.trim().contains("class=\"avatar\"")) {
-                        big_icon = U.sub(line, "src=\"", "\"");
-                        small_icon = big_icon.replace("100x100", "24x24");
-                        mid_icon = big_icon.replace("100x100", "48x48");
-                        part++;
-                    }
-                    break;
-                case 4:
-                    if (line.trim().equals("<h3>О себе</h3>")) part++;
-                    break;
-                case 5:
-                    if (!line.trim().equals("</div>")) {
-                        about += line;
-                    } else part++;
-                    break;
-                case 6:
-                    if (line.trim().equals("<ul class=\"profile-dotted-list\">")) part++;
-                    break;
-                case 7:
-                    if (line.trim().contains("<h2 class=\"header-table mb-15\">")) {
-                        for (String prop : temp.split("<li>")) {
-                            if (!prop.trim().isEmpty()) {
-                                String key = U.sub(prop, "<span>", "</span>").replace(":", "");
-                                String value = U.sub(U.sub(prop, "<strong", "</li>"), ">", "</strong>");
-                                personal.add(new Userdata(key, value));
+
+                    // Достаём ещё более второстепенную инфу. И она завёрнута сурово.
+                    {
+                        HTMLParser lists = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-left"));
+
+                        // И сказал cab404 хтмлпарсерам - плодитесь и размножайтесь.
+                        for (int list_id : lists.getAllIDsByName("ul")) {
+                            if (lists.get(list_id).isClosing) continue;
+                            HTMLParser list = lists.getParserForIndex(list_id);
+                            for (int entry_id : list.getAllIDsByName("li")) {
+                                if (list.get(entry_id).isClosing) continue;
+                                HTMLParser entry = list.getParserForIndex(entry_id);
+
+                                try {
+                                    String key = entry.getContents(entry.getTagIndexForName("span")).replaceAll(":", "");
+                                    String value = entry.getContents(entry.getTagIndexForName("strong"));
+
+                                    personal.add(new Userdata(key, value));
+                                } catch (Error e) {
+                                    break;
+                                }
                             }
                         }
-                        part++;
-                    } else
-                        temp += line.trim();
-                    break;
-                case 8:
-                    if (line.trim().equals("<h2 class=\"header-table\">Контакты</h2>")) {
-                        part++;
                     }
-                    break;
-                case 9:
-                    if (line.contains("icon-contact icon-contact")) {
-                        String type = U.sub(line, "icon-contact-", "\"");
-                        String value = U.removeAllTags(U.sub(line, "</i>", "</li>")).trim();
-                        contacts.add(new Contact(type, value));
-                    } else if (line.contains("ignoreUser")) return false;
 
+                    // Достаём контакты. Тут легче, ибо <li>шних </li> нету.
+                    {
+                        HTMLParser contact_p = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-right"));
+                        for (int i : contact_p.getAllIDsByName("li")) {
+                            if (!contact_p.get(i).isClosing) {
+                                String foo = contact_p.getContents(i);
+                                String key = U.sub(foo, "title=\"", "\"");
+                                String value = U.removeAllTags(foo);
+                                contacts.add(new Contact(key, value));
+                            }
+                        }
+                    }
+                }
+                return false;
             }
             return true;
         }
@@ -186,6 +206,4 @@ public class UserInfo {
             this.value = value;
         }
     }
-
-
 }

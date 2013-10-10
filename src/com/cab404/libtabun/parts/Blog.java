@@ -1,9 +1,8 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.U;
-import com.cab404.libtabun.parts.User;
 import javolution.util.FastList;
 
 /**
@@ -22,6 +21,21 @@ public class Blog extends PaWPoL {
     public Blog(User user, String url_name) {
         this.url_name = url_name;
         switchToPage(user, 1);
+    }
+
+    /**
+     * Знаю, не нужно было это пихать сюда. Проще говоря - эта штука нужна,
+     * чтобы просто достать все лэйблы с заданной страницы.
+     */
+    public void switchToCustomPage(User user, String relative_address) {
+        BlogParser parser = new BlogParser();
+        parser.part = 1;
+
+        this.url_name = relative_address;
+        ResponseFactory.read(
+                user.execute(RequestFactory.get(relative_address).build()),
+                parser
+        );
     }
 
     public void switchToPage(User user, int page) {
@@ -43,15 +57,15 @@ public class Blog extends PaWPoL {
         public boolean line(String line) {
             switch (part) {
                 case 0:
-                    if (line.contains("\"page-header\"")){
+                    if (line.contains("\"page-header\"")) {
                         name = U.sub(line, ">", "<").trim();
                         part++;
                     }
                 case 1:
                     if (!pllp.line(line)) {
-                        posts = pllp.labels;
                         part++;
                     }
+                    posts = pllp.labels;
                     break;
                 case 2:
                     if (line.contains("title=\"последняя\"")) {
@@ -63,6 +77,4 @@ public class Blog extends PaWPoL {
             return true;
         }
     }
-
-
 }

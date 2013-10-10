@@ -1,6 +1,7 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.*;
+import com.cab404.libtabun.U;
+import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -8,19 +9,22 @@ import javolution.util.FastList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class Post extends Part {
-    public String tags, name, author, time, body, votes;
-    public FastList<Comment> comments;
+public class Post extends PaWPoL.PostLabel {
+    public static enum Type {
+        QUIZ, SIMPLE
+    }
+
+    public FastList<Comment> comment_list;
+    public Type topic_type;
     private int max_comment_id = 0;
-    public Blog blog;
 
     /**
      * Создаёт пустой пост ниоткуда. Заполнять самим.
      */
     public Post() {
-        comments = new FastList<>();
+        comment_list = new FastList<>();
         blog = new Blog();
-        name = author = time = body = votes = "";
+        name = time = content = votes = "";
         type = "Topic";
     }
 
@@ -36,7 +40,7 @@ public class Post extends Part {
     public void fetchHeader(User user) {
         ResponseFactory.read(
                 user.execute(RequestFactory.get("/blog/" + id + ".html").build()),
-                new PostParser()
+                new PostHeaderParser()
         );
     }
 
@@ -44,107 +48,95 @@ public class Post extends Part {
      * Выдаёт новый парсер для чтения поста в данный объект
      */
     public ResponseFactory.Parser getParser() {
-        return new PostParser();
+        return new PostHeaderParser();
     }
 
     /**
      * Парсер заголовка поста
      */
-    private class PostParser implements ResponseFactory.Parser {
+    private class PostHeaderParser implements ResponseFactory.Parser {
         private int part = 0;
-        ActiveCommentListParser comment_parser = new ActiveCommentListParser();
+        private boolean reading = false;
+        private String text = "";
+
 
         @Override
         public boolean line(String line) {
-            switch (part) {
-                case 0:
-                    // Находим заголовок и ID.
-                    if (line.contains("rss/comments")) {
-                        name = U.sub(line, "title=\"", "\"");
-                        id = Integer.parseInt(U.sub(line, "rss/comments/", "/"));
-                        part++;
-                    }
-                    break;
-                case 1:
-                    // Находим ключ
-                    if (line.contains("LIVESTREET_SECURITY_KEY")) {
-                        key = new LivestreetKey(getRelativeAddress(), U.sub(line, "'", "'"));
-                        part++;
-                    }
-                    break;
-                case 2:
-                    if (line.contains("<h3><a href=\"http://tabun.everypony.ru/blog/")) {
-                        blog.url_name = U.sub(line, "blog/", "/");
-                        blog.name = U.sub(line, "\">", "<");
-                        part++;
-                    } else if (line.contains("vote-item")) part++;
-                    break;
-                case 3:
-                    // Читаем заголовок количества голосов.
-                    if (line.contains("<span id=\"vote_total_topic")) {
-                        part++;
-                    }
-                    break;
-                case 4:
-                    // Читаем количество голосов.
-                    if (line.contains("</span>")) {
-                        part++;
-                    } else {
-                        votes = line.trim();
-                        try {
-                            Integer.parseInt(votes);
-                        } catch (NumberFormatException e) {
-                            votes = "?";
-                        }
-                    }
-                    break;
-                case 5:
-                    // Читаем автора.
-                    if (line.contains("http://tabun.everypony.ru/profile/")) {
-                        author = U.sub(line, "profile/", "/");
-                        part++;
-                    }
-                    break;
-                case 6:
-                    // Пропускаем первый </header>
-                    if (line.contains("<div class=\"topic-content text\">")) {
-                        part++;
-                    }
-                    break;
-                case 7:
-                    // Читаем тело до первого </div>
-                    if (line.trim().equals("</div>")) {
-                        part++;
-                    } else if (!line.trim().isEmpty())
-                        body += line + "\n";
-                    break;
-                case 8:
-                    if (line.contains("rel=\"tag\"")) {
-                        tags = U.removeAllTags(line);
-                        part++;
-                    }
-                case 9:
-                    // Читаем время написания
-                    if (line.contains("time datetime")) {
-                        time = U.sub(line, "datetime=\"", "\"");
-                        part++;
-                        return false;
-                    }
-                    break;
+            if (!reading) {
+                if (line.trim().equals("<article class=\"topic topic-type-topic js-topic\">")) {
+                    topic_type = Type.SIMPLE;
+                    reading = true;
+                }
 
+                if (line.trim().equals("<article class=\"topic topic-type-question js-topic\">")) {
+                    topic_type = Type.QUIZ;
+                    reading = true;
+                }
+            } else if (line.trim().equals("</article> <!-- /.topic -->")) {
+                text += line;
+                HTMLParser raw = new HTMLParser(text);
+
+                id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
+                content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
+                name = raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap")).trim();
+
+                String vote_info = raw.getTagByProperty("id", "vote_area_topic_" + id).props.get("class").replace("\t", "");
+                vote_enabled = vote_info.contains("vote-not-self") && vote_info.contains("not-voted") && vote_info.contains("vote-not-expired");
+
+                if (!vote_enabled) {
+                    if (vote_info.contains("voted-up"))
+                        your_vote = 1;
+                    if (vote_info.contains("voted-down"))
+                        your_vote = -1;
+                    if (vote_info.contains("voted-zero"))
+                        your_vote = 0;
+                }
+
+                isInFavs = raw.getTagByProperty("id", "fav_topic_" + id).props.get("class").equals("favourite active");
+
+                int blog_tag;
+                try {
+                    blog_tag = raw.getTagIndexByProperty("class", "topic-blog");
+                } catch (Error e) {
+                    blog_tag = raw.getTagIndexByProperty("class", "topic-blog private-blog");
+                }
+                blog = new Blog();
+                blog.name = raw.getContents(blog_tag);
+                blog.url_name = U.bsub(raw.tags.get(blog_tag).props.get("href"), "/blog/", "/");
+
+                int time_tag = raw.getTagIndexForName("time");
+                time = raw.getContents(time_tag).trim();
+                date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
+                votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + id)).trim();
+                try {
+                    U.parseInt(votes);
+                } catch (Exception e) {
+                    votes = "±?";
+                }
+                FastList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
+                tags = new String[raw_tags.size()];
+                for (int i = 0; i != raw_tags.size(); i++) {
+                    tags[i] = raw.getContents(raw_tags.get(i));
+                }
+
+                author = new UserInfo();
+                author.nick = raw.getContents(raw.getTagIndexByProperty("rel", "author"));
+                author.small_icon = raw.getTagByProperty("alt", "avatar").props.get("src");
+                author.fillImages();
+                return false;
             }
-
+            if (reading) text += line + "\n";
             return true;
         }
     }
 
     /**
      * Парсер комментариев в списках - комментарии пользователя, посты, письма.
-     * Но для писем и постов удобнее и быстрее загружать через JSON.
+     * <s>Но для писем и постов удобнее и быстрее загружать через JSON.</s>
+     * Нифига не быстрее.
      */
-    public static class ActiveCommentListParser implements ResponseFactory.Parser {
+    public class ActiveCommentListParser implements ResponseFactory.Parser {
         int part = 0;
-        public FastList<Comment> comments = new FastList<>();
         private int count_comments_dec = -1;
         private int count_comments = -1;
         private Comment.CommentParser parser = new Comment.CommentParser();
@@ -161,7 +153,7 @@ public class Post extends Part {
             else {
                 if (count_comments_dec != 0) {
                     if (!parser.line(line)) {
-                        comments.add(parser.comment);
+                        comment_list.add(parser.comment);
                         onCommentLoad(parser.comment, count_comments_dec, count_comments);
                         parser = new Comment.CommentParser();
                         count_comments_dec--;
@@ -176,6 +168,50 @@ public class Post extends Part {
         }
 
         public void onCommentLoad(Comment comment, int left, int total) {
+        }
+    }
+
+    public static enum PartType {
+        COMMENT, HEADER
+    }
+
+    public static interface LoadingEventListener {
+        public void onLoadingEvent(PartType type, Object part);
+    }
+
+    public class PostParser implements ResponseFactory.Parser {
+        int part = 0;
+        LoadingEventListener listener;
+
+        public PostParser(LoadingEventListener listener) {
+            this.listener = listener;
+        }
+
+        PostHeaderParser head = new PostHeaderParser();
+        ActiveCommentListParser comments = new ActiveCommentListParser() {
+            @Override public void onCommentLoad(Comment comment, int left, int total) {
+                listener.onLoadingEvent(PartType.COMMENT, comment);
+                max_comment_id = Math.max(comment.id, max_comment_id);
+            }
+        };
+
+        @Override public boolean line(String line) {
+            switch (part) {
+                case 0:
+                    if (!head.line(line)) {
+                        listener.onLoadingEvent(PartType.HEADER, null);
+                        part++;
+                    }
+                    break;
+                case 1:
+                    if (!comments.line(line)) {
+                        part++;
+                    }
+                    break;
+                case 2:
+                    return false;
+            }
+            return true;
         }
     }
 
@@ -261,15 +297,19 @@ public class Post extends Part {
 
         JSONObject status = MessageFactory.processJSONwithMessage(response);
 
-        return (boolean) status.get("bStateError");
+        boolean err = (boolean) status.get("bStateError");
+
+        if (!err) {
+            getCommentByID(comment).votes = U.parseInt(String.valueOf(status.get("iRating")));
+        }
+
+        return err;
     }
 
     /**
      * Голосует за пост
      */
     public boolean voteForPost(User user, int vote) {
-
-        U.v(key);
 
         String body = "";
         body += "&value=" + vote;
@@ -286,14 +326,21 @@ public class Post extends Part {
         ));
 
         JSONObject status = MessageFactory.processJSONwithMessage(response);
-
-        return (boolean) status.get("bStateError");
+        boolean err = (boolean) status.get("bStateError");
+        if (!err) {
+            votes = String.valueOf(status.get("iRating"));
+            if (!votes.startsWith("-"))
+                votes = "+" + votes;
+            your_vote = vote;
+            vote_enabled = false;
+        }
+        return err;
     }
 
     /**
      * Загружает новые комментарии, и говорит, сколько вышло.
      */
-    public int fetchNewComments(User user, int max_comment_id) {
+    public int fetchNewComments(User user, int max_comment_id, CommentListener cl) {
 
         String body = "&idCommentLast=" + max_comment_id;
         body += "&idTarget=" + id;
@@ -313,6 +360,9 @@ public class Post extends Part {
         } catch (Throwable ex) {
             return 0;
         }
+
+        if (status == null) return 0;
+
         for (Object obj : ((JSONArray) status.get("aComments")).toArray()) {
             Comment.CommentParser comment_parser = new Comment.CommentParser();
             String html = (String) ((JSONObject) obj).get("html");
@@ -322,21 +372,44 @@ public class Post extends Part {
             }
 
             comment_parser.comment.key = key;
-            comments.add(comment_parser.comment);
+            comment_list.add(comment_parser.comment);
+            if (cl != null) cl.onCommentLoad(comment_parser.comment);
         }
 
         this.max_comment_id = Math.max(Integer.parseInt(String.valueOf(status.get("iMaxIdComment"))), max_comment_id);
         return ((JSONArray) status.get("aComments")).toArray().length;
     }
 
+    /**
+     * Загружает и комментарии и заголовок сразу со странички.
+     */
+    public void initialFetch(User user, LoadingEventListener l) {
+        ResponseFactory.read(
+                user.execute(RequestFactory.get("/blog/" + id + ".html").build()),
+                new PostParser(l)
+        );
+    }
+
+    public int fetchNewComments(User user, CommentListener cl) {
+        return fetchNewComments(user, max_comment_id, cl);
+    }
+
+    public int fetchNewComments(User user, int max_comment_id) {
+        return fetchNewComments(user, max_comment_id, null);
+    }
+
     public int fetchNewComments(User user) {
-        return fetchNewComments(user, max_comment_id);
+        return fetchNewComments(user, max_comment_id, null);
     }
 
     public Comment getCommentByID(int id) {
-        for (Comment comment : comments) {
+        for (Comment comment : comment_list) {
             if (comment.id == id) return comment;
         }
         return null;
+    }
+
+    public interface CommentListener {
+        public void onCommentLoad(Comment comment);
     }
 }
