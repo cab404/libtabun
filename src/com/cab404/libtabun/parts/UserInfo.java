@@ -27,8 +27,8 @@ public class UserInfo {
     public void fillImages() {
         String uni = "";
         if (!small_icon.isEmpty()) uni = small_icon.replace("24x24", "***");
-        if (!mid_icon.isEmpty()) uni = small_icon.replace("48x48", "***");
-        if (!big_icon.isEmpty()) uni = small_icon.replace("100x100", "***");
+        else if (!mid_icon.isEmpty()) uni = mid_icon.replace("48x48", "***");
+        else if (!big_icon.isEmpty()) uni = big_icon.replace("100x100", "***");
 
         small_icon = uni.replace("***", "24x24");
         mid_icon = uni.replace("***", "48x48");
