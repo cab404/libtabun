@@ -6,6 +6,8 @@ import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 import javolution.util.FastList;
 
+import java.util.Map;
+
 /**
  * @author cab404
  */
@@ -73,14 +75,21 @@ public class UserInfo {
                         strength = U.parseFloat(strength_part.getContents(strength_part.getTagIndexByProperty("id", "user_skill_" + id)));
 
                         nick = head_info.getContents(head_info.getTagByProperty("itemprop", "nickname"));
-                        name = head_info.getContents(head_info.getTagByProperty("itemprop", "name"));
+                        try {
+                            name = head_info.getContents(head_info.getTagByProperty("itemprop", "name"));
+                        } catch (HTMLParser.TagNotFoundError e) {
+                            name = "";
+                        }
                     }
 
                     // Достаём второстепенную инфу.
                     {
                         HTMLParser about_p = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-info-about"));
-
-                        about = about_p.getContents(about_p.getTagIndexByProperty("class", "text"));
+                        try {
+                            about = about_p.getContents(about_p.getTagIndexByProperty("class", "text"));
+                        } catch (HTMLParser.TagNotFoundError e) {
+                            about = "";
+                        }
                         big_icon = about_p.getTagByProperty("alt", "avatar").props.get("src");
                         fillImages();
                     }
@@ -128,23 +137,26 @@ public class UserInfo {
         }
     }
 
-    public static class Contact {
+    public static class Contact implements Map.Entry<String, String> {
+
         public static enum ContactType {
-            PHONE("phone"),
-            EMAIL("mail"),
-            SKYPE("skype"),
-            ICQ("icq"),
-            SITE("www"),
-            TWITTER("twitter"),
-            FACEBOOK("facebook"),
-            VKONTAKTE("vkontakte"),
-            ODNOKLASSNIKI("odnoklassniki"),
-            UNKNOWN("???");
+            PHONE("phone", "Телефон"),
+            EMAIL("mail", "Электропочта"),
+            SKYPE("skype", "Skype"),
+            ICQ("icq", "ICQ"),
+            SITE("www", "Сайт"),
+            TWITTER("twitter", "Твиттер"),
+            FACEBOOK("facebook", "Facebook"),
+            VKONTAKTE("vkontakte", "ВК"),
+            ODNOKLASSNIKI("odnoklassniki", "Одноклассники"),
+            UNKNOWN("???", "");
 
             public String name;
+            public String normal_name;
 
-            ContactType(String name) {
+            ContactType(String name, String normal_name) {
                 this.name = name;
+                this.normal_name = normal_name;
             }
 
             @Override
@@ -166,9 +178,23 @@ public class UserInfo {
             }
             if (this.type == null) throw new Error("Непонятный тип контакта - " + type);
         }
+
+        @Override public String getKey() {
+            return type.normal_name;
+        }
+
+        @Override public String getValue() {
+            return value;
+        }
+
+        @Override public String setValue(String o) {
+            // Данунафиг
+            return null;
+        }
     }
 
-    public static class Userdata {
+    public static class Userdata implements Map.Entry<String, String> {
+
         public static enum UserdataType {
             SEX("Пол"),
             BIRTHDAY("Дата рождения"),
@@ -204,6 +230,18 @@ public class UserInfo {
             }
             if (data_type == null) throw new Error("Непонятный тип данных - " + type);
             this.value = value;
+        }
+
+        @Override public String getKey() {
+            return data_type.name;
+        }
+
+        @Override public String getValue() {
+            return value;
+        }
+
+        @Override public String setValue(String o) {
+            return null; // Данунафиг[1]
         }
     }
 }

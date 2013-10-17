@@ -127,7 +127,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
 
     public Tag getTagByName(String name) {
         for (Tag tag : this) if (tag.name.equals(name)) return tag;
-        throw new Error("Tag not found");
+        throw new TagNotFoundError();
     }
 
     public Tag getTagByProperty(String key, String value) {
@@ -138,17 +138,17 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         for (int i = 0; i != tags.size(); i++) {
             if (value.equals(tags.get(i).props.get(key))) return i;
         }
-        throw new Error("Tag not found");
+        throw new TagNotFoundError();
     }
 
     public int getIndexForTag(Tag tag) {
         for (int i = 0; i != tags.size(); i++) if (tags.get(i) == tag) return i;
-        throw new Error("Tag not found");
+        throw new TagNotFoundError();
     }
 
     public int getTagIndexForName(String name) {
         for (int i = 0; i != tags.size(); i++) if (tags.get(i).name.equals(name)) return i;
-        throw new Error("Tag not found");
+        throw new TagNotFoundError();
     }
 
     public int getClosingTag(int opening_tag_index) {
@@ -166,7 +166,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
                 return check_index;
         }
 
-        throw new Error("Tag not found");
+        throw new TagNotFoundError();
     }
 
     public String getContents(Tag tag) {
@@ -219,4 +219,15 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
     public String toString() {
         return getContents(0);
     }
+
+    public static class TagNotFoundError extends Error {
+        public TagNotFoundError(String s) {
+            super(s);
+        }
+
+        public TagNotFoundError() {
+            super();
+        }
+    }
+
 }

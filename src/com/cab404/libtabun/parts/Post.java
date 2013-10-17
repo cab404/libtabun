@@ -55,7 +55,6 @@ public class Post extends PaWPoL.PostLabel {
      * Парсер заголовка поста
      */
     private class PostHeaderParser implements ResponseFactory.Parser {
-        private int part = 0;
         private boolean reading = false;
         private String text = "";
 
@@ -71,6 +70,14 @@ public class Post extends PaWPoL.PostLabel {
                 if (line.trim().equals("<article class=\"topic topic-type-question js-topic\">")) {
                     topic_type = Type.QUIZ;
                     reading = true;
+                }
+
+                if (line.contains("var LIVESTREET_SECURITY_KEY")) {
+                    key = new LivestreetKey("/", U.sub(
+                            line,
+                            "var LIVESTREET_SECURITY_KEY = '",
+                            "';"
+                    ));
                 }
             } else if (line.trim().equals("</article> <!-- /.topic -->")) {
                 text += line;

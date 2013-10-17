@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.params.CoreConnectionPNames;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class User {
     public LivestreetKey key;
     private String login;
     private FastMap<String, String> cookies;
+    public int timeout = 15000;
 
     private HttpHost tabun;
 
@@ -102,7 +104,6 @@ public class User {
         JSONObject parsed = MessageFactory.processJSONwithMessage(out);
 
         isLoggedIn = !(boolean) parsed.get("bStateError");
-        U.w(isLoggedIn ? "Logged in!" : "Error!");
     }
 
     void addCookies(String input) {
@@ -128,7 +129,11 @@ public class User {
     HttpResponse execute(HttpRequestBase request, boolean follow) {
         try {
             HttpClient client = new DefaultHttpClient();
+
             client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, follow);
+
+            client.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+            client.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
 
             request.setHeader(cookies());
             HttpResponse response = client.execute(tabun, request);
