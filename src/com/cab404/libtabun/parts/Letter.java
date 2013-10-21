@@ -2,9 +2,12 @@ package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.HTMLParser;
+import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import javolution.util.FastList;
+import org.json.simple.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Переписка.
@@ -16,9 +19,38 @@ public class Letter extends Part {
 
     }
 
+    /**
+     * Возвращает адрес блога
+     */
+    private String getRelativeAddress() {
+        return "/talk/" + id + ".html";
+    }
+
+    public boolean comment(User user, int parent, String text) {
+        String body = "";
+        body += "&comment_text=" + U.rl(text);
+        body += "&reply=" + parent;
+        body += "&cmt_target_id=" + id;
+        body += "&security_ls_key=" + key;
+
+
+        String response = ResponseFactory.read(user.execute(
+                RequestFactory
+                        .post("/blog/ajaxaddcomment/")
+                        .addReferer(getRelativeAddress())
+                        .setBody(body)
+                        .XMLRequest()
+                        .build()
+        ));
+
+        JSONObject status = MessageFactory.processJSONwithMessage(response);
+
+        return (boolean) status.get("bStateError");
+    }
+
 
     public static class List {
-        public FastList<LetterLabel> labels;
+        public ArrayList<LetterLabel> labels;
 
         class LetterLabel {
             String[] people;
@@ -48,7 +80,7 @@ public class Letter extends Part {
         }
 
         public List(User user) {
-            labels = new FastList<>();
+            labels = new ArrayList<>();
 
             Simplifier simp = new Simplifier();
             ResponseFactory.read(
@@ -74,7 +106,7 @@ public class Letter extends Part {
                 label.last_message = parser.tags.get(title).props.get("title");
 
                 // Достаём участников, всех до единого!
-                FastList<HTMLParser.Tag> contacts =
+                ArrayList<HTMLParser.Tag> contacts =
                         parser
                                 .getParserForIndex(
                                         parser
@@ -95,13 +127,9 @@ public class Letter extends Part {
                                         parser.getTagIndexByProperty("class", "cell-date ta-r")
                                 ).split("\\Q<br/>\\E")[0]).trim();
 
-
                 labels.add(label);
             }
-
-
         }
-
     }
 }
 

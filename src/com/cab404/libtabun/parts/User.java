@@ -4,7 +4,6 @@ import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import javolution.util.FastMap;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -17,6 +16,7 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,14 +29,14 @@ public class User {
     private boolean isLoggedIn = false;
     public LivestreetKey key;
     private String login;
-    private FastMap<String, String> cookies;
+    private HashMap<String, String> cookies;
     public int timeout = 15000;
 
     private HttpHost tabun;
 
     public User() {
         tabun = new HttpHost(U.tabun, 80);
-        cookies = new FastMap<>();
+        cookies = new HashMap<>();
 
         // Получаем ключ страницы. Нужен для того, чтобы нас не посчитали за XSS.
         HttpResponse resp = execute(

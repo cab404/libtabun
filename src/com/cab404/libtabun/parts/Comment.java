@@ -28,7 +28,7 @@ public class Comment extends Part {
     public static class CommentParser implements ResponseFactory.Parser {
         public Comment comment = new Comment();
         int part = 0;
-        String text = "";
+        StringBuilder text = new StringBuilder();
 
         @Override
         public boolean line(String line) {
@@ -37,16 +37,16 @@ public class Comment extends Part {
                     // Находим заголовок
                     if (line.contains("<section id=\"comment_id")) {
                         comment.id = U.parseInt(U.sub(line, "_id_", "\""));
-                        text += line + '\n';
+                        text.append(line).append('\n');
                         part++;
                     }
                     break;
 
                 case 1:
                     if (line.contains("</section>")) {
-                        text += line;
+                        text.append(line).append('\n');
 
-                        HTMLParser parser = new HTMLParser(text);
+                        HTMLParser parser = new HTMLParser(text.toString());
 
                         try {
                             parser.getTagIndexByProperty("class", " text");
@@ -81,7 +81,7 @@ public class Comment extends Part {
 
 
                         return false;
-                    } else text += line + '\n';
+                    } else this.text.append(line).append("\n");
 
                     break;
             }

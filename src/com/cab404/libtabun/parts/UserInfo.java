@@ -4,8 +4,8 @@ import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import javolution.util.FastList;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -16,13 +16,13 @@ public class UserInfo {
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
     public int id;
 
-    public FastList<Userdata> personal;
-    public FastList<Contact> contacts;
-    public FastList<String> friends;
+    public ArrayList<Userdata> personal;
+    public ArrayList<Contact> contacts;
+    public ArrayList<String> friends;
 
     public UserInfo() {
-        personal = new FastList<>();
-        contacts = new FastList<>();
+        personal = new ArrayList<>();
+        contacts = new ArrayList<>();
         name = nick = about = small_icon = big_icon = mid_icon = photo = "";
     }
 

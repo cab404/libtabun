@@ -3,24 +3,29 @@ package com.cab404.libtabun.parts;
 import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import javolution.util.FastList;
+
+import java.util.ArrayList;
 
 /**
  * PaWPoL с рейтингом, описанием и читателями.
  *
  * @author cab404
  */
-public class Blog extends PaWPoL {
+public class Blog extends PaWPoL implements PaginatedPart {
     public String name, url_name;
-    public FastList<PostLabel> posts;
+    public ArrayList<PostLabel> posts;
     public int numpages = 0;
+    public int curpage = 0;
 
     public Blog() {
+        posts = new ArrayList<>();
     }
 
     public Blog(User user, String url_name) {
+        this();
         this.url_name = url_name;
-        switchToPage(user, 1);
+        loadPage(user, 1);
+        posts = new ArrayList<>();
     }
 
     /**
@@ -38,11 +43,33 @@ public class Blog extends PaWPoL {
         );
     }
 
-    public void switchToPage(User user, int page) {
+    @Override public boolean loadNextPage(User user) {
+        return loadPage(user, curpage++);
+    }
+
+    @Override public boolean loadPage(User user, int page) {
+        curpage = page;
+        ArrayList<PostLabel> tmp = new ArrayList<>();
+        tmp.addAll(posts);
+
         ResponseFactory.read(
                 user.execute(RequestFactory.get("/blog/" + url_name + "/page" + page).build()),
                 new BlogParser()
         );
+
+        if (posts.isEmpty()) {
+            posts = tmp;
+            return false;
+        }
+        return true;
+    }
+
+    @Override public boolean hasPages() {
+        return true;
+    }
+
+    @Override public int getPageCount() {
+        return numpages;
     }
 
     private class BlogParser implements ResponseFactory.Parser {

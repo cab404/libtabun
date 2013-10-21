@@ -3,7 +3,8 @@ package com.cab404.libtabun.parts;
 import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.ResponseFactory;
-import javolution.util.FastList;
+
+import java.util.ArrayList;
 
 /**
  * <strong>Page With Post Labels</strong>
@@ -36,7 +37,7 @@ public class PaWPoL extends Part {
 
     public static class PostLabelParser implements ResponseFactory.Parser {
         boolean writing = false;
-        String text = "";
+        StringBuilder text = new StringBuilder();
         public PostLabel pl = new PostLabel();
 
         @Override
@@ -44,9 +45,9 @@ public class PaWPoL extends Part {
             if (!writing) if (line.trim().equals("<article class=\"topic topic-type-topic js-topic\">")) writing = true;
             else ;
             else if (line.trim().equals("</article> <!-- /.topic -->")) {
-                text += line + "\n";
+                this.text.append(line).append("\n");
 
-                HTMLParser raw = new HTMLParser(text);
+                HTMLParser raw = new HTMLParser(text.toString());
 
                 pl.id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
                 pl.content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
@@ -71,7 +72,7 @@ public class PaWPoL extends Part {
                 } catch (Exception e) {
                     pl.votes = "±?";
                 }
-                FastList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
+                ArrayList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
                 pl.tags = new String[raw_tags.size()];
                 for (int i = 0; i != raw_tags.size(); i++) {
                     pl.tags[i] = raw.getContents(raw_tags.get(i));
@@ -94,7 +95,7 @@ public class PaWPoL extends Part {
 
                 return false;
             }
-            if (writing) text += line + "\n";
+            if (writing) this.text.append(line).append("\n");
             return true;
         }
     }
@@ -102,7 +103,7 @@ public class PaWPoL extends Part {
     public static class PostLabelListParser implements ResponseFactory.Parser {
         public PostLabelListParser(EndsWith endsWith) {
             plp = new PostLabelParser();
-            labels = new FastList<>();
+            labels = new ArrayList<>();
             this.endsWith = endsWith;
         }
 
@@ -125,7 +126,7 @@ public class PaWPoL extends Part {
 
         private final EndsWith endsWith;
         private PostLabelParser plp;
-        public FastList<PostLabel> labels;
+        public ArrayList<PostLabel> labels;
 
         @Override
         public boolean line(String line) {

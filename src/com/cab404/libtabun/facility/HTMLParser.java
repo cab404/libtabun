@@ -1,10 +1,6 @@
 package com.cab404.libtabun.facility;
 
-import javolution.util.FastList;
-import javolution.util.FastMap;
-
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,14 +26,14 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         public String name, text;
         public boolean isClosing;    // Тег типа </x>
         public boolean isStandalone; // Тег типа <x/>
-        public FastMap<String, String> props;
+        public Map<String, String> props;
 
         public Tag() {
-            props = new FastMap<>();
+            props = new HashMap<>();
         }
     }
 
-    public FastList<Tag> tags;
+    public ArrayList<Tag> tags;
     public String html;
 
     Pattern
@@ -48,7 +44,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
             name = Pattern.compile("(?<=</|<!|<)(\\w+?)(?=[>\\s])");
 
     private HTMLParser() {
-        tags = new FastList<>();
+        tags = new ArrayList<>();
     }
 
     public HTMLParser(String parse) {
@@ -93,8 +89,8 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         }
     }
 
-    public FastList<Tag> getAllTagsByProperty(String key, String value) {
-        FastList<Tag> _return = new FastList<>();
+    public ArrayList<Tag> getAllTagsByProperty(String key, String value) {
+        ArrayList<Tag> _return = new ArrayList<>();
         for (Tag tag : this) {
             if (value.equals(tag.props.get(key))) _return.add(tag);
         }
@@ -117,8 +113,8 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         return _return;
     }
 
-    public FastList<Tag> getAllTagsByName(String name) {
-        FastList<Tag> _return = new FastList<>();
+    public ArrayList<Tag> getAllTagsByName(String name) {
+        ArrayList<Tag> _return = new ArrayList<>();
         for (Tag tag : this) {
             if (tag.name.equals(name)) _return.add(tag);
         }

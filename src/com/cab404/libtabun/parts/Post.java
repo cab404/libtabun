@@ -5,16 +5,17 @@ import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import javolution.util.FastList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.util.ArrayList;
 
 public class Post extends PaWPoL.PostLabel {
     public static enum Type {
         QUIZ, SIMPLE
     }
 
-    public FastList<Comment> comment_list;
+    public ArrayList<Comment> comment_list;
     public Type topic_type;
     private int max_comment_id = 0;
 
@@ -22,7 +23,7 @@ public class Post extends PaWPoL.PostLabel {
      * Создаёт пустой пост ниоткуда. Заполнять самим.
      */
     public Post() {
-        comment_list = new FastList<>();
+        comment_list = new ArrayList<>();
         blog = new Blog();
         name = time = content = votes = "";
         type = "Topic";
@@ -120,7 +121,7 @@ public class Post extends PaWPoL.PostLabel {
                 } catch (Exception e) {
                     votes = "±?";
                 }
-                FastList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
+                ArrayList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
                 tags = new String[raw_tags.size()];
                 for (int i = 0; i != raw_tags.size(); i++) {
                     tags[i] = raw.getContents(raw_tags.get(i));
