@@ -147,6 +147,16 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         throw new TagNotFoundError();
     }
 
+    public int getTagIndexForParamRegex(String key, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        for (int i = 0; i != tags.size(); i++) {
+            if (tags.get(i).props.containsKey(key))
+                if (pattern.matcher(tags.get(i).props.get(key)).matches()) return i;
+        }
+        throw new TagNotFoundError();
+    }
+
+
     public int getClosingTag(int opening_tag_index) {
         int level = 0, check_index;
 
@@ -225,5 +235,4 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
             super();
         }
     }
-
 }

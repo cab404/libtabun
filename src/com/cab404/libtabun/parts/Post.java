@@ -57,7 +57,7 @@ public class Post extends PaWPoL.PostLabel {
      */
     private class PostHeaderParser implements ResponseFactory.Parser {
         private boolean reading = false;
-        private String text = "";
+        private StringBuffer text = new StringBuffer();
 
 
         @Override
@@ -81,8 +81,8 @@ public class Post extends PaWPoL.PostLabel {
                     ));
                 }
             } else if (line.trim().equals("</article> <!-- /.topic -->")) {
-                text += line;
-                HTMLParser raw = new HTMLParser(text);
+                text.append(line).append("\n");
+                HTMLParser raw = new HTMLParser(text.toString());
 
                 id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
                 content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
@@ -133,7 +133,7 @@ public class Post extends PaWPoL.PostLabel {
                 author.fillImages();
                 return false;
             }
-            if (reading) text += line + "\n";
+            if (reading) text.append(line).append("\n");
             return true;
         }
     }

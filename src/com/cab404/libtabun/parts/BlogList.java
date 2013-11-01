@@ -2,24 +2,28 @@ package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.U;
 import com.cab404.libtabun.facility.HTMLParser;
+import com.cab404.libtabun.facility.MessageFactory;
+import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 
 /**
  * Список блогов
  */
-public class BlogList {
-    ArrayList<BlogLabel> labels;
+public class BlogList implements PaginatedPart {
+    public ArrayList<BlogLabel> labels;
 
     public BlogList() {
         labels = new ArrayList<>();
     }
 
     public static class BlogLabel {
-        String name, url_name;
-        float votes;
-        int readers;
+        public String name, url_name;
+        public float votes;
+        public int readers;
     }
 
 
@@ -33,22 +37,64 @@ public class BlogList {
             if (line.trim().equals("</tbody>")) {
 
                 HTMLParser main = new HTMLParser(builder.toString());
+                labels.clear();
 
                 for (int tag_id : main.getAllIDsByName("tr")) {
-
                     if (main.get(tag_id).isClosing) continue;
 
                     BlogLabel lab = new BlogLabel();
                     HTMLParser doc = main.getParserForIndex(tag_id);
-
-                    lab.name = doc.getContents(doc.getTagIndexByProperty("class", "blog_name"));
-                    lab.url_name = U.bsub(doc.getTagByProperty("class", "blog_name").props.get("href"), "/", "/");
-                    lab.votes = U.parseFloat(doc.getContents(doc.getTagIndexByProperty("class", "cell-rating align-center")));
-                    lab.readers = U.parseInt(doc.getContents(doc.getTagIndexByProperty("class", "cell_readers")));
+                    try {
+                        lab.name = doc.getContents(doc.getTagIndexByProperty("class", "blog-name"));
+                        lab.votes = U.parseFloat(doc.getContents(doc.getTagIndexForParamRegex("class", "^\\Qcell-rating\\E.+")));
+                        lab.readers = U.parseInt(doc.getContents(doc.getTagIndexByProperty("class", "cell-readers")));
+                        lab.url_name = U.bsub(doc.getTagByProperty("class", "blog-name").props.get("href"), "/blog/", "/");
+                        labels.add(lab);
+                    } catch (HTMLParser.TagNotFoundError unchecked) {
+                        // Поисковые пегасы ничего не нашли.
+                        return false;
+                    }
                 }
                 return false;
             }
             return true;
         }
+    }
+
+    int currentPage = 0;
+
+    @Override public boolean loadNextPage(User user) {
+        return loadPage(user, ++currentPage);
+    }
+
+    public boolean loadPage(User user, int page) {
+        currentPage = page;
+        ResponseFactory.read(user.execute(RequestFactory.get("/blogs/page" + page).build()), new ListParser());
+        return true;
+    }
+
+    @Override public boolean hasPages() {
+        return false;
+    }
+
+    @Override public int getPageCount() {
+        return 9000;
+    }
+
+    public void find(User user, String phrase) {
+        HttpRequestBase request = RequestFactory.post("/blogs/ajax-search/")
+                .XMLRequest()
+                .setBody("blog_title=" + U.rl(phrase) + "&security_ls_key=" + user.key)
+                .build();
+
+        String read = ResponseFactory.read(user.execute(request));
+
+        JSONObject object = MessageFactory.processJSONwithMessage(read);
+
+        String text = (String) object.get("sText");
+        if (text == null) return;
+
+        ListParser parser = new ListParser();
+        for (String line : text.split("\n")) parser.line(line);
     }
 }

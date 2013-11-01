@@ -18,6 +18,14 @@ public class Comment extends Part {
     public String avatar;
     public boolean MODERASTIA = false;
 
+    private boolean is_new = false;
+
+    public boolean isNew() {
+        boolean ret = is_new;
+        is_new = false;
+        return ret;
+    }
+
     public Comment() {
         type = "Comment";
     }
@@ -28,7 +36,7 @@ public class Comment extends Part {
     public static class CommentParser implements ResponseFactory.Parser {
         public Comment comment = new Comment();
         int part = 0;
-        StringBuilder text = new StringBuilder();
+        StringBuffer text = new StringBuffer();
 
         @Override
         public boolean line(String line) {
@@ -48,6 +56,7 @@ public class Comment extends Part {
 
                         HTMLParser parser = new HTMLParser(text.toString());
 
+                        // Если комментарий пуст - вероятно, это остов убитого модерастией.
                         try {
                             parser.getTagIndexByProperty("class", " text");
                         } catch (java.lang.Error e) {
@@ -55,6 +64,9 @@ public class Comment extends Part {
                             return false;
                         }
 
+
+                        String props = parser.getTagByName("section").props.get("class");
+                        comment.is_new = props.contains("comment-new");
 
                         comment.body = parser.getContents(parser.getTagIndexByProperty("class", " text")).replaceAll("\t", "");
                         // Тут чуточку сложнее.

@@ -51,20 +51,20 @@ public class UserInfo {
 
     public class UserInfoParser implements ResponseFactory.Parser {
         int prt = 0;
-        String temp = "";
+        StringBuffer temp = new StringBuffer();
 
         @Override
         public boolean line(String line) {
             switch (prt) {
                 case 0:
                     if (line.trim().equals("</div> <!-- /container -->")) prt++;
-                    else temp += line;
+                    else temp.append(line).append("\n");
                     break;
                 case 1: {
-                    HTMLParser parser = new HTMLParser(temp);
+                    HTMLParser parser = new HTMLParser(temp.toString());
 
                     // Достаём более-менее основную инфу.
-                    {
+                    try {
                         HTMLParser head_info = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile"));
 
                         HTMLParser vote_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "vote-profile"));
@@ -80,6 +80,8 @@ public class UserInfo {
                         } catch (HTMLParser.TagNotFoundError e) {
                             name = "";
                         }
+                    } catch (HTMLParser.TagNotFoundError e){
+                        throw new RuntimeException("Пользователя не существует, или произошло незнамо что.\n" + parser.html, e);
                     }
 
                     // Достаём второстепенную инфу.

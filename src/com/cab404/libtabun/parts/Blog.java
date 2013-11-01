@@ -24,7 +24,6 @@ public class Blog extends PaWPoL implements PaginatedPart {
     public Blog(User user, String url_name) {
         this();
         this.url_name = url_name;
-        loadPage(user, 1);
         posts = new ArrayList<>();
     }
 
@@ -43,8 +42,12 @@ public class Blog extends PaWPoL implements PaginatedPart {
         );
     }
 
+    public String getUrl() {
+        return "/blog/" + url_name;
+    }
+
     @Override public boolean loadNextPage(User user) {
-        return loadPage(user, curpage++);
+        return loadPage(user, ++curpage);
     }
 
     @Override public boolean loadPage(User user, int page) {
@@ -53,7 +56,7 @@ public class Blog extends PaWPoL implements PaginatedPart {
         tmp.addAll(posts);
 
         ResponseFactory.read(
-                user.execute(RequestFactory.get("/blog/" + url_name + "/page" + page).build()),
+                user.execute(RequestFactory.get(getUrl() + "page" + page).build()),
                 new BlogParser()
         );
 

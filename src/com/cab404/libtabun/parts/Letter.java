@@ -63,7 +63,7 @@ public class Letter extends Part {
         public class Simplifier implements ResponseFactory.Parser {
 
             boolean started = false;
-            public String all;
+            public StringBuffer all;
 
             @Override
             public boolean line(String line) {
@@ -71,7 +71,7 @@ public class Letter extends Part {
                     started = line.trim().equals("</thead>");
                 } else {
                     if (!line.trim().equals("</table>"))
-                        all += line + "\n";
+                        all.append(line).append("\n");
                     else return false;
                 }
 
@@ -90,7 +90,7 @@ public class Letter extends Part {
                     simp
             );
 
-            HTMLParser list = new HTMLParser(simp.all);
+            HTMLParser list = new HTMLParser(simp.all.toString());
 
             // Достаём и парсим заголовки
             for (HTMLParser.Tag tr : list.getAllTagsByName("tr")) {
