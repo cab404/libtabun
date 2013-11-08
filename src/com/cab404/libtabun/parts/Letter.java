@@ -63,7 +63,7 @@ public class Letter extends Part {
         public class Simplifier implements ResponseFactory.Parser {
 
             boolean started = false;
-            public StringBuffer all;
+            public StringBuilder all = new StringBuilder();
 
             @Override
             public boolean line(String line) {

@@ -36,7 +36,7 @@ public class Comment extends Part {
     public static class CommentParser implements ResponseFactory.Parser {
         public Comment comment = new Comment();
         int part = 0;
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
 
         @Override
         public boolean line(String line) {

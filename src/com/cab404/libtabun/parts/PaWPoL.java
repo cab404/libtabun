@@ -37,7 +37,7 @@ public class PaWPoL extends Part {
 
     public static class PostLabelParser implements ResponseFactory.Parser {
         boolean writing = false;
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         public PostLabel pl = new PostLabel();
 
         @Override

@@ -57,7 +57,7 @@ public class Post extends PaWPoL.PostLabel {
      */
     private class PostHeaderParser implements ResponseFactory.Parser {
         private boolean reading = false;
-        private StringBuffer text = new StringBuffer();
+        private StringBuilder text = new StringBuilder();
 
 
         @Override

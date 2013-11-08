@@ -18,7 +18,6 @@ public class UserInfo {
 
     public ArrayList<Userdata> personal;
     public ArrayList<Contact> contacts;
-    public ArrayList<String> friends;
 
     public UserInfo() {
         personal = new ArrayList<>();
@@ -39,10 +38,14 @@ public class UserInfo {
 
     public UserInfo(User user, String username) {
         this();
-        ResponseFactory.read(
-                user.execute(RequestFactory.get("/profile/" + username).build()),
-                new UserInfoParser()
-        );
+        try {
+            ResponseFactory.read(
+                    user.execute(RequestFactory.get("/profile/" + username).build()),
+                    new UserInfoParser()
+            );
+        } catch (Exception ex) {
+            throw new RuntimeException("Ошибка при попытке достать страницу /profile/" + username, ex);
+        }
     }
 
     public UserInfo(User user) {
@@ -51,7 +54,7 @@ public class UserInfo {
 
     public class UserInfoParser implements ResponseFactory.Parser {
         int prt = 0;
-        StringBuffer temp = new StringBuffer();
+        StringBuilder temp = new StringBuilder();
 
         @Override
         public boolean line(String line) {
@@ -65,6 +68,7 @@ public class UserInfo {
 
                     // Достаём более-менее основную инфу.
                     try {
+
                         HTMLParser head_info = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile"));
 
                         HTMLParser vote_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "vote-profile"));
@@ -75,12 +79,14 @@ public class UserInfo {
                         strength = U.parseFloat(strength_part.getContents(strength_part.getTagIndexByProperty("id", "user_skill_" + id)));
 
                         nick = head_info.getContents(head_info.getTagByProperty("itemprop", "nickname"));
+
                         try {
                             name = head_info.getContents(head_info.getTagByProperty("itemprop", "name"));
                         } catch (HTMLParser.TagNotFoundError e) {
                             name = "";
                         }
-                    } catch (HTMLParser.TagNotFoundError e){
+
+                    } catch (HTMLParser.TagNotFoundError e) {
                         throw new RuntimeException("Пользователя не существует, или произошло незнамо что.\n" + parser.html, e);
                     }
 
