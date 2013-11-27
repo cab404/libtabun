@@ -18,13 +18,7 @@ public class Comment extends Part {
     public String avatar;
     public boolean MODERASTIA = false;
 
-    private boolean is_new = false;
-
-    public boolean isNew() {
-        boolean ret = is_new;
-        is_new = false;
-        return ret;
-    }
+    public boolean is_new = false;
 
     public Comment() {
         type = "Comment";
