@@ -56,7 +56,7 @@ public class PaWPoL extends Part {
                 int blog_tag;
                 try {
                     blog_tag = raw.getTagIndexByProperty("class", "topic-blog");
-                } catch (Error e) {
+                } catch (Exception e) {
                     blog_tag = raw.getTagIndexByProperty("class", "topic-blog private-blog");
                 }
                 pl.blog = new Blog();

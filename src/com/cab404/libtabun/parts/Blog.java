@@ -56,7 +56,7 @@ public class Blog extends PaWPoL implements PaginatedPart {
         tmp.addAll(posts);
 
         ResponseFactory.read(
-                user.execute(RequestFactory.get(getUrl() + "page" + page).build()),
+                user.execute(RequestFactory.get(getUrl() + "/page" + page).build()),
                 new BlogParser()
         );
 
