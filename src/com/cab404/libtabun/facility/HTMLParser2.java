@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * +20% cooler; +4k% faster;
+ *
  * @author cab404
  */
 public class HTMLParser2 {
