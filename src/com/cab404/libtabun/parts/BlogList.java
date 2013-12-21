@@ -24,6 +24,14 @@ public class BlogList implements PaginatedPart {
         public String name, url_name;
         public float votes;
         public int readers;
+
+        @Override public boolean equals(Object o) {
+            return o instanceof BlogLabel && name.equals(((BlogLabel) o).name);
+        }
+
+        @Override public int hashCode() {
+            return name.hashCode();
+        }
     }
 
 

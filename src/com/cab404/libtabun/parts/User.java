@@ -30,7 +30,7 @@ public class User {
     public LivestreetKey key;
     private String login;
     private HashMap<String, String> cookies;
-    public int timeout = 15000;
+    public int timeout = 30000;
 
     private HttpHost tabun;
 

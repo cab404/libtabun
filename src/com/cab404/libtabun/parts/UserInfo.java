@@ -209,6 +209,8 @@ public class UserInfo {
             PLACE("Местоположение"),
             CREATED("Создал"),
             MODERATOR("Модерирует"),
+            HAS_INVITED("Приглашенные"),
+            INVITED_BY("Пригласил"),
             ADMIN("Администрирует"),
             BELONGS("Состоит в"),
             REG_DATE("Зарегистрирован"),
@@ -236,7 +238,7 @@ public class UserInfo {
                     break;
                 }
             }
-            if (data_type == null) throw new Error("Непонятный тип данных - " + type);
+            if (data_type == null) throw new RuntimeException("Непонятный тип данных - " + type);
             this.value = value;
         }
 

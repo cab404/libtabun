@@ -53,7 +53,7 @@ public class Comment extends Part {
                         // Если комментарий пуст - вероятно, это остов убитого модерастией.
                         try {
                             parser.getTagIndexByProperty("class", " text");
-                        } catch (java.lang.Error e) {
+                        } catch (Throwable e) {
                             comment.MODERASTIA = true;
                             return false;
                         }
@@ -96,23 +96,28 @@ public class Comment extends Part {
         }
     }
 
-    public boolean edit(User user, String text) {
+    public String edit(User user, Part post, String text) {
         String body = "";
         body += "commentId=" + id;
         body += "&text=" + U.rl(text);
-        body += "&security_ls_key=" + key.key;
+        body += "&security_ls_key=" + post.key;
 
         String request = ResponseFactory.read(
                 user.execute(
                         RequestFactory.post("/role_ajax/savecomment/")
-                                .addReferer(key.address)
+                                .addReferer(post.key.address)
                                 .setBody(body)
                                 .XMLRequest()
                                 .build()));
 
         JSONObject object = MessageFactory.processJSONwithMessage(request);
 
-        return (boolean) object.get("bStateError");
+        boolean err = (boolean) object.get("bStateError");
+
+        if (!err)
+            this.body = U.drl((String) object.get("sText"));
+
+        return err ? null : this.body;
     }
 
     private boolean favourites(User user, int type) {
