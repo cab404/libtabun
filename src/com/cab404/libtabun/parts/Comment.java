@@ -79,7 +79,7 @@ public class Comment extends Part {
                         try {
                             HTMLParser comment_parent_goto = parser.getParserForIndex(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
                             comment.parent = U.parseInt(U.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
-                        } catch (Error e) {
+                        } catch (Throwable e) {
                             comment.parent = 0;
                         }
 

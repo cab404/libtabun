@@ -119,7 +119,7 @@ public class UserInfo {
                                     String value = entry.getContents(entry.getTagIndexForName("strong"));
 
                                     personal.add(new Userdata(key, value));
-                                } catch (Error e) {
+                                } catch (Exception e) {
                                     break;
                                 }
                             }
