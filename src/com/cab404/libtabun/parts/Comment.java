@@ -54,7 +54,7 @@ public class Comment extends Part {
 
                         // Если комментарий пуст (совсем-совсем, не только текст) - это остов убитого модерастией.
                         try {
-                            parser.getTagIndexByProperty("class", " text");
+                            parser.getTagIndexByProperty("class", "text");
                         } catch (Throwable e) {
                             comment.MODERASTIA = true;
                             return false;
@@ -64,7 +64,7 @@ public class Comment extends Part {
                         String props = parser.getTagByName("section").props.get("class");
                         comment.is_new = props.contains("comment-new");
 
-                        comment.body = parser.getContents(parser.getTagIndexByProperty("class", " text")).replaceAll("\t", "");
+                        comment.body = parser.getContents(parser.getTagIndexByProperty("class", "text")).replaceAll("\t", "");
                         // Тут чуточку сложнее.
                         comment.time = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-date")).getTagByName("time").props.get("datetime");
 
@@ -85,7 +85,7 @@ public class Comment extends Part {
                             comment.parent = 0;
                         }
 
-                        comment.votes = U.parseInt(parser.getContents(parser.getTagByProperty("class", "vote-count")).trim());
+//                        comment.votes = U.parseInt(parser.getContents(parser.getTagByProperty("class", "vote-count")).trim());
 
 
                         return false;
@@ -107,13 +107,14 @@ public class Comment extends Part {
 
         String request = ResponseFactory.read(
                 user.execute(
-                        RequestFactory.post("/role_ajax/savecomment/")
+                        RequestFactory.post("/ec_ajax/savecomment/")
                                 .addReferer(post.key.address)
                                 .setBody(body)
                                 .XMLRequest()
                                 .build()));
 
         JSONObject object = MessageFactory.processJSONwithMessage(request);
+
 
         boolean err = (boolean) object.get("bStateError");
 
