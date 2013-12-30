@@ -114,7 +114,7 @@ public class RequestFactory {
      * Без них обычно, Табун будет ругаться "Hacking attempt!"
      */
     private RequestFactory addStandardHeaders() {
-        request.addHeader("Host", U.tabun);
+        request.addHeader("Host", U.path);
         request.addHeader("Connection", "keep-alive");
         request.addHeader("Accept-Encoding", "gzip");
         request.addHeader("User-Agent", "sweetieBot");
@@ -132,7 +132,7 @@ public class RequestFactory {
      * что ключ взят со страницы /404/.
      */
     public RequestFactory addReferer(String referer) {
-        request.addHeader("Referer", "http://" + U.tabun + referer);
+        request.addHeader("Referer", "http://" + U.path + referer);
 
         return this;
     }

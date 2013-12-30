@@ -35,7 +35,7 @@ public class User {
     private HttpHost tabun;
 
     public User() {
-        tabun = new HttpHost(U.tabun, 80);
+        tabun = new HttpHost(U.path, 80);
         cookies = new HashMap<>();
 
         // Получаем ключ страницы. Нужен для того, чтобы нас не посчитали за XSS.
