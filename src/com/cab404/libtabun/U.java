@@ -18,7 +18,7 @@ import java.util.TimeZone;
  * @author cab404
  */
 public class U {
-    public static final String path = "tabun.everypony.ru";
+    public static final String path = "ponyhawks.ru";
 
     /**
      * Делает абсолютно то же, что и Log.v("Luna Log", obj.toString()),

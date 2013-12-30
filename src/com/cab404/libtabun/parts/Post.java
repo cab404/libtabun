@@ -25,7 +25,7 @@ public class Post extends PaWPoL.PostLabel {
     public Post() {
         comment_list = new ArrayList<>();
         blog = new Blog();
-        name = time = content = votes = "";
+        name = time = content = "";
         type = "Topic";
     }
 
@@ -84,21 +84,21 @@ public class Post extends PaWPoL.PostLabel {
                 text.append(line).append("\n");
                 HTMLParser raw = new HTMLParser(text.toString());
 
-                id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
+                id = U.parseInt(U.sub(raw.getTagByProperty("class", "close").props.get("onclick"), "_share_", "'"));
                 content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
                 name = raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap")).trim();
 
-                String vote_info = raw.getTagByProperty("id", "vote_area_topic_" + id).props.get("class").replace("\t", "");
-                vote_enabled = vote_info.contains("vote-not-self") && vote_info.contains("not-voted") && vote_info.contains("vote-not-expired");
-
-                if (!vote_enabled) {
-                    if (vote_info.contains("voted-up"))
-                        your_vote = 1;
-                    if (vote_info.contains("voted-down"))
-                        your_vote = -1;
-                    if (vote_info.contains("voted-zero"))
-                        your_vote = 0;
-                }
+//                String vote_info = raw.getTagByProperty("id", "vote_area_topic_" + id).props.get("class").replace("\t", "");
+//                vote_enabled = vote_info.contains("vote-not-self") && vote_info.contains("not-voted") && vote_info.contains("vote-not-expired");
+//
+//                if (!vote_enabled) {
+//                    if (vote_info.contains("voted-up"))
+//                        your_vote = 1;
+//                    if (vote_info.contains("voted-down"))
+//                        your_vote = -1;
+//                    if (vote_info.contains("voted-zero"))
+//                        your_vote = 0;
+//                }
 
                 isInFavs = raw.getTagByProperty("id", "fav_topic_" + id).props.get("class").equals("favourite active");
 
@@ -115,12 +115,12 @@ public class Post extends PaWPoL.PostLabel {
                 int time_tag = raw.getTagIndexForName("time");
                 time = raw.getContents(time_tag).trim();
                 date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
-                votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + id)).trim();
-                try {
-                    U.parseInt(votes);
-                } catch (Exception e) {
-                    votes = "±?";
-                }
+//                votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + id)).trim();
+//                try {
+//                    U.parseInt(votes);
+//                } catch (Exception e) {
+//                    votes = "±?";
+//                }
                 ArrayList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
                 tags = new String[raw_tags.size()];
                 for (int i = 0; i != raw_tags.size(); i++) {
@@ -336,9 +336,9 @@ public class Post extends PaWPoL.PostLabel {
         JSONObject status = MessageFactory.processJSONwithMessage(response);
         boolean err = (boolean) status.get("bStateError");
         if (!err) {
-            votes = String.valueOf(status.get("iRating"));
-            if (!votes.startsWith("-"))
-                votes = "+" + votes;
+//            votes = String.valueOf(status.get("iRating"));
+//            if (!votes.startsWith("-"))
+//                votes = "+" + votes;
             your_vote = vote;
             vote_enabled = false;
         }

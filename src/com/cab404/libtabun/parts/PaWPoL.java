@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class PaWPoL extends Part {
 
     public static class PostLabel extends Part {
-        public String name, votes;
+        public String name;
         public UserInfo author;
         public String content, time;
         public String[] tags;
@@ -31,7 +31,7 @@ public class PaWPoL extends Part {
 
         public PostLabel() {
             type = "Topic";
-            name = votes = time = content = "";
+            name = time = content = "";
         }
     }
 
@@ -49,7 +49,7 @@ public class PaWPoL extends Part {
 
                 HTMLParser raw = new HTMLParser(text.toString());
 
-                pl.id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
+                pl.id = U.parseInt(U.bsub(raw.getTagByName("a").props.get("href"), "/", "."));
                 pl.content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
                 pl.name = U.removeAllTags(raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap"))).trim();
 
@@ -66,12 +66,12 @@ public class PaWPoL extends Part {
                 int time_tag = raw.getTagIndexForName("time");
                 pl.time = raw.getContents(time_tag).trim();
                 pl.date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
-                pl.votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + pl.id)).trim();
-                try {
-                    U.parseInt(pl.votes);
-                } catch (Exception e) {
-                    pl.votes = "±?";
-                }
+//                pl.votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + pl.id)).trim();
+//                try {
+//                    U.parseInt(pl.votes);
+//                } catch (Exception e) {
+//                    pl.votes = "±?";
+//                }
                 ArrayList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
                 pl.tags = new String[raw_tags.size()];
                 for (int i = 0; i != raw_tags.size(); i++) {
