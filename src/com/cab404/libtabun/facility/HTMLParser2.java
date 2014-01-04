@@ -11,9 +11,8 @@ import java.util.List;
  * @author cab404
  */
 public class HTMLParser2 {
-    public static final boolean logging = false;
+    public static boolean logging = false;
 
-    @SuppressWarnings("ConstantConditions")
     public static void v(Object obj) {
         if (logging)
             U.v(obj);
