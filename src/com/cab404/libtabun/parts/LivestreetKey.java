@@ -10,6 +10,7 @@ import com.cab404.libtabun.facility.ResponseFactory;
 class LivestreetKey {
     public String address, key;
 
+
     public LivestreetKey(String address, String key) {
         this.address = address;
         this.key = key;

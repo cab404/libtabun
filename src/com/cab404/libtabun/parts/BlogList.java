@@ -58,7 +58,7 @@ public class BlogList implements PaginatedPart {
                         lab.readers = U.parseInt(doc.getContents(doc.getTagIndexByProperty("class", "cell-readers")));
                         lab.url_name = U.bsub(doc.getTagByProperty("class", "blog-name").props.get("href"), "/blog/", "/");
                         labels.add(lab);
-                    } catch (HTMLParser.TagNotFoundError unchecked) {
+                    } catch (HTMLParser.TagNotFoundException unchecked) {
                         // Поисковые пегасы ничего не нашли.
                         return false;
                     }

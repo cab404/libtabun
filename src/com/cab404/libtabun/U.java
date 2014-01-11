@@ -1,5 +1,6 @@
 package com.cab404.libtabun;
 
+import com.cab404.libtabun.facility.ResponseFactory;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpRequestBase;
 
@@ -226,5 +227,39 @@ public class U {
 
     public static String removeAllTags(String toProcess) {
         return toProcess.replaceAll("<.*?>", "");
+    }
+
+    public static abstract class TextPartParser implements ResponseFactory.Parser {
+
+
+        boolean started;
+        StringBuilder builder;
+
+        public TextPartParser() {
+            builder = new StringBuilder();
+        }
+
+        @Override public boolean line(String line) {
+
+            if (!started)
+                started = isStart(line);
+            if (!started)
+                return true;
+
+            builder.append(line).append("\n");
+
+            if (isEnd(line)) {
+                process(builder);
+                return false;
+            }
+
+            return true;
+        }
+
+        public abstract void process(StringBuilder out);
+        public abstract boolean isStart(String str);
+        public abstract boolean isEnd(String str);
+
+
     }
 }

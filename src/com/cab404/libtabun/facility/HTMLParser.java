@@ -135,7 +135,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
 
     public Tag getTagByName(String name) {
         for (Tag tag : this) if (tag.name.equals(name)) return tag;
-        throw new TagNotFoundError();
+        throw new TagNotFoundException();
     }
 
     public Tag getTagByProperty(String key, String value) {
@@ -146,17 +146,17 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         for (int i = 0; i != tags.size(); i++) {
             if (value.equals(tags.get(i).props.get(key))) return i;
         }
-        throw new TagNotFoundError();
+        throw new TagNotFoundException();
     }
 
     public int getIndexForTag(Tag tag) {
         for (int i = 0; i != tags.size(); i++) if (tags.get(i) == tag) return i;
-        throw new TagNotFoundError();
+        throw new TagNotFoundException();
     }
 
     public int getTagIndexForName(String name) {
         for (int i = 0; i != tags.size(); i++) if (tags.get(i).name.equals(name)) return i;
-        throw new TagNotFoundError();
+        throw new TagNotFoundException();
     }
 
     public int getTagIndexForParamRegex(String key, String regex) {
@@ -165,7 +165,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
             if (tags.get(i).props.containsKey(key))
                 if (pattern.matcher(tags.get(i).props.get(key)).matches()) return i;
         }
-        throw new TagNotFoundError();
+        throw new TagNotFoundException();
     }
 
 
@@ -184,7 +184,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
                 return check_index;
         }
 
-        throw new TagNotFoundError();
+        throw new TagNotFoundException();
     }
 
     public String getContents(Tag tag) {
@@ -238,12 +238,12 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         return getContents(0);
     }
 
-    public static class TagNotFoundError extends RuntimeException {
-        public TagNotFoundError(String s) {
+    public static class TagNotFoundException extends RuntimeException {
+        public TagNotFoundException(String s) {
             super(s);
         }
 
-        public TagNotFoundError() {
+        public TagNotFoundException() {
             super();
         }
     }
