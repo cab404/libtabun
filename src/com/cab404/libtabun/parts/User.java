@@ -272,6 +272,7 @@ public class User {
                 case 1:
                     if (line.contains("class=\"username\">")) {
                         login = U.sub(line, ">", "<");
+                        return false;
                     }
             }
             return true;

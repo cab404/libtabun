@@ -55,7 +55,7 @@ public class RequestFactory {
     }
 
     public RequestFactory setBody(String body) {
-        return setBody(body, false);
+        return setBody(body, true);
     }
 
     /**

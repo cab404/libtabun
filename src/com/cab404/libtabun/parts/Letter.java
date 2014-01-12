@@ -5,6 +5,7 @@ import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class Letter extends Part {
 
     public String name, text;
     public int new_letters = 0;
+    public int max_comment_id = 0;
     public java.util.List<String> whoisthere;
 
 
@@ -139,6 +141,59 @@ public class Letter extends Part {
         JSONObject status = MessageFactory.processJSONwithMessage(response);
 
         return (boolean) status.get("bStateError");
+    }
+
+    /**
+     * Загружает новые комментарии, и говорит, сколько вышло.
+     */
+
+    public interface CommentListener {
+        public void onCommentLoad(Comment comment);
+    }
+
+    public int fetchNewComments(User user, CommentListener cl) {
+
+        String body = "&idCommentLast=" + max_comment_id;
+        body += "&idTarget=" + id;
+        body += "&typeTarget=topic&security_ls_key=" + user.key;
+
+        String response = ResponseFactory.read(user.execute(
+                RequestFactory
+                        .post("/talk/ajaxresponsecomment/")
+                        .addReferer(getRelativeAddress())
+                        .setBody(body)
+//                        .MultipartRequest(
+//                                "&idCommentLast=", max_comment_id + "",
+//                                "&idTarget=", id + "",
+//                                "&typeTarget=topic&security_ls_key=", user.key + ""
+//                        )
+                        .XMLRequest()
+                        .build()
+        ));
+        JSONObject status;
+        try {
+            status = MessageFactory.processJSONwithMessage(response);
+        } catch (Throwable ex) {
+            return 0;
+        }
+
+        if (status == null) return 0;
+
+        for (Object obj : ((JSONArray) status.get("aComments")).toArray()) {
+            Comment.Parser comment_parser = new Comment.Parser();
+            String html = (String) ((JSONObject) obj).get("html");
+
+            for (String line : html.split("\n")) {
+                comment_parser.line(line);
+            }
+
+            comment_parser.comment.key = key;
+            comments.add(comment_parser.comment);
+            if (cl != null) cl.onCommentLoad(comment_parser.comment);
+        }
+
+        this.max_comment_id = Math.max(Integer.parseInt(String.valueOf(status.get("iMaxIdComment"))), max_comment_id);
+        return ((JSONArray) status.get("aComments")).toArray().length;
     }
 
     public static class Comment extends Part {
