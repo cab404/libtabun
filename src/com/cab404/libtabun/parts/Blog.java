@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class Blog extends PaWPoL implements PaginatedPart {
     public String name, url_name;
     public ArrayList<PostLabel> posts;
+    public LivestreetKey key;
     public int numpages = 0;
     public int curpage = 0;
 
@@ -40,6 +41,8 @@ public class Blog extends PaWPoL implements PaginatedPart {
                 user.execute(RequestFactory.get(relative_address).build()),
                 parser
         );
+
+        this.key = parser.fetcher.key;
     }
 
     public String getUrl() {
@@ -83,21 +86,25 @@ public class Blog extends PaWPoL implements PaginatedPart {
             pllp = new PostLabelListParser(PostLabelListParser.EndsWith.PAGINATOR);
         }
 
+        KeyFetcher fetcher = new KeyFetcher();
+
         @Override
         public boolean line(String line) {
             switch (part) {
                 case 0:
+                    if (!fetcher.line(line)) part++;
+                case 1:
                     if (line.contains("\"page-header\"")) {
                         name = U.sub(line, ">", "<").trim();
                         part++;
                     }
-                case 1:
+                case 2:
                     if (!pllp.line(line)) {
                         part++;
                     }
                     posts = pllp.labels;
                     break;
-                case 2:
+                case 3:
                     if (line.contains("title=\"последняя\"")) {
                         numpages = Integer.parseInt(U.sub(line, "page", "/"));
                         return false;

@@ -7,7 +7,7 @@ import com.cab404.libtabun.facility.ResponseFactory;
 /**
  * @author cab404
  */
-class LivestreetKey {
+public class LivestreetKey {
     public String address, key;
 
     public LivestreetKey(String address, String key) {

@@ -139,7 +139,7 @@ public class HTMLParser2 {
 
             v(tag);
             if (name_and_everything_else.size() == 2) {
-                List<String> props = charSplit(name_and_everything_else.get(1), "\"");
+                List<String> props = charSplit(name_and_everything_else.get(1), "\"'");
 
                 for (int ind = 0; ind + 1 < props.size(); ind += 2) {
 

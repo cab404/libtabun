@@ -33,14 +33,12 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         }
 
         @Override public String toString() {
-            return new StringBuilder()
-                    .append("== TAG ==").append("\n")
-                    .append("Code: '").append(text).append("' \n")
-                    .append("Name: '").append(name).append("' \n")
-                    .append("StA: ").append(isStandalone).append(" \n")
-                    .append("Cl: ").append(isClosing).append(" \n")
-                    .append("Cm: ").append(isComment).append(" \n")
-                    .toString();
+            return "== TAG ==" + "\n"
+                    + "Code: '" + text + "' \n"
+                    + "Name: '" + name + "' \n"
+                    + "StA: " + isStandalone + " \n"
+                    + "Cl: " + isClosing + " \n"
+                    + "Cm: " + isComment + " \n";
         }
     }
 
