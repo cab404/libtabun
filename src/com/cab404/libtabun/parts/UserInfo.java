@@ -1,9 +1,10 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
-import com.cab404.libtabun.facility.HTMLParser;
+import com.cab404.libtabun.facility.html_parser.HTMLParser;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -82,11 +83,11 @@ public class UserInfo {
 
                         try {
                             name = head_info.getContents(head_info.getTagByProperty("itemprop", "name"));
-                        } catch (HTMLParser.TagNotFoundError e) {
+                        } catch (HTMLParser.TagNotFoundException e) {
                             name = "";
                         }
 
-                    } catch (HTMLParser.TagNotFoundError e) {
+                    } catch (HTMLParser.TagNotFoundException e) {
                         throw new RuntimeException("Пользователя не существует, или произошло незнамо что.\n" + parser.html, e);
                     }
 
@@ -95,7 +96,7 @@ public class UserInfo {
                         HTMLParser about_p = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-info-about"));
                         try {
                             about = about_p.getContents(about_p.getTagIndexByProperty("class", "text"));
-                        } catch (HTMLParser.TagNotFoundError e) {
+                        } catch (HTMLParser.TagNotFoundException e) {
                             about = "";
                         }
                         big_icon = about_p.getTagByProperty("alt", "avatar").props.get("src");
@@ -132,8 +133,8 @@ public class UserInfo {
                         for (int i : contact_p.getAllIDsByName("li")) {
                             if (!contact_p.get(i).isClosing) {
                                 String foo = contact_p.getContents(i);
-                                String key = U.sub(foo, "title=\"", "\"");
-                                String value = U.removeAllTags(foo);
+                                String key = SU.sub(foo, "title=\"", "\"");
+                                String value = SU.removeAllTags(foo);
                                 contacts.add(new Contact(key, value));
                             }
                         }

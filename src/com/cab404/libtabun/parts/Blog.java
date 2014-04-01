@@ -1,6 +1,6 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
+import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class Blog extends PaWPoL implements PaginatedPart {
     public String name, url_name;
     public ArrayList<PostLabel> posts;
-    public LivestreetKey key;
     public int numpages = 0;
     public int curpage = 0;
+    public LivestreetKey key;
 
     public Blog() {
         posts = new ArrayList<>();
@@ -41,8 +41,6 @@ public class Blog extends PaWPoL implements PaginatedPart {
                 user.execute(RequestFactory.get(relative_address).build()),
                 parser
         );
-
-        this.key = parser.fetcher.key;
     }
 
     public String getUrl() {
@@ -84,18 +82,21 @@ public class Blog extends PaWPoL implements PaginatedPart {
 
         public BlogParser() {
             pllp = new PostLabelListParser(PostLabelListParser.EndsWith.PAGINATOR);
+            fetcher = new KeyFetcher();
         }
 
-        KeyFetcher fetcher = new KeyFetcher();
-
+        KeyFetcher fetcher;
         @Override
         public boolean line(String line) {
             switch (part) {
                 case 0:
-                    if (!fetcher.line(line)) part++;
+                    if (!fetcher.line(line)) {
+                        key = fetcher.key;
+                        part++;
+                    }
                 case 1:
                     if (line.contains("\"page-header\"")) {
-                        name = U.sub(line, ">", "<").trim();
+                        name = SU.sub(line, ">", "<").trim();
                         part++;
                     }
                 case 2:
@@ -106,7 +107,7 @@ public class Blog extends PaWPoL implements PaginatedPart {
                     break;
                 case 3:
                     if (line.contains("title=\"последняя\"")) {
-                        numpages = Integer.parseInt(U.sub(line, "page", "/"));
+                        numpages = Integer.parseInt(SU.sub(line, "page", "/"));
                         return false;
                     }
                     break;

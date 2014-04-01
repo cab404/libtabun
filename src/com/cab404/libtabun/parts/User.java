@@ -1,6 +1,7 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -78,8 +79,8 @@ public class User {
 
         // Собираем пакет для входа. Собственно, всё просто и понятно.
         String packet = "";
-        packet += "&login=" + U.rl(login);
-        packet += "&password=" + U.rl(password);
+        packet += "&login=" + SU.rl(login);
+        packet += "&password=" + SU.rl(password);
         packet += "&security_ls_key=" + key;
         packet += "&remember=on";
         packet += "&return-path=/";
@@ -98,7 +99,7 @@ public class User {
         );
 
         // Убираем веб-кодировку из ответа, если не хотим кракозябров.
-        out = U.drl(out);
+        out = SU.drl(out);
 
         // Отправляем сообщение в <s>космос</s> обработчик, заодно получая JSON себе.
         JSONObject parsed = MessageFactory.processJSONwithMessage(out);
@@ -201,7 +202,7 @@ public class User {
                                         "blog_id", post.blog.id + "",
                                         "topic_title", post.name,
                                         "topic_text", post.content,
-                                        "topic_tags", U.join(post.tags, ", "),
+                                        "topic_tags", SU.join(post.tags, ", "),
                                         "topic_type", "topic",
                                         "submit_topic_publish", ""
                                 )
@@ -225,7 +226,7 @@ public class User {
         JSONObject status = MessageFactory.processJSONwithMessage(response);
 
 
-        String raw = (U.drl(status.get("sText").toString()));
+        String raw = (SU.drl(status.get("sText").toString()));
         String new_raw = "";
         for (String str : raw.split("\n")) {
             str = str.trim();
@@ -236,10 +237,10 @@ public class User {
         StreamElement[] stream = new StreamElement[(split.length - 1) / 2];
         for (int i = 0; i != (split.length - 1) / 2; i++) {
             StreamElement el = new StreamElement();
-            el.author = U.sub(split[i * 2], "class=\"author\">", "<");
-            el.blog_name = U.sub(split[i * 2], "class=\"stream-blog\">", "<");
-            el.post_name = U.sub(split[i * 2 + 1], ">", "<");
-            el.comment_id = Integer.parseInt(U.sub(split[i * 2 + 1], "comments/", "\""));
+            el.author = SU.sub(split[i * 2], "class=\"author\">", "<");
+            el.blog_name = SU.sub(split[i * 2], "class=\"stream-blog\">", "<");
+            el.post_name = SU.sub(split[i * 2 + 1], ">", "<");
+            el.comment_id = Integer.parseInt(SU.sub(split[i * 2 + 1], "comments/", "\""));
             stream[i] = el;
         }
 
@@ -249,6 +250,13 @@ public class User {
     public static class StreamElement {
         public String blog_name, author, post_name;
         public int comment_id;
+    }
+
+    public void deletePost(Blog blog, int id) {
+        String req = "/topic/delete/" + id + "/?security_ls_key=" + blog.key;
+
+        execute(RequestFactory.post(req).build());
+
     }
 
     /**
@@ -262,7 +270,7 @@ public class User {
             switch (part) {
                 case 0:
                     if (line.contains("var LIVESTREET_SECURITY_KEY")) {
-                        key = new LivestreetKey("/", U.sub(
+                        key = new LivestreetKey("/", SU.sub(
                                 line,
                                 "var LIVESTREET_SECURITY_KEY = '",
                                 "';"
@@ -271,7 +279,8 @@ public class User {
                     }
                 case 1:
                     if (line.contains("class=\"username\">")) {
-                        login = U.sub(line, ">", "<");
+                        login = SU.sub(line, ">", "<");
+                        return false;
                     }
             }
             return true;

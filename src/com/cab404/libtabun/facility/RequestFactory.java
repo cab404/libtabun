@@ -1,6 +1,6 @@
 package com.cab404.libtabun.facility;
 
-import com.cab404.libtabun.U;
+import com.cab404.libtabun.util.U;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -55,7 +55,7 @@ public class RequestFactory {
     }
 
     public RequestFactory setBody(String body) {
-        return setBody(body, false);
+        return setBody(body, true);
     }
 
     /**

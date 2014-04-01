@@ -1,6 +1,6 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
+import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.facility.ResponseFactory;
 
 /**
@@ -15,11 +15,12 @@ public class KeyFetcher implements ResponseFactory.Parser {
         switch (part) {
             case 0:
                 if (line.contains("var LIVESTREET_SECURITY_KEY")) {
-                    key = new LivestreetKey("/", U.sub(
+                    key = new LivestreetKey("/", SU.sub(
                             line,
                             "var LIVESTREET_SECURITY_KEY = '",
                             "';"
                     ));
+                    part++;
                     return false;
                 }
         }
