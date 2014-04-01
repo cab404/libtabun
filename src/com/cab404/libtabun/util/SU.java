@@ -1,81 +1,108 @@
-package com.cab404.libtabun;
+package com.cab404.libtabun.util;
 
-import com.cab404.libtabun.facility.ResponseFactory;
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpRequestBase;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * U is for the Utils
- * Куча статичных методов и переменных (по идее).
+ * String utils.
  *
  * @author cab404
  */
-public class U {
-    public static final String path = "tabun.everypony.ru";
-
+public class SU {
     /**
-     * Делает абсолютно то же, что и Log.v("Luna Log", obj.toString()),
-     * плюс проверяет на null.
+     * Splits string without reqexes
      */
-    public static void v(Object obj) {
-        try {
-            System.out.println(obj == null ? null : obj.toString());
-            System.out.flush();
-        } catch (NullPointerException e) {
-            w(e);
+    public static List<String> split(String source, String not_a_regex) {
+        ArrayList<String> out = new ArrayList<>();
+        int i = 0;
+        while (true) {
+            int j = source.indexOf(not_a_regex, i);
+
+            if (j == -1) {
+                out.add(source.substring(i));
+                break;
+            }
+            out.add(source.substring(i, j));
+            i = j + not_a_regex.length();
         }
+        return out;
+    }
+    /**
+     * Splits string without reqexes
+     */
+    public static List<String> split(String source, String not_a_regex, int limit) {
+        ArrayList<String> out = new ArrayList<>();
+        int i = 0;
+        while (true) {
+            int j = source.indexOf(not_a_regex, i);
+
+            if (j == -1 || out.size() + 1 == limit) {
+                out.add(source.substring(i));
+                break;
+            }
+            out.add(source.substring(i, j));
+            i = j + not_a_regex.length();
+        }
+        return out;
+    }
+
+
+    /**
+     * Returns true if check contains symbol ch
+     */
+    public static boolean contains(char[] check, char ch) {
+        for (char curr : check)
+            if (curr == ch) return true;
+        return false;
     }
 
     /**
-     * Делает абсолютно то же, что и Log.w("Luna Log", obj.toString()),
-     * плюс проверяет на null.
+     * Splits string using any of chars from "chars"
+     * For instance, call<br/>
+     * charSplit("test test, test.test", " .,") <br/>
+     * will return you [test, test, test, test]
      */
-    public static void w(Object obj) {
-        System.err.println(obj == null ? null : obj.toString());
-        System.err.flush();
+    public static List<String> charSplit(String source, char... chars) {
+        ArrayList<String> out = new ArrayList<>();
+        int last = 0;
+
+        for (int i = 0; i < source.length(); i++) {
+            if (contains(chars, source.charAt(i))) {
+                out.add(source.substring(last, i));
+                last = i + 1;
+            }
+        }
+
+        out.add(source.substring(last));
+        return out;
     }
 
     /**
-     * Делает абсолютно то же, что и Log.w("Luna Log", obj.toString()),
-     * плюс проверяет на null.
+     * Splits string using any of chars from "chars"
+     * For instance, call<br/>
+     * charSplit("test test, test.test", 2, " .,") <br/>
+     * will return you ["test", "test, test.test"]
      */
-    public static void w(Throwable obj) {
-        StringWriter writer = new StringWriter();
-        PrintWriter out = new PrintWriter(writer);
-        if (obj != null) obj.printStackTrace(out);
-        System.err.println(writer.toString());
-        System.err.flush();
-    }
+    public static List<String> charSplit(String source, int limit, char... chars) {
+        ArrayList<String> out = new ArrayList<>();
+        int last = 0;
 
-    public static void v(HttpRequestBase request) {
-        v(request.getRequestLine());
-        for (Header header : request.getAllHeaders())
-            v(header.getName() + ": " + header.getValue());
-        v("");
-    }
+        for (int i = 0; i < source.length(); i++) {
+            if (contains(chars, source.charAt(i))) {
+                out.add(source.substring(last, i));
+                last = i + 1;
 
-    /**
-     * Делает абсолютно то же, что и Log.wtf("Luna Log", obj.toString()),
-     * плюс проверяет на null.
-     */
-    public static void wtf(Object obj) {
-        System.err.println("WTF? " + (obj == null ? null : obj.toString()));
-        System.err.flush();
-    }
+                if (out.size() + 1 == limit)
+                    break;
 
-    /**
-     * Достаёт рандомный элемент из массива. И всё :D
-     */
-    public static <T> T getRandomEntry(T[] values) {
-        return values[(int) Math.floor(Math.random() * values.length)];
+            }
+        }
+
+        out.add(source.substring(last));
+        return out;
     }
 
     /**
@@ -97,7 +124,6 @@ public class U {
         }
         return source.substring(sIndex, eIndex);
     }
-
     /**
      * Backwards sub, делает то же, что и sub, только с конца строки.
      */
@@ -115,7 +141,6 @@ public class U {
         }
         return source.substring(eIndex + end.length(), sIndex);
     }
-
     /**
      * Всего лишь сокращение URLEncoder.encode()
      */
@@ -123,11 +148,10 @@ public class U {
         try {
             return URLEncoder.encode(toConvert, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            w(e);
+            U.w(e);
             return null;
         }
     }
-
     /**
      * Всего лишь сокращение URLDecoder.decode()
      */
@@ -135,29 +159,16 @@ public class U {
         try {
             return URLDecoder.decode(toConvert, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            w(e);
+            U.w(e);
             return null;
         }
     }
-
     public static String join(String[] strings, String delimeter) {
         String out = "";
         for (int i = 0; i < strings.length - 1; i++) out += strings[i] + delimeter;
         out += strings[strings.length - 1];
         return out;
     }
-
-    /**
-     * Андроид, почему ты не любишь плюсы?
-     */
-    public static int parseInt(String in) {
-        return Integer.parseInt(in.replace("+", ""));
-    }
-
-    public static float parseFloat(String in) {
-        return Float.parseFloat(in.replace("+", ""));
-    }
-
     /**
      * Фух. Эта штука меняет все HTML 4.0 и 2.0 entity на нормальный текст.
      */
@@ -182,7 +193,6 @@ public class U {
                 .replaceAll("&#039;", "'")
                 ;
     }
-
     /**
      * Фух. Эта штука меняет все HTML 4.0 и 2.0 entity на нормальный текст.
      */
@@ -207,59 +217,7 @@ public class U {
                 .replaceAll("&#039;", "'")
                 ;
     }
-
-
-    public static Calendar convertDatetime(String datetime) {
-        String timezone = datetime.substring(18);
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(timezone));
-
-        int year = Integer.parseInt(datetime.substring(0, 4));
-        int month = Integer.parseInt(datetime.substring(5, 7)) - 1;
-        int day = Integer.parseInt(datetime.substring(8, 10));
-
-        int hour = Integer.parseInt(datetime.substring(11, 13));
-        int minute = Integer.parseInt(datetime.substring(14, 16));
-        int second = Integer.parseInt(datetime.substring(17, 19));
-
-        calendar.set(year, month, day, hour, minute, second);
-        return calendar;
-    }
-
     public static String removeAllTags(String toProcess) {
         return toProcess.replaceAll("<.*?>", "");
-    }
-
-    public static abstract class TextPartParser implements ResponseFactory.Parser {
-
-
-        boolean started;
-        StringBuilder builder;
-
-        public TextPartParser() {
-            builder = new StringBuilder();
-        }
-
-        @Override public boolean line(String line) {
-
-            if (!started)
-                started = isStart(line);
-            if (!started)
-                return true;
-
-            builder.append(line).append("\n");
-
-            if (isEnd(line)) {
-                process(builder);
-                return false;
-            }
-
-            return true;
-        }
-
-        public abstract void process(StringBuilder out);
-        public abstract boolean isStart(String str);
-        public abstract boolean isEnd(String str);
-
-
     }
 }

@@ -1,10 +1,12 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.*;
-import com.cab404.libtabun.facility.HTMLParser;
+import com.cab404.libtabun.facility.html_parser.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.modular.HandledParser;
 import org.json.simple.JSONObject;
 
 /**
@@ -27,7 +29,7 @@ public class Comment extends Part {
     /**
      * Парсит комментарии с <s>1823 года</s> тега section
      */
-    public static class CommentParser implements ResponseFactory.Parser {
+    public static class CommentParser extends HandledParser {
         public Comment comment = new Comment();
         int part = 0;
         StringBuilder text = new StringBuilder();
@@ -38,7 +40,7 @@ public class Comment extends Part {
                 case 0:
                     // Находим заголовок
                     if (line.contains("<section id=\"comment_id")) {
-                        comment.id = U.parseInt(U.sub(line, "_id_", "\""));
+                        comment.id = U.parseInt(SU.sub(line, "_id_", "\""));
                         text.append(line).append('\n');
                         part++;
                     }
@@ -50,7 +52,7 @@ public class Comment extends Part {
 
                         HTMLParser parser = new HTMLParser(text.toString());
 
-                        // Если комментарий пуст - вероятно, это остов убитого модерастией.
+                        // Если комментарий пуст (совсем-совсем, не только текст) - это остов убитого модерастией.
                         try {
                             parser.getTagIndexByProperty("class", " text");
                         } catch (Throwable e) {
@@ -71,14 +73,14 @@ public class Comment extends Part {
                         HTMLParser author;
                         author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-info"));
                         {
-                            comment.author = U.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
+                            comment.author = SU.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
                             comment.avatar = author.getTagByProperty("alt", "avatar").props.get("src");
                         }
 
                         // Попытка достать род. комментарий:
                         try {
                             HTMLParser comment_parent_goto = parser.getParserForIndex(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
-                            comment.parent = U.parseInt(U.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
+                            comment.parent = U.parseInt(SU.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
                         } catch (Throwable e) {
                             comment.parent = 0;
                         }
@@ -87,6 +89,7 @@ public class Comment extends Part {
 
 
                         return false;
+
                     } else this.text.append(line).append("\n");
 
                     break;
@@ -99,7 +102,7 @@ public class Comment extends Part {
     public String edit(User user, Part post, String text) {
         String body = "";
         body += "commentId=" + id;
-        body += "&text=" + U.rl(text);
+        body += "&text=" + SU.rl(text);
         body += "&security_ls_key=" + post.key;
 
         String request = ResponseFactory.read(
@@ -115,7 +118,7 @@ public class Comment extends Part {
         boolean err = (boolean) object.get("bStateError");
 
         if (!err)
-            this.body = U.drl((String) object.get("sText"));
+            this.body = SU.drl((String) object.get("sText"));
 
         return err ? null : this.body;
     }
@@ -145,12 +148,13 @@ public class Comment extends Part {
 
     public static int getPostNum(User user, int comment_id) {
         return Integer.parseInt(
-                U.bsub(
+                SU.bsub(
                         user.execute(RequestFactory.get("/comments/" + comment_id).build(), false)
                                 .getFirstHeader("Location")
                                 .getValue(),
                         "/",
-                        ".html")
+                        ".html"
+                )
         );
     }
 

@@ -1,13 +1,13 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
+import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 
 /**
  * @author cab404
  */
-class LivestreetKey {
+public class LivestreetKey {
     public String address, key;
 
 
@@ -35,7 +35,7 @@ class LivestreetKey {
         @Override
         public boolean line(String line) {
             if (line.contains("var LIVESTREET_SECURITY_KEY")) {
-                key = U.sub(
+                key = SU.sub(
                         line,
                         "var LIVESTREET_SECURITY_KEY = '",
                         "';"

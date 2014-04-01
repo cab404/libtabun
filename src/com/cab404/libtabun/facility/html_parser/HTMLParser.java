@@ -1,6 +1,10 @@
-package com.cab404.libtabun.facility;
+package com.cab404.libtabun.facility.html_parser;
 
-import java.util.*;
+import com.cab404.libtabun.util.SU;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -8,7 +12,9 @@ import java.util.regex.Pattern;
  *
  * @author cab404
  */
-public class HTMLParser implements Iterable<HTMLParser.Tag> {
+public class HTMLParser implements Iterable<Tag> {
+
+    int offset = 0;
 
     @Override
     public Iterator<Tag> iterator() {
@@ -20,39 +26,8 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
     }
 
 
-    public static class Tag {
-        public int start, end;
-        public String name, text;
-        public boolean isClosing;    // Тег типа </x>
-        public boolean isStandalone; // Тег типа <x/>
-        public boolean isComment; // Тег типа <!-- x --> и <! x>
-        public Map<String, String> props;
-
-        public Tag() {
-            props = new HashMap<>();
-        }
-
-        @Override public String toString() {
-            return new StringBuilder()
-                    .append("== TAG ==").append("\n")
-                    .append("Code: '").append(text).append("' \n")
-                    .append("Name: '").append(name).append("' \n")
-                    .append("StA: ").append(isStandalone).append(" \n")
-                    .append("Cl: ").append(isClosing).append(" \n")
-                    .append("Cm: ").append(isComment).append(" \n")
-                    .toString();
-        }
-    }
-
-    public ArrayList<Tag> tags;
+    public List<Tag> tags;
     public String html;
-
-//    Pattern
-//            tag_pattern = Pattern.compile("(?s:<.*?>)"),
-//            property = Pattern.compile("(?<=\\s)(?!\\s)(?s:.*?=\".*?\")"),
-//            closing = Pattern.compile("(?s:</.*?>)"),
-//            alone = Pattern.compile("(?s:<.*?/>)"),
-//            name = Pattern.compile("(?<=</|<!|<)(\\w+?)(?=[>\\s])");
 
     private HTMLParser() {
         tags = new ArrayList<>();
@@ -62,46 +37,12 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         this();
         html = parse;
         tags = HTMLParser2.parse(parse);
-//        Matcher matcher = tag_pattern.matcher(parse);
-//
-////        String offset = "";
-//        // Ищем теги
-//        while (matcher.find()) {
-//            Tag out = new Tag();
-//            out.start = matcher.start();
-//            out.end = matcher.end();
-//
-//            // Весь тег целиком
-//            out.text = parse.substring(matcher.start(), matcher.end());
-//
-//            // Закрытый/Одиночный тег
-//            out.isClosing = closing.matcher(out.text).matches();
-//            out.isStandalone = alone.matcher(out.text).matches();
-//
-////            if (out.isClosing) offset = offset.substring(4);
-//
-//            // Ищем имя тега
-//            Matcher n = name.matcher(out.text);
-//            if (!n.find()) continue; // Нашли комментарий или что похуже.
-//            out.name = out.text.substring(n.start(), n.end());
-//
-//            // Свойства тега
-//            Matcher properties = property.matcher(out.text);
-////            U.v(offset + out.name);
-//
-//            while (properties.find()) {
-//                String[] kw = out.text.substring(properties.start(), properties.end()).split("=", 2);
-//                out.props.put(kw[0], kw[1].substring(1, kw[1].length() - 1));
-////                U.v(offset + "\t" + kw[0] + ":\t" + kw[1].substring(1, kw[1].length() - 1));
-//            }
-//
-////            if (!out.isClosing && !out.isStandalone) offset += "....";
-//
-//            tags.add(out);
-//        }
+
+        for (int i = 0; i < tags.size(); i++)
+            tags.get(i).index = i;
     }
 
-    public ArrayList<Tag> getAllTagsByProperty(String key, String value) {
+    public List<Tag> getAllTagsByProperty(String key, String value) {
         ArrayList<Tag> _return = new ArrayList<>();
         for (Tag tag : this) {
             if (value.equals(tag.props.get(key))) _return.add(tag);
@@ -109,23 +50,23 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
         return _return;
     }
 
-    public Vector<Integer> getAllIDsByName(String div) {
-        Vector<Integer> _return = new Vector<>();
+    public List<Integer> getAllIDsByName(String div) {
+        ArrayList<Integer> _return = new ArrayList<>();
         for (int i = 0; i != tags.size(); i++) {
             if (div.equals(tags.get(i).name)) _return.add(i);
         }
         return _return;
     }
 
-    public Vector<Integer> getAllIDsByProperty(String key, String value) {
-        Vector<Integer> _return = new Vector<>();
+    public List<Integer> getAllIDsByProperty(String key, String value) {
+        ArrayList<Integer> _return = new ArrayList<>();
         for (int i = 0; i != tags.size(); i++) {
             if (value.equals(tags.get(i).props.get(key))) _return.add(i);
         }
         return _return;
     }
 
-    public ArrayList<Tag> getAllTagsByName(String name) {
+    public List<Tag> getAllTagsByName(String name) {
         ArrayList<Tag> _return = new ArrayList<>();
         for (Tag tag : this) {
             if (tag.name.equals(name)) _return.add(tag);
@@ -150,8 +91,7 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
     }
 
     public int getIndexForTag(Tag tag) {
-        for (int i = 0; i != tags.size(); i++) if (tags.get(i) == tag) return i;
-        throw new TagNotFoundException();
+        return tag.index - offset;
     }
 
     public int getTagIndexForName(String name) {
@@ -214,20 +154,52 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
      */
     public HTMLParser getParserForIndex(int index) {
         HTMLParser _return = new HTMLParser();
+        _return.offset = index;
         _return.html = html;
-        int level = 0, findex;
 
         Tag tag = tags.get(index);
         if (tag.isClosing) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
         if (tag.isStandalone) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
+
+        int level = 0, findex;
         for (findex = index; findex != tags.size(); findex++) {
             Tag check = tags.get(findex);
             _return.tags.add(check);
 
-            if (check.isClosing) level--;
-            else if (!check.isStandalone) level++;
+            if (!check.isComment)
+                if (check.isClosing) level--;
+                else if (!check.isStandalone) level++;
             if (level == 0 && check.isClosing && check.name.equals(tag.name))
                 break;
+        }
+
+        return _return;
+    }
+
+    public List<Tag> getTopChildren(Tag tag) {
+        if (tag.isClosing) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
+        if (tag.isStandalone) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
+
+        int level = 0, index = getIndexForTag(tag);
+
+        ArrayList<Tag> _return = new ArrayList<>();
+
+        for (; index != tags.size(); index++) {
+            Tag check = tags.get(index);
+
+            if (!check.isComment) {
+                if (check.isClosing) level--;
+                else if (!check.isStandalone) level++;
+            }
+
+
+//            U.v(level + U.tabs(level + (check.isClosing ? 1 : 0)) + check.text);
+            if (level == 2 && !check.isClosing)
+                _return.add(check);
+
+            if (level == 0 && check.isClosing && check.name.equals(tag.name))
+                break;
+
         }
 
         return _return;
@@ -247,4 +219,65 @@ public class HTMLParser implements Iterable<HTMLParser.Tag> {
             super();
         }
     }
+
+
+    /**
+     * Very simple implementation of XPath language interpreter.
+     */
+    public List<Tag> pseudoXPath(String path) {
+        ArrayList<Tag> results = new ArrayList<>(tags);
+
+        List<String> request = SU.charSplit(path, '/');
+
+        for (int index = 0; index < request.size(); index++) {
+
+            List<String> node = SU.charSplit(request.get(index), '&');
+
+            String name = node.remove(0);
+            if (!name.equals("*")) {
+                for (int i = 0; i < results.size(); ) {
+                    if (!results.get(i).name.equals(name)) {
+                        results.remove(i);
+                        continue;
+                    }
+                    i++;
+                }
+            }
+
+            for (String quiz : node) {
+                List<String> property = SU.charSplit(quiz, 2, '=');
+
+                String p_name = property.get(0);
+                String p_val = property.get(1);
+
+                for (int i = 0; i < results.size(); ) {
+                    Tag proc = results.get(i);
+
+                    if (!(proc.props.containsKey(p_name) && proc.props.get(p_name).equals(p_val))) {
+                        results.remove(i);
+                        continue;
+                    }
+
+                    i++;
+                }
+
+            }
+
+            if (index < request.size() - 1) {
+                ArrayList<Tag> top = new ArrayList<>();
+                for (Tag tag : results)
+                    if (!(tag.isStandalone || tag.isComment || tag.isClosing))
+                        top.addAll(getTopChildren(tag));
+                results = top;
+            }
+
+        }
+
+        return results;
+    }
+
+    public String pseudoXPathStr(String str) {
+        return getContents(pseudoXPath(str).get(0));
+    }
+
 }

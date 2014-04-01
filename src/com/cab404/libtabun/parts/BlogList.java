@@ -1,7 +1,8 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
-import com.cab404.libtabun.facility.HTMLParser;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.facility.html_parser.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -56,7 +57,7 @@ public class BlogList implements PaginatedPart {
                         lab.name = doc.getContents(doc.getTagIndexByProperty("class", "blog-name"));
                         lab.votes = U.parseFloat(doc.getContents(doc.getTagIndexForParamRegex("class", "^\\Qcell-rating\\E.+")));
                         lab.readers = U.parseInt(doc.getContents(doc.getTagIndexByProperty("class", "cell-readers")));
-                        lab.url_name = U.bsub(doc.getTagByProperty("class", "blog-name").props.get("href"), "/blog/", "/");
+                        lab.url_name = SU.bsub(doc.getTagByProperty("class", "blog-name").props.get("href"), "/blog/", "/");
                         labels.add(lab);
                     } catch (HTMLParser.TagNotFoundException unchecked) {
                         // Поисковые пегасы ничего не нашли.
@@ -92,7 +93,7 @@ public class BlogList implements PaginatedPart {
     public void find(User user, String phrase) {
         HttpRequestBase request = RequestFactory.post("/blogs/ajax-search/")
                 .XMLRequest()
-                .setBody("blog_title=" + U.rl(phrase) + "&security_ls_key=" + user.key)
+                .setBody("blog_title=" + SU.rl(phrase) + "&security_ls_key=" + user.key)
                 .build();
 
         String read = ResponseFactory.read(user.execute(request));

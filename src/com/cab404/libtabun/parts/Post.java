@@ -1,14 +1,17 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
-import com.cab404.libtabun.facility.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.facility.html_parser.HTMLParser;
+import com.cab404.libtabun.facility.html_parser.Tag;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Post extends PaWPoL.PostLabel {
     public static enum Type {
@@ -74,7 +77,7 @@ public class Post extends PaWPoL.PostLabel {
                 }
 
                 if (line.contains("var LIVESTREET_SECURITY_KEY")) {
-                    key = new LivestreetKey("/", U.sub(
+                    key = new LivestreetKey("/", SU.sub(
                             line,
                             "var LIVESTREET_SECURITY_KEY = '",
                             "';"
@@ -84,7 +87,7 @@ public class Post extends PaWPoL.PostLabel {
                 text.append(line).append("\n");
                 HTMLParser raw = new HTMLParser(text.toString());
 
-                id = U.parseInt(U.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
+                id = U.parseInt(SU.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
                 content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
                 name = raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap")).trim();
 
@@ -110,7 +113,7 @@ public class Post extends PaWPoL.PostLabel {
                 }
                 blog = new Blog();
                 blog.name = raw.getContents(blog_tag);
-                blog.url_name = U.bsub(raw.tags.get(blog_tag).props.get("href"), "/blog/", "/");
+                blog.url_name = SU.bsub(raw.tags.get(blog_tag).props.get("href"), "/blog/", "/");
 
                 int time_tag = raw.getTagIndexForName("time");
                 time = raw.getContents(time_tag).trim();
@@ -121,7 +124,7 @@ public class Post extends PaWPoL.PostLabel {
                 } catch (Exception e) {
                     votes = "±?";
                 }
-                ArrayList<HTMLParser.Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
+                List<Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
                 tags = new String[raw_tags.size()];
                 for (int i = 0; i != raw_tags.size(); i++) {
                     tags[i] = raw.getContents(raw_tags.get(i));
@@ -154,7 +157,7 @@ public class Post extends PaWPoL.PostLabel {
             if (part == 0)
                 // Находим заголовок с количеством комментариев.
                 if (line.contains("<span id=\"count-comments\">")) {
-                    count_comments_dec = Integer.parseInt(U.sub(line, "\">", "<"));
+                    count_comments_dec = Integer.parseInt(SU.sub(line, "\">", "<"));
                     count_comments = count_comments_dec;
                     part++;
                 } else ;
@@ -264,7 +267,7 @@ public class Post extends PaWPoL.PostLabel {
      */
     public boolean comment(User user, int parent, String text) {
         String body = "";
-        body += "&comment_text=" + U.rl(text);
+        body += "&comment_text=" + SU.rl(text);
         body += "&reply=" + parent;
         body += "&cmt_target_id=" + id;
         body += "&security_ls_key=" + key;

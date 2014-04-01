@@ -1,7 +1,9 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.U;
-import com.cab404.libtabun.facility.HTMLParser;
+import com.cab404.libtabun.facility.html_parser.Tag;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.facility.html_parser.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -91,12 +93,12 @@ public class Letter extends Part {
 
             name = parser.getContents(parser.getTagIndexByProperty("class", "topic-title"));
             text = parser.getContents(parser.getTagIndexByProperty("class", "topic-content text"));
-            id = U.parseInt(U.sub(parser.getTagByProperty("class", "topic-info-favourite").props.get("onclick"), "(", ","));
+            id = U.parseInt(SU.sub(parser.getTagByProperty("class", "topic-info-favourite").props.get("onclick"), "(", ","));
 
             whoisthere = new ArrayList<>();
             HTMLParser names = parser.getParserForIndex(parser.getTagIndexByProperty("class", "talk-recipients-header"));
 
-            for (HTMLParser.Tag name : names.getAllTagsByName("a")) {
+            for (Tag name : names.getAllTagsByName("a")) {
                 if (name.isClosing) continue;
                 whoisthere.add(names.getContents(name));
             }
@@ -123,7 +125,7 @@ public class Letter extends Part {
 
     public boolean comment(User user, int parent, String text) {
         String body = "";
-        body += "&comment_text=" + U.rl(text);
+        body += "&comment_text=" + SU.rl(text);
         body += "&reply=" + parent;
         body += "&cmt_target_id=" + id;
         body += "&security_ls_key=" + user.key;
@@ -224,14 +226,14 @@ public class Letter extends Part {
                 HTMLParser author;
                 author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-info"));
                 {
-                    comment.author = U.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
+                    comment.author = SU.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
                     comment.avatar = author.getTagByProperty("alt", "avatar").props.get("src");
                 }
 
                 // Попытка достать род. комментарий:
                 try {
                     HTMLParser comment_parent_goto = parser.getParserForIndex(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
-                    comment.parent = U.parseInt(U.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
+                    comment.parent = U.parseInt(SU.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
                 } catch (Throwable e) {
                     comment.parent = 0;
                 }
@@ -299,7 +301,7 @@ public class Letter extends Part {
             HTMLParser list = new HTMLParser(simp.all.toString());
 
             // Достаём и парсим заголовки
-            for (HTMLParser.Tag tr : list.getAllTagsByName("tr")) {
+            for (Tag tr : list.getAllTagsByName("tr")) {
                 if (tr.isClosing) continue;
                 Label label = new Label();
                 HTMLParser parser = list.getParserForIndex(list.getIndexForTag(tr));
@@ -308,11 +310,11 @@ public class Letter extends Part {
                 int title = parser.getTagIndexByProperty("class", "js-title-talk");
 
                 label.name = parser.getContents(title);
-                label.id = U.parseInt(U.bsub(parser.tags.get(title).props.get("href"), "read/", "/"));
+                label.id = U.parseInt(SU.bsub(parser.tags.get(title).props.get("href"), "read/", "/"));
                 label.last_message = parser.tags.get(title).props.get("title");
 
                 // Достаём участников, всех до единого!
-                ArrayList<HTMLParser.Tag> contacts =
+                java.util.List<Tag> contacts =
                         parser
                                 .getParserForIndex(
                                         parser
@@ -332,10 +334,11 @@ public class Letter extends Part {
                     label.comments = 0;
                 }
                 label.date =
-                        U.removeAllTags(
+                        SU.removeAllTags(
                                 parser.getContents(
                                         parser.getTagIndexByProperty("class", "cell-date ta-r")
-                                ).split("\\Q<br/>\\E")[0]).trim();
+                                ).split("\\Q<br/>\\E")[0]
+                        ).trim();
 
                 labels.add(label);
             }

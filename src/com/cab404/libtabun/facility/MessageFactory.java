@@ -1,6 +1,6 @@
 package com.cab404.libtabun.facility;
 
-import com.cab404.libtabun.U;
+import com.cab404.libtabun.util.U;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;

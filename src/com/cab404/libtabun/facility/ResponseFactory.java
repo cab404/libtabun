@@ -1,6 +1,6 @@
 package com.cab404.libtabun.facility;
 
-import com.cab404.libtabun.U;
+import com.cab404.libtabun.util.U;
 import org.apache.http.HttpResponse;
 
 import java.io.BufferedReader;
