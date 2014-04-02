@@ -1,24 +1,16 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.facility.RequestFactory;
-import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
-import com.cab404.libtabun.util.html_parser.HTMLParser;
-import com.cab404.libtabun.util.html_parser.Tag;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
+ *
  * @author cab404
  */
 public class UserInfo {
     public float strength, votes;
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
     public int id;
-
     public ArrayList<Userdata> personal;
     public ArrayList<Contact> contacts;
 
@@ -39,80 +31,6 @@ public class UserInfo {
         big_icon = uni.replace("***", "100x100");
     }
 
-    public UserInfo(User user, String username) {
-        this();
-        try {
-            ResponseFactory.read(
-                    user.execute(RequestFactory.get("/profile/" + username).build()),
-                    new UserInfoParser()
-            );
-        } catch (Exception ex) {
-            throw new RuntimeException("Ошибка при попытке достать страницу /profile/" + username, ex);
-        }
-    }
-
-    public UserInfo(User user) {
-        this(user, user.getLogin());
-    }
-
-    public class UserInfoParser extends U.TextPartParser {
-
-        @Override public void process(StringBuilder out) {
-            HTMLParser parser = new HTMLParser(out.toString());
-
-            // Достаём более-менее основную инфу.
-            try {
-
-                id = U.parseInt(SU.bsub(parser.xPathFirstTag("div&class=profile/div&class=vote-profile/div&id=*user_*").get("id"), "_", ""));
-                votes = U.parseFloat(parser.xPathStr("div&class=profile/div&class=vote-profile/div/div&class=*count/span"));
-                strength = U.parseFloat(parser.xPathStr("div&class=profile/div&class=strength/div&class=count"));
-                nick = parser.xPathStr("div&class=profile/h2&itemprop=nickname");
-
-                name = parser.xPathStr("div&class=profile/p&itemprop=name");
-                name = name == null ? "" : name;
-
-            } catch (Exception e) {
-                throw new RuntimeException("Пользователя не существует, или произошло незнамо что.\n" + parser.html, e);
-            }
-
-            // Достаём второстепенную инфу.
-            {
-                about = parser.xPathStr("div&class=*about/p&class=text");
-                big_icon = parser.xPathFirstTag("div&class=*about/a&class=avatar/img").get("src");
-                fillImages();
-            }
-
-            {
-                List<Tag> spans = parser.xPath("div&class=wrapper/div&class=*left/ul/li/span");
-                List<Tag> data = parser.xPath("div&class=wrapper/div&class=*left/ul/li/strong");
-                for (int i = 0; i < spans.size(); i++) {
-                    String key = SU.sub(parser.getContents(spans.get(i)), "", ":");
-                    String value = parser.getContents(data.get(i));
-
-                    personal.add(new Userdata(key, value));
-                }
-
-            }
-
-            // Достаём контакты. Тут легче, ибо <li>шних </li> нету.
-            {
-                List<Tag> liList = parser.xPath("div&class=wrapper/div&class=*right/ul/li");
-                for (Tag tag : liList) {
-                    String foo = parser.getContents(tag);
-                    String key = SU.sub(foo, "title=\"", "\"");
-                    String value = SU.removeAllTags(foo);
-                    contacts.add(new Contact(key, value));
-                }
-            }
-        }
-
-        @Override public boolean isStart(String line) {
-            return line.trim().equals("<div class=\"profile\">");
-        }
-        @Override public boolean isEnd(String line) {
-            return line.trim().equals("</div> <!-- /container -->");
-        }
-    }
 
     public static class Contact implements Map.Entry<String, String> {
 
@@ -125,8 +43,7 @@ public class UserInfo {
             TWITTER("twitter", "Твиттер"),
             FACEBOOK("facebook", "Facebook"),
             VKONTAKTE("vkontakte", "ВК"),
-            ODNOKLASSNIKI("odnoklassniki", "Одноклассники"),
-            UNKNOWN("???", "");
+            ODNOKLASSNIKI("odnoklassniki", "Одноклассники"),;
 
             public String name;
             public String normal_name;

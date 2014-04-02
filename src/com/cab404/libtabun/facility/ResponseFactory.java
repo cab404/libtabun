@@ -36,6 +36,30 @@ public class ResponseFactory {
     }
 
     /**
+     * Каждую новую полученную строку пропускает через listener
+     *
+     * @param listener Parser, слушающий каждую новую строку
+     * @param response Сбснна, откуда слушать.
+     * @param status   Статус загрузки ответа.
+     */
+    public static void read(HttpResponse response, Parser listener, StatusListener status) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
+        String line;
+
+        long length = response.getEntity().getContentLength();
+        long loaded = 0;
+        try {
+            while ((line = reader.readLine()) != null) {
+                listener.line(line);
+                loaded += line.length();
+                status.onProgressChange(loaded / (float) length);
+            }
+        } catch (IOException e) {
+            U.w(e);
+        }
+    }
+
+    /**
      * @see String read(HttpResponse, Parser)
      */
     public static String read(HttpResponse response) {
@@ -50,6 +74,10 @@ public class ResponseFactory {
             U.w(e);
         }
         return page;
+    }
+
+    public static interface StatusListener {
+        public void onProgressChange(float progress);
     }
 
     /**

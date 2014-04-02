@@ -1,10 +1,11 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.modular.HeaderProvider;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -17,15 +18,17 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Всё, что делает - подставляет печеньки.
  *
  * @author cab404
  */
-public class User {
+public class User implements HeaderProvider {
 
     private boolean isLoggedIn = false;
     public LivestreetKey key;
@@ -132,11 +135,11 @@ public class User {
             HttpClient client = new DefaultHttpClient();
 
             client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, follow);
-
             client.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
             client.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
 
             request.setHeader(cookies());
+
             HttpResponse response = client.execute(tabun, request);
 
             for (Header header : response.getHeaders("Set-Cookie"))
@@ -170,7 +173,9 @@ public class User {
                                 .addReferer(target.key.address)
                                 .setBody(body)
                                 .XMLRequest()
-                                .build()));
+                                .build()
+                )
+        );
 
         U.v(response);
         U.v(body);
@@ -207,7 +212,8 @@ public class User {
                                         "submit_topic_publish", ""
                                 )
                                 .build()
-                ), psto.getParser());
+                ), psto.getParser()
+        );
         return psto;
     }
 
@@ -245,6 +251,9 @@ public class User {
         }
 
         return stream;
+    }
+    @Override public Set<Header> getHeaders() {
+        return Collections.singleton(cookies());
     }
 
     public static class StreamElement {

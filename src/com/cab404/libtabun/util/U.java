@@ -2,6 +2,7 @@ package com.cab404.libtabun.util;
 
 import com.cab404.libtabun.facility.ResponseFactory;
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import java.util.TimeZone;
  */
 public class U {
     public static final String path = "tabun.everypony.ru";
+    public static final HttpHost host = new HttpHost(path, 80);
 
     /**
      * Делает абсолютно то же, что и Log.v("Luna Log", obj.toString()),
@@ -99,11 +101,12 @@ public class U {
         int minute = Integer.parseInt(datetime.substring(14, 16));
         int second = Integer.parseInt(datetime.substring(17, 19));
 
+        //noinspection MagicConstant
         calendar.set(year, month, day, hour, minute, second);
         return calendar;
     }
 
-    public static String tabs(int num){
+    public static String tabs(int num) {
         StringBuilder tabs = new StringBuilder();
         for (int i = 0; i < num; i++) tabs.append("\t");
         return tabs.toString();
