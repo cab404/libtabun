@@ -1,4 +1,4 @@
-package com.cab404.libtabun.facility.html_parser;
+package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
 
@@ -36,7 +36,7 @@ public class HTMLParser implements Iterable<Tag> {
     public HTMLParser(String parse) {
         this();
         html = parse;
-        tags = HTMLParser2.parse(parse);
+        tags = TagParser.parse(parse);
 
         for (int i = 0; i < tags.size(); i++)
             tags.get(i).index = i;
@@ -224,7 +224,7 @@ public class HTMLParser implements Iterable<Tag> {
     /**
      * Very simple implementation of XPath language interpreter.
      */
-    public List<Tag> pseudoXPath(String path) {
+    public List<Tag> xPath(String path) {
         ArrayList<Tag> results = new ArrayList<>(tags);
 
         List<String> request = SU.charSplit(path, '/');
@@ -234,14 +234,12 @@ public class HTMLParser implements Iterable<Tag> {
             List<String> node = SU.charSplit(request.get(index), '&');
 
             String name = node.remove(0);
-            if (!name.equals("*")) {
-                for (int i = 0; i < results.size(); ) {
-                    if (!results.get(i).name.equals(name)) {
-                        results.remove(i);
-                        continue;
-                    }
-                    i++;
+            for (int i = 0; i < results.size(); ) {
+                if (!SU.fast_match(name, results.get(i).name)) {
+                    results.remove(i);
+                    continue;
                 }
+                i++;
             }
 
             for (String quiz : node) {
@@ -253,7 +251,7 @@ public class HTMLParser implements Iterable<Tag> {
                 for (int i = 0; i < results.size(); ) {
                     Tag proc = results.get(i);
 
-                    if (!(proc.props.containsKey(p_name) && proc.props.get(p_name).equals(p_val))) {
+                    if (!(proc.props.containsKey(p_name) && SU.fast_match(p_val, proc.get(p_name)))) {
                         results.remove(i);
                         continue;
                     }
@@ -276,8 +274,12 @@ public class HTMLParser implements Iterable<Tag> {
         return results;
     }
 
-    public String pseudoXPathStr(String str) {
-        return getContents(pseudoXPath(str).get(0));
+    public String xPathStr(String str) {
+        return getContents(xPathFirstTag(str));
+    }
+
+    public Tag xPathFirstTag(String str) {
+        return xPath(str).get(0);
     }
 
 }

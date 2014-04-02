@@ -217,6 +217,28 @@ public class SU {
                 .replaceAll("&#039;", "'")
                 ;
     }
+
+    /**
+     * Works with patterns like asd*g
+     */
+    public static boolean fast_match(String regex, String data) {
+        List<String> strings = charSplit(regex, '*');
+
+        String copy = data;
+        int s = 0, f = 0;
+        for (String str : strings) {
+            s = copy.indexOf(str, 0);
+            f = s + str.length();
+
+            if (s == -1)
+                return false;
+
+            copy = copy.substring(0, s) + copy.substring(f);
+        }
+
+        return data.startsWith(strings.get(0)) && data.endsWith(strings.get(strings.size() - 1));
+    }
+
     public static String removeAllTags(String toProcess) {
         return toProcess.replaceAll("<.*?>", "");
     }

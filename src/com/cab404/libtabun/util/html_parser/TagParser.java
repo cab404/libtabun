@@ -1,4 +1,4 @@
-package com.cab404.libtabun.facility.html_parser;
+package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
 
@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author cab404
  */
-public class HTMLParser2 {
+public class TagParser {
 //    public static final boolean logging = false;
 //
 //    @SuppressWarnings("ConstantConditions")

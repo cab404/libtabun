@@ -1,11 +1,11 @@
-package com.cab404.libtabun.facility.html_parser;
+package com.cab404.libtabun.util.html_parser;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
-* @author cab404
-*/
+ * @author cab404
+ */
 public class Tag {
     public int index;
     public int start, end;
@@ -17,6 +17,10 @@ public class Tag {
 
     public Tag() {
         props = new HashMap<>();
+    }
+
+    public String get(String property) {
+        return props.get(property);
     }
 
     @Override public String toString() {

@@ -1,8 +1,8 @@
 package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.facility.html_parser.HTMLParser;
-import com.cab404.libtabun.facility.html_parser.Tag;
+import com.cab404.libtabun.util.html_parser.HTMLParser;
+import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
 

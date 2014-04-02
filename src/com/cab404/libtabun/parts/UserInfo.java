@@ -1,6 +1,6 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.facility.html_parser.HTMLParser;
+import com.cab404.libtabun.util.html_parser.HTMLParser;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.SU;
@@ -53,7 +53,7 @@ public class UserInfo {
         this(user, user.getLogin());
     }
 
-    public class UserInfoParser implements ResponseFactory.Parser {
+    public class UserInfoParser extends U.TextPartParser {
         int prt = 0;
         StringBuilder temp = new StringBuilder();
 
@@ -67,13 +67,16 @@ public class UserInfo {
                 case 1: {
                     HTMLParser parser = new HTMLParser(temp.toString());
 
+                    U.v(temp.toString());
                     // Достаём более-менее основную инфу.
                     try {
 
                         HTMLParser head_info = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile"));
 
                         HTMLParser vote_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "vote-profile"));
-                        id = U.parseInt(vote_part.tags.get(1).props.get("id").replace("vote_area_user_", ""));
+
+                        id = U.parseInt(parser.xPathFirstTag("div/div&class=vote-profile/div").get("id").replace("vote_area_user_", ""));
+
                         votes = U.parseFloat(vote_part.getContents(vote_part.getTagIndexByProperty("id", "vote_total_user_" + id)));
 
                         HTMLParser strength_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "strength"));
@@ -143,6 +146,15 @@ public class UserInfo {
                 return false;
             }
             return true;
+        }
+        @Override public void process(StringBuilder out) {
+
+        }
+        @Override public boolean isStart(String line) {
+            return line.trim().equals("<div class=\"profile\">");
+        }
+        @Override public boolean isEnd(String line) {
+            return line.trim().equals("</div> <!-- /container -->");
         }
     }
 
