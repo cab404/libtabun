@@ -187,15 +187,16 @@ public class HTMLParser implements Iterable<Tag> {
         for (; index != tags.size(); index++) {
             Tag check = tags.get(index);
 
-            if (!check.isComment) {
-                if (check.isClosing) level--;
-                else if (!check.isStandalone) level++;
-            }
+            if (!check.isComment && !check.isStandalone)
+                level += check.isClosing ? -1 : 0;
 
+//            U.v(level + U.tabs(level) + check.text);
 
-//            U.v(level + U.tabs(level + (check.isClosing ? 1 : 0)) + check.text);
-            if (level == 2 && !check.isClosing)
+            if (level == 1 && !check.isClosing)
                 _return.add(check);
+
+            if (!check.isComment && !check.isStandalone)
+                level += check.isClosing ? 0 : +1;
 
             if (level == 0 && check.isClosing && check.name.equals(tag.name))
                 break;
@@ -275,11 +276,19 @@ public class HTMLParser implements Iterable<Tag> {
     }
 
     public String xPathStr(String str) {
-        return getContents(xPathFirstTag(str));
+        try {
+            return getContents(xPathFirstTag(str));
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
+            return null;
+        }
     }
 
     public Tag xPathFirstTag(String str) {
-        return xPath(str).get(0);
+        try {
+            return xPath(str).get(0);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
 }

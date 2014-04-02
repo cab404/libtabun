@@ -1,6 +1,7 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +12,13 @@ import java.util.List;
  * @author cab404
  */
 public class TagParser {
-//    public static final boolean logging = false;
+    public static final boolean logging = false;
 //
-//    @SuppressWarnings("ConstantConditions")
-//    public static void v(Object obj) {
-//        if (logging)
-//            U.v(obj);
-//    }
+    @SuppressWarnings("ConstantConditions")
+    public static void v(Object obj) {
+        if (logging)
+            U.v(obj);
+    }
 
     private static final String
             COMM_START = "!--",
@@ -52,7 +53,7 @@ public class TagParser {
                 tag.name = COMM_START;
                 j = toParse.indexOf(COMM_END, i) + 3;
                 tag.text = toParse.substring(i, j);
-//                v(tag);
+                v(tag);
                 out.add(tag);
                 continue;
             }
@@ -73,7 +74,7 @@ public class TagParser {
             if (tag.name.charAt(0) == '!')
                 tag.isStandalone = true; // Handling !doctype.
 
-//            v(tag);
+            v(tag);
             if (name_and_everything_else.size() == 2) { // Parsing properties.
                 List<String> props = SU.charSplit(name_and_everything_else.get(1), '\"', '\'');
 

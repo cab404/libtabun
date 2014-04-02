@@ -1,12 +1,14 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.util.html_parser.HTMLParser;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.html_parser.HTMLParser;
+import com.cab404.libtabun.util.html_parser.Tag;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,102 +56,56 @@ public class UserInfo {
     }
 
     public class UserInfoParser extends U.TextPartParser {
-        int prt = 0;
-        StringBuilder temp = new StringBuilder();
 
-        @Override
-        public boolean line(String line) {
-            switch (prt) {
-                case 0:
-                    if (line.trim().equals("</div> <!-- /container -->")) prt++;
-                    else temp.append(line).append("\n");
-                    break;
-                case 1: {
-                    HTMLParser parser = new HTMLParser(temp.toString());
-
-                    U.v(temp.toString());
-                    // Достаём более-менее основную инфу.
-                    try {
-
-                        HTMLParser head_info = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile"));
-
-                        HTMLParser vote_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "vote-profile"));
-
-                        id = U.parseInt(parser.xPathFirstTag("div/div&class=vote-profile/div").get("id").replace("vote_area_user_", ""));
-
-                        votes = U.parseFloat(vote_part.getContents(vote_part.getTagIndexByProperty("id", "vote_total_user_" + id)));
-
-                        HTMLParser strength_part = head_info.getParserForIndex(head_info.getTagIndexByProperty("class", "strength"));
-                        strength = U.parseFloat(strength_part.getContents(strength_part.getTagIndexByProperty("id", "user_skill_" + id)));
-
-                        nick = head_info.getContents(head_info.getTagByProperty("itemprop", "nickname"));
-
-                        try {
-                            name = head_info.getContents(head_info.getTagByProperty("itemprop", "name"));
-                        } catch (HTMLParser.TagNotFoundException e) {
-                            name = "";
-                        }
-
-                    } catch (HTMLParser.TagNotFoundException e) {
-                        throw new RuntimeException("Пользователя не существует, или произошло незнамо что.\n" + parser.html, e);
-                    }
-
-                    // Достаём второстепенную инфу.
-                    {
-                        HTMLParser about_p = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-info-about"));
-                        try {
-                            about = about_p.getContents(about_p.getTagIndexByProperty("class", "text"));
-                        } catch (HTMLParser.TagNotFoundException e) {
-                            about = "";
-                        }
-                        big_icon = about_p.getTagByProperty("alt", "avatar").props.get("src");
-                        fillImages();
-                    }
-
-                    // Достаём ещё более второстепенную инфу. И она завёрнута сурово.
-                    {
-                        HTMLParser lists = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-left"));
-
-                        // И сказал cab404 хтмлпарсерам - плодитесь и размножайтесь.
-                        for (int list_id : lists.getAllIDsByName("ul")) {
-                            if (lists.get(list_id).isClosing) continue;
-                            HTMLParser list = lists.getParserForIndex(list_id);
-                            for (int entry_id : list.getAllIDsByName("li")) {
-                                if (list.get(entry_id).isClosing) continue;
-                                HTMLParser entry = list.getParserForIndex(entry_id);
-
-                                try {
-                                    String key = entry.getContents(entry.getTagIndexForName("span")).replaceAll(":", "");
-                                    String value = entry.getContents(entry.getTagIndexForName("strong"));
-
-                                    personal.add(new Userdata(key, value));
-                                } catch (Exception e) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    // Достаём контакты. Тут легче, ибо <li>шних </li> нету.
-                    {
-                        HTMLParser contact_p = parser.getParserForIndex(parser.getTagIndexByProperty("class", "profile-right"));
-                        for (int i : contact_p.getAllIDsByName("li")) {
-                            if (!contact_p.get(i).isClosing) {
-                                String foo = contact_p.getContents(i);
-                                String key = SU.sub(foo, "title=\"", "\"");
-                                String value = SU.removeAllTags(foo);
-                                contacts.add(new Contact(key, value));
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
-            return true;
-        }
         @Override public void process(StringBuilder out) {
+            HTMLParser parser = new HTMLParser(out.toString());
 
+            // Достаём более-менее основную инфу.
+            try {
+
+                id = U.parseInt(SU.bsub(parser.xPathFirstTag("div&class=profile/div&class=vote-profile/div&id=*user_*").get("id"), "_", ""));
+                votes = U.parseFloat(parser.xPathStr("div&class=profile/div&class=vote-profile/div/div&class=*count/span"));
+                strength = U.parseFloat(parser.xPathStr("div&class=profile/div&class=strength/div&class=count"));
+                nick = parser.xPathStr("div&class=profile/h2&itemprop=nickname");
+
+                name = parser.xPathStr("div&class=profile/p&itemprop=name");
+                name = name == null ? "" : name;
+
+            } catch (Exception e) {
+                throw new RuntimeException("Пользователя не существует, или произошло незнамо что.\n" + parser.html, e);
+            }
+
+            // Достаём второстепенную инфу.
+            {
+                about = parser.xPathStr("div&class=*about/p&class=text");
+                big_icon = parser.xPathFirstTag("div&class=*about/a&class=avatar/img").get("src");
+                fillImages();
+            }
+
+            {
+                List<Tag> spans = parser.xPath("div&class=wrapper/div&class=*left/ul/li/span");
+                List<Tag> data = parser.xPath("div&class=wrapper/div&class=*left/ul/li/strong");
+                for (int i = 0; i < spans.size(); i++) {
+                    String key = SU.sub(parser.getContents(spans.get(i)), "", ":");
+                    String value = parser.getContents(data.get(i));
+
+                    personal.add(new Userdata(key, value));
+                }
+
+            }
+
+            // Достаём контакты. Тут легче, ибо <li>шних </li> нету.
+            {
+                List<Tag> liList = parser.xPath("div&class=wrapper/div&class=*right/ul/li");
+                for (Tag tag : liList) {
+                    String foo = parser.getContents(tag);
+                    String key = SU.sub(foo, "title=\"", "\"");
+                    String value = SU.removeAllTags(foo);
+                    contacts.add(new Contact(key, value));
+                }
+            }
         }
+
         @Override public boolean isStart(String line) {
             return line.trim().equals("<div class=\"profile\">");
         }

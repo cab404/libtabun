@@ -223,20 +223,22 @@ public class SU {
      */
     public static boolean fast_match(String regex, String data) {
         List<String> strings = charSplit(regex, '*');
-
-        String copy = data;
+        if (!(data.startsWith(strings.get(0)) && data.endsWith(strings.get(strings.size() - 1))))
+            return false;
         int s = 0, f = 0;
+
+
         for (String str : strings) {
-            s = copy.indexOf(str, 0);
+            s = data.indexOf(str, 0);
             f = s + str.length();
 
             if (s == -1)
                 return false;
 
-            copy = copy.substring(0, s) + copy.substring(f);
+            data = data.substring(0, s) + data.substring(f);
         }
 
-        return data.startsWith(strings.get(0)) && data.endsWith(strings.get(strings.size() - 1));
+        return true;
     }
 
     public static String removeAllTags(String toProcess) {
