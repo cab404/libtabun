@@ -1,5 +1,6 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.data.PostLabel;
 import com.cab404.libtabun.data.UserInfo;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
@@ -14,7 +15,7 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Post extends PaWPoL.PostLabel {
+public class Post extends PostLabel {
     public static enum Type {
         QUIZ, SIMPLE
     }

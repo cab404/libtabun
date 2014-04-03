@@ -145,4 +145,25 @@ public class U {
 
 
     }
+
+    public static class Timer {
+        long time;
+
+        public Timer() {
+            set();
+        }
+
+        public void set() {
+            time = System.nanoTime();
+        }
+
+        public long get() {
+            return System.nanoTime() - time;
+        }
+
+        public long getMs() {
+            return (System.nanoTime() - time) / 1000000;
+        }
+
+    }
 }

@@ -5,11 +5,10 @@ import java.util.Calendar;
 /**
  * @author cab404
  */
-abstract class Part {
-    LivestreetKey key;
-    String type;
-    Calendar date;
-
+public abstract class Part {
+    public LivestreetKey key;
+    public String type;
+    public Calendar date;
 
     public int id;
 }

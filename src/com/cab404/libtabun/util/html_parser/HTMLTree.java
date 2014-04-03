@@ -3,7 +3,10 @@ package com.cab404.libtabun.util.html_parser;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -19,6 +22,7 @@ public class HTMLTree implements Iterable<Tag> {
     private LevelAnalyzer leveled;
     private List<Tag> tags;
     public final String html;
+
 
     @Override
     public Iterator<Tag> iterator() {
@@ -45,11 +49,11 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public int getLevel(int index) {
-        return leveled.tags.get(index + start).level;
+        return leveled.get(index + start).getLevel();
     }
 
     public int getLevel(Tag tag) {
-        return leveled.tags.get(tag.index).level;
+        return leveled.get(tag.index).getLevel();
     }
 
 
@@ -61,15 +65,20 @@ public class HTMLTree implements Iterable<Tag> {
     public HTMLTree(String parse) {
         tags = new ArrayList<>();
         html = parse;
+
+        U.Timer timer = new U.Timer();
         tags = TagParser.parse(parse);
+        U.v("Parsed tags in " + timer.getMs() + "ms.");
+
         tags = Collections.unmodifiableList(tags);
         end = tags.size();
 
 
-        leveled = new LevelAnalyzer();
-        for (Tag tag : tags)
-            leveled.add(tag);
+        timer.set();
+        leveled = new LevelAnalyzer(this);
         leveled.fixLayout();
+
+        U.v("Performed error analysis in " + timer.getMs() + "ms.");
 
         for (int i = 0; i < end; i++)
             tags.get(i).index = i;
@@ -192,7 +201,7 @@ public class HTMLTree implements Iterable<Tag> {
         for (; index < tags.size(); index++) {
 
             Tag check = get(index);
-            int c_level = leveled.tags.get(check.index).level;
+            int c_level = getLevel(check);
 
             if (getLevel(check) - 1 == level)
                 if (check.isOpening() || check.isStandalone())
@@ -300,149 +309,6 @@ public class HTMLTree implements Iterable<Tag> {
             return xPath(str).get(0);
         } catch (IndexOutOfBoundsException e) {
             return null;
-        }
-    }
-
-    /**
-     * Довольно простой эвристический анализатор ошибок HTML.
-     */
-    private static class LevelAnalyzer {
-        LinkedList<LeveledTag> tags;
-        LinkedList<String> opened_tags;
-
-        private LevelAnalyzer() {
-            tags = new LinkedList<>();
-            opened_tags = new LinkedList<>();
-        }
-
-        private class LeveledTag {
-            Tag tag;
-            int level, index;
-            private LeveledTag(Tag tag, int level) {
-                this.tag = tag;
-                this.level = level;
-                index = tags.size();
-            }
-        }
-
-        /**
-         * Ищет открывающий тег для текущей позиции.
-         */
-        private LeveledTag findBackOpening(String name) {
-            int level = 1;
-            for (int i = tags.size() - 1; i >= 0; i--) {
-                LeveledTag checking = tags.get(i);
-
-                if (checking.tag.isStandalone()) continue;
-
-                if (checking.tag.name.equals(name)) {
-                    if (checking.tag.isClosing()) level++;
-                    else level--;
-                    if (level == 0) return checking;
-                }
-
-            }
-            return null;
-        }
-
-        /**
-         * Делаем из незакрытых тегов теги standalone (<tag/>)
-         */
-        private void fixLyingLoners(LeveledTag start) {
-            HashMap<String, Integer> levels = new HashMap<>();
-
-            for (int i = tags.size() - 1; i > start.index; i--) {
-                LeveledTag checking = tags.get(i);
-
-                int c_level;
-                if (!levels.containsKey(checking.tag.name)) {
-                    levels.put(checking.tag.name, 0);
-                    c_level = 0;
-                } else {
-                    c_level = levels.get(checking.tag.name);
-                }
-
-
-                if (checking.tag.isClosing()) {
-                    c_level++;
-                    levels.put(checking.tag.name, c_level);
-                }
-
-                if (checking.tag.isOpening()) {
-                    c_level--;
-                    if (c_level < 0) {
-                        checking.tag.type = Tag.Type.STANDALONE;
-                        c_level++;
-                    }
-                    levels.put(checking.tag.name, c_level);
-                }
-
-
-            }
-
-        }
-
-        /**
-         * Перерасставляет отступы.
-         */
-        public void fixLayout() {
-            int layer = 0;
-            for (LeveledTag curr : tags) {
-
-                if (curr.tag.isClosing())
-                    layer--;
-
-                curr.level = layer;
-
-                if (curr.tag.isOpening())
-                    layer++;
-
-            }
-        }
-
-        public void add(Tag tag) {
-            if (tag.isClosing()) {
-                int level;
-                LeveledTag opening = findBackOpening(tag.name);
-
-                if (opening == null) {
-                    level = lastLevel();
-                    tag.type = Tag.Type.STANDALONE;
-                } else {
-                    level = opening.level;
-                    fixLyingLoners(opening);
-                }
-
-                tags.add(new LeveledTag(tag, level));
-            } else {
-                tags.add(new LeveledTag(tag, currentLevel()));
-            }
-        }
-
-        private int currentLevel() {
-            if (tags.isEmpty()) return 0;
-            else {
-                LeveledTag last = tags.getLast();
-                if (last.tag.isOpening())
-                    return last.level + 1;
-                else
-                    return last.level;
-            }
-        }
-
-        private int lastLevel() {
-            if (tags.isEmpty())
-                return 0;
-            else
-                return tags.getLast().level;
-        }
-
-        @Override public String toString() {
-            StringBuilder builder = new StringBuilder();
-            for (LeveledTag tag : tags) {
-                builder.append(U.tabs(tag.level)).append(tag.tag).append("\n");
-            }
-            return builder.toString();
         }
     }
 

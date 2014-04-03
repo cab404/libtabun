@@ -1,5 +1,6 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.data.PostLabel;
 import com.cab404.libtabun.data.UserInfo;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
@@ -18,26 +19,6 @@ import java.util.List;
  * @author cab404
  */
 public class PaWPoL extends Part {
-
-    public static class PostLabel extends Part {
-        public String name, votes;
-        public UserInfo author;
-        public String content, time;
-        public String[] tags;
-        public Blog blog;
-
-        public boolean vote_enabled = false, voted = false;
-        public boolean isInFavs = false;
-        public int your_vote = 0;
-
-        public int comments = 0, comments_new = 0;
-
-
-        public PostLabel() {
-            type = "Topic";
-            name = votes = time = content = "";
-        }
-    }
 
     public static class PostLabelParser extends U.TextPartParser {
         public PostLabel pl = new PostLabel();

@@ -17,6 +17,7 @@ public class CommonInfoModule implements Module<CommonInfo> {
     @Override public CommonInfo extractData(HTMLTree tree, String url) {
         CommonInfo info = new CommonInfo();
 
+        U.v(tree);
         try {
             tree = tree.getTree(tree.xPathFirstTag("html/body/div&id=container/header/div&class=dropdown-user"));
             info.isLoggedIn = true;
