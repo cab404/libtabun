@@ -46,13 +46,16 @@ public class ResponseFactory {
         BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
         String line;
 
+
         long length = response.getEntity().getContentLength();
+        if (length == -1) length = 1;
+
         long loaded = 0;
         try {
             while ((line = reader.readLine()) != null) {
                 listener.line(line);
                 loaded += line.length();
-                status.onProgressChange(loaded / (float) length);
+                status.onProgressChange((float) loaded / (float) length);
             }
         } catch (IOException e) {
             U.w(e);
@@ -77,7 +80,20 @@ public class ResponseFactory {
     }
 
     public static interface StatusListener {
+
+        public void onResponseStart();
+        public void onResponseFinished();
+
+        public void onLoadingStarted();
         public void onProgressChange(float progress);
+        public void onLoadingFinished();
+
+        public void onParseStarted();
+        public void onParseFinished();
+
+        public void onFail();
+        public void onFinish();
+
     }
 
     /**
@@ -93,6 +109,7 @@ public class ResponseFactory {
                     return new DeflaterInputStream(response.getEntity().getContent());
             } else
                 return response.getEntity().getContent();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

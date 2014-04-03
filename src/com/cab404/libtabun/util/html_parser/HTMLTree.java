@@ -1,10 +1,9 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -12,9 +11,10 @@ import java.util.regex.Pattern;
  *
  * @author cab404
  */
-public class HTMLParser implements Iterable<Tag> {
+public class HTMLTree implements Iterable<Tag> {
 
     int offset = 0;
+    SimpleLevelAnalyzer leveled;
 
     @Override
     public Iterator<Tag> iterator() {
@@ -29,14 +29,26 @@ public class HTMLParser implements Iterable<Tag> {
     public List<Tag> tags;
     public String html;
 
-    private HTMLParser() {
+    private HTMLTree() {
         tags = new ArrayList<>();
     }
 
-    public HTMLParser(String parse) {
+    public HTMLTree(String parse) {
         this();
         html = parse;
         tags = TagParser.parse(parse);
+
+        for (int i = 0; i < tags.size(); )
+            if (tags.get(i).isComment())
+                tags.remove(i);
+            else i++;
+
+        leveled = new SimpleLevelAnalyzer();
+
+        for (Tag tag : tags)
+            leveled.add(tag);
+
+        U.v(leveled);
 
         for (int i = 0; i < tags.size(); i++)
             tags.get(i).index = i;
@@ -117,10 +129,10 @@ public class HTMLParser implements Iterable<Tag> {
         for (check_index = opening_tag_index; check_index < tags.size(); check_index++) {
             Tag check = tags.get(check_index);
 
-            if (check.isClosing) level--;
-            else if (!check.isStandalone) level++;
+            if (check.isClosing()) level--;
+            if (check.isOpening()) level++;
 
-            if (level == 0 && check.isClosing && check.name.equals(tag.name))
+            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
                 return check_index;
         }
 
@@ -140,36 +152,45 @@ public class HTMLParser implements Iterable<Tag> {
         for (check_index = index; check_index < tags.size(); check_index++) {
             Tag check = tags.get(check_index);
 
-            if (check.isClosing) level--;
-            else if (!check.isStandalone) level++;
-            if (level == 0 && check.isClosing && check.name.equals(tag.name))
+            if (check.isClosing()) level--;
+            if (check.isOpening()) level++;
+
+            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
                 return html.substring(tag.end, check.start);
         }
 
         return "";
     }
 
+
     /**
      * Возвращает уровень тегов целиком.
      */
-    public HTMLParser getParserForIndex(int index) {
-        HTMLParser _return = new HTMLParser();
+    public HTMLTree getTree(Tag tag) {
+        return getTree(getIndexForTag(tag));
+    }
+
+    /**
+     * Возвращает уровень тегов целиком.
+     */
+    public HTMLTree getTree(int index) {
+        HTMLTree _return = new HTMLTree();
         _return.offset = index;
         _return.html = html;
 
         Tag tag = tags.get(index);
-        if (tag.isClosing) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
-        if (tag.isStandalone) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
+        if (tag.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
+        if (tag.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
 
         int level = 0, findex;
         for (findex = index; findex != tags.size(); findex++) {
             Tag check = tags.get(findex);
             _return.tags.add(check);
 
-            if (!check.isComment)
-                if (check.isClosing) level--;
-                else if (!check.isStandalone) level++;
-            if (level == 0 && check.isClosing && check.name.equals(tag.name))
+            if (check.isClosing()) level--;
+            if (check.isOpening()) level++;
+
+            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
                 break;
         }
 
@@ -177,8 +198,8 @@ public class HTMLParser implements Iterable<Tag> {
     }
 
     public List<Tag> getTopChildren(Tag tag) {
-        if (tag.isClosing) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
-        if (tag.isStandalone) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
+        if (tag.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
+        if (tag.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
 
         int level = 0, index = getIndexForTag(tag);
 
@@ -187,18 +208,16 @@ public class HTMLParser implements Iterable<Tag> {
         for (; index != tags.size(); index++) {
             Tag check = tags.get(index);
 
-            if (!check.isComment && !check.isStandalone)
-                level += check.isClosing ? -1 : 0;
+            level += check.isClosing() ? -1 : 0;
 
 //            U.v(level + U.tabs(level) + check.text);
 
-            if (level == 1 && !check.isClosing)
+            if (level == 1 && check.isOpening())
                 _return.add(check);
 
-            if (!check.isComment && !check.isStandalone)
-                level += check.isClosing ? 0 : +1;
+            level += check.isClosing() ? 0 : +1;
 
-            if (level == 0 && check.isClosing && check.name.equals(tag.name))
+            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
                 break;
 
         }
@@ -208,7 +227,7 @@ public class HTMLParser implements Iterable<Tag> {
 
     @Override
     public String toString() {
-        return getContents(0);
+        return leveled.toString();
     }
 
     public static class TagNotFoundException extends RuntimeException {
@@ -265,7 +284,7 @@ public class HTMLParser implements Iterable<Tag> {
             if (index < request.size() - 1) {
                 ArrayList<Tag> top = new ArrayList<>();
                 for (Tag tag : results)
-                    if (!(tag.isStandalone || tag.isComment || tag.isClosing))
+                    if (tag.isOpening())
                         top.addAll(getTopChildren(tag));
                 results = top;
             }
@@ -288,6 +307,149 @@ public class HTMLParser implements Iterable<Tag> {
             return xPath(str).get(0);
         } catch (IndexOutOfBoundsException e) {
             return null;
+        }
+    }
+
+    /**
+     * Довольно простой эвристический анализатор HTML.
+     */
+    private static class SimpleLevelAnalyzer {
+        LinkedList<LeveledTag> tags;
+        LinkedList<String> opened_tags;
+
+        private SimpleLevelAnalyzer() {
+            tags = new LinkedList<>();
+            opened_tags = new LinkedList<>();
+        }
+
+        private class LeveledTag {
+            Tag tag;
+            int level, index;
+            private LeveledTag(Tag tag, int level) {
+                this.tag = tag;
+                this.level = level;
+                index = tags.size();
+            }
+        }
+
+        /**
+         * Ищет открывающий тег для текущей позиции.
+         */
+        LeveledTag findBackOpening(String name) {
+            int level = 1;
+            for (int i = tags.size() - 1; i >= 0; i--) {
+                LeveledTag checking = tags.get(i);
+
+                if (checking.tag.isStandalone()) continue;
+
+                if (checking.tag.name.equals(name)) {
+                    if (checking.tag.isClosing()) level++;
+                    else level--;
+                    if (level == 0) return checking;
+                }
+
+            }
+            return null;
+        }
+
+        /**
+         * Делаем из незакрытых тегов теги standalone (<tag/>)
+         */
+        void fixLyingLoners(LeveledTag start) {
+            HashMap<String, Integer> levels = new HashMap<>();
+
+            int fixed_level = tags.getLast().level;
+
+            for (int i = tags.size() - 1; i > start.index; i--) {
+                LeveledTag checking = tags.get(i);
+
+                int c_level;
+                if (!levels.containsKey(checking.tag.name)) {
+                    levels.put(checking.tag.name, 0);
+                    c_level = 0;
+                } else {
+                    c_level = levels.get(checking.tag.name);
+                }
+
+
+                if (checking.tag.isClosing()) {
+                    c_level++;
+                    levels.put(checking.tag.name, c_level);
+                }
+
+                if (checking.tag.isOpening()) {
+                    c_level--;
+                    if (c_level < 0) {
+                        checking.tag.type = Tag.Type.STANDALONE;
+                        c_level++;
+                    }
+                    levels.put(checking.tag.name, c_level);
+                }
+
+
+            }
+
+            for (int i = start.index + 1; i < tags.size() - 1; i++) {
+                LeveledTag curr = tags.get(i);
+
+                if (curr.tag.isClosing())
+                    fixed_level--;
+
+                curr.level = fixed_level;
+
+                if (curr.tag.isOpening())
+                    fixed_level++;
+
+            }
+
+        }
+
+
+        public void add(Tag tag) {
+            if (tag.isComment()) return;
+
+            if (tag.isClosing()) {
+                int level;
+                LeveledTag opening = findBackOpening(tag.name);
+
+                if (opening == null) {
+                    level = lastLevel();
+                    tag.type = Tag.Type.STANDALONE;
+                } else {
+                    level = opening.level;
+                    fixLyingLoners(opening);
+                }
+
+                tags.add(new LeveledTag(tag, level));
+            } else {
+                tags.add(new LeveledTag(tag, currentLevel()));
+            }
+        }
+
+        int currentLevel() {
+            if (tags.isEmpty()) return 0;
+            else {
+                LeveledTag last = tags.getLast();
+                if (last.tag.isOpening())
+                    return last.level + 1;
+                else
+                    return last.level;
+            }
+        }
+
+        int lastLevel() {
+            if (tags.isEmpty())
+                return 0;
+            else
+                return tags.getLast().level;
+        }
+
+        @Override public String toString() {
+            StringBuilder builder = new StringBuilder();
+            for (LeveledTag tag : tags) {
+                builder.append(U.tabs(tag.level)).append(tag.tag).append("\n");
+            }
+            return builder.toString();
         }
     }
 

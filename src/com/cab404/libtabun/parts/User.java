@@ -5,7 +5,6 @@ import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
-import com.cab404.libtabun.util.modular.HeaderProvider;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -18,17 +17,15 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Всё, что делает - подставляет печеньки.
  *
  * @author cab404
  */
-public class User implements HeaderProvider {
+public class User {
 
     private boolean isLoggedIn = false;
     public LivestreetKey key;
@@ -251,9 +248,6 @@ public class User implements HeaderProvider {
         }
 
         return stream;
-    }
-    @Override public Set<Header> getHeaders() {
-        return Collections.singleton(cookies());
     }
 
     public static class StreamElement {

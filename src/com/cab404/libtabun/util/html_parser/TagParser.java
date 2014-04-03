@@ -2,6 +2,7 @@ package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.html_parser.Tag.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public class TagParser {
     public static final boolean logging = false;
-//
+    //
     @SuppressWarnings("ConstantConditions")
     public static void v(Object obj) {
         if (logging)
@@ -38,6 +39,7 @@ public class TagParser {
 
 
             Tag tag = new Tag();
+            tag.type = Type.OPENING;
             tag.start = i;
             tag.end = j + 1;
             tag.text = toParse.substring(i, j + 1);
@@ -48,8 +50,7 @@ public class TagParser {
 
 
             if (inner.startsWith(COMM_START)) {
-                tag.isComment = true;
-                tag.isStandalone = true;
+                tag.type = Type.COMMENT;
                 tag.name = COMM_START;
                 j = toParse.indexOf(COMM_END, i) + 3;
                 tag.text = toParse.substring(i, j);
@@ -60,10 +61,10 @@ public class TagParser {
 
 
             if (inner.charAt(0) == '/') {
-                tag.isClosing = true;
+                tag.type = Type.CLOSING;
                 inner = toParse.substring(i + 2, j);
             } else if (inner.charAt(l) == '/') {
-                tag.isStandalone = true;
+                tag.type = Type.STANDALONE;
                 inner = toParse.substring(i + 1, j - 1);
             }
 
@@ -72,7 +73,7 @@ public class TagParser {
             tag.name = name_and_everything_else.get(0);
 
             if (tag.name.charAt(0) == '!')
-                tag.isStandalone = true; // Handling !doctype.
+                tag.type = Type.COMMENT; // Handling !doctype and others.
 
             v(tag);
             if (name_and_everything_else.size() == 2) { // Parsing properties.

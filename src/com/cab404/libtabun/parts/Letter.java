@@ -1,9 +1,9 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
-import com.cab404.libtabun.util.html_parser.HTMLParser;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -69,10 +69,10 @@ public class Letter extends Part {
         int num = 0;
 
         @Override public void process(StringBuilder out) {
-            HTMLParser parser = new HTMLParser(out.toString());
+            HTMLTree parser = new HTMLTree(out.toString());
             try {
                 num = U.parseInt(parser.getContents(parser.getTagIndexByProperty("class", "new-messages")));
-            } catch (HTMLParser.TagNotFoundException ignored) {
+            } catch (HTMLTree.TagNotFoundException ignored) {
             }
 
 
@@ -89,17 +89,17 @@ public class Letter extends Part {
 
         @Override public void process(StringBuilder out) {
             String built = out.toString();
-            HTMLParser parser = new HTMLParser(built);
+            HTMLTree parser = new HTMLTree(built);
 
             name = parser.getContents(parser.getTagIndexByProperty("class", "topic-title"));
             text = parser.getContents(parser.getTagIndexByProperty("class", "topic-content text"));
             id = U.parseInt(SU.sub(parser.getTagByProperty("class", "topic-info-favourite").props.get("onclick"), "(", ","));
 
             whoisthere = new ArrayList<>();
-            HTMLParser names = parser.getParserForIndex(parser.getTagIndexByProperty("class", "talk-recipients-header"));
+            HTMLTree names = parser.getTree(parser.getTagIndexByProperty("class", "talk-recipients-header"));
 
             for (Tag name : names.getAllTagsByName("a")) {
-                if (name.isClosing) continue;
+                if (name.isClosing()) continue;
                 whoisthere.add(names.getContents(name));
             }
 
@@ -209,7 +209,7 @@ public class Letter extends Part {
             public Comment comment = new Comment();
 
             @Override public void process(StringBuilder out) {
-                HTMLParser parser = new HTMLParser(out.toString());
+                HTMLTree parser = new HTMLTree(out.toString());
 
                 String props = parser.getTagByName("section").props.get("class");
                 String tmp = parser.getTagByName("section").props.get("id");
@@ -219,12 +219,12 @@ public class Letter extends Part {
 
                 comment.body = parser.getContents(parser.getTagIndexByProperty("class", " text")).replaceAll("\t", "");
                 // Тут чуточку сложнее.
-                comment.time = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-date")).getTagByName("time").props.get("datetime");
+                comment.time = parser.getTree(parser.getTagIndexByProperty("class", "comment-date")).getTagByName("time").props.get("datetime");
 
                 // Достаём автора и аватарку.
 
-                HTMLParser author;
-                author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-info"));
+                HTMLTree author;
+                author = parser.getTree(parser.getTagIndexByProperty("class", "comment-info"));
                 {
                     comment.author = SU.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
                     comment.avatar = author.getTagByProperty("alt", "avatar").props.get("src");
@@ -232,7 +232,7 @@ public class Letter extends Part {
 
                 // Попытка достать род. комментарий:
                 try {
-                    HTMLParser comment_parent_goto = parser.getParserForIndex(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
+                    HTMLTree comment_parent_goto = parser.getTree(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
                     comment.parent = U.parseInt(SU.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
                 } catch (Throwable e) {
                     comment.parent = 0;
@@ -298,13 +298,13 @@ public class Letter extends Part {
             U.v(simp.all);
 
             labels.clear();
-            HTMLParser list = new HTMLParser(simp.all.toString());
+            HTMLTree list = new HTMLTree(simp.all.toString());
 
             // Достаём и парсим заголовки
             for (Tag tr : list.getAllTagsByName("tr")) {
-                if (tr.isClosing) continue;
+                if (tr.isClosing()) continue;
                 Label label = new Label();
-                HTMLParser parser = list.getParserForIndex(list.getIndexForTag(tr));
+                HTMLTree parser = list.getTree(list.getIndexForTag(tr));
 
                 // Достаём всё из заголовка
                 int title = parser.getTagIndexByProperty("class", "js-title-talk");
@@ -316,7 +316,7 @@ public class Letter extends Part {
                 // Достаём участников, всех до единого!
                 java.util.List<Tag> contacts =
                         parser
-                                .getParserForIndex(
+                                .getTree(
                                         parser
                                                 .getTagIndexByProperty("class", "cell-recipients")
                                 )
@@ -330,7 +330,7 @@ public class Letter extends Part {
                 // Ну и... достаём другие данные.
                 try {
                     label.comments = U.parseInt(parser.getContents(parser.getTagByName("span")));
-                } catch (HTMLParser.TagNotFoundException ex) {
+                } catch (HTMLTree.TagNotFoundException ex) {
                     label.comments = 0;
                 }
                 label.date =

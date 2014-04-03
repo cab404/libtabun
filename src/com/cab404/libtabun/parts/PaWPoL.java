@@ -1,7 +1,8 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.data.UserInfo;
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.util.html_parser.HTMLParser;
+import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
@@ -42,7 +43,7 @@ public class PaWPoL extends Part {
         public PostLabel pl = new PostLabel();
 
         @Override public void process(StringBuilder text) {
-            HTMLParser raw = new HTMLParser(text.toString());
+            HTMLTree raw = new HTMLTree(text.toString());
 
             pl.id = U.parseInt(SU.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
             pl.content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();

@@ -1,6 +1,6 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.util.html_parser.HTMLParser;
+import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -50,7 +50,7 @@ public class Comment extends Part {
                     if (line.contains("</section>")) {
                         text.append(line).append('\n');
 
-                        HTMLParser parser = new HTMLParser(text.toString());
+                        HTMLTree parser = new HTMLTree(text.toString());
 
                         // Если комментарий пуст (совсем-совсем, не только текст) - это остов убитого модерастией.
                         try {
@@ -66,12 +66,12 @@ public class Comment extends Part {
 
                         comment.body = parser.getContents(parser.getTagIndexByProperty("class", "text")).replaceAll("\t", "");
                         // Тут чуточку сложнее.
-                        comment.time = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-date")).getTagByName("time").props.get("datetime");
+                        comment.time = parser.getTree(parser.getTagIndexByProperty("class", "comment-date")).getTagByName("time").props.get("datetime");
 
                         // Достаём автора и аватарку.
 
-                        HTMLParser author;
-                        author = parser.getParserForIndex(parser.getTagIndexByProperty("class", "comment-info"));
+                        HTMLTree author;
+                        author = parser.getTree(parser.getTagIndexByProperty("class", "comment-info"));
                         {
                             comment.author = SU.bsub(author.getTagByName("a").props.get("href"), "profile/", "/");
                             comment.avatar = author.getTagByProperty("alt", "avatar").props.get("src");
@@ -79,7 +79,7 @@ public class Comment extends Part {
 
                         // Попытка достать род. комментарий:
                         try {
-                            HTMLParser comment_parent_goto = parser.getParserForIndex(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
+                            HTMLTree comment_parent_goto = parser.getTree(parser.getTagIndexByProperty("class", "goto goto-comment-parent"));
                             comment.parent = U.parseInt(SU.bsub(comment_parent_goto.getTagByName("a").props.get("onclick"), ",", ");"));
                         } catch (Throwable e) {
                             comment.parent = 0;

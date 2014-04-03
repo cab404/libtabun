@@ -219,14 +219,18 @@ public class SU {
     }
 
     /**
-     * Works with patterns like asd*g
+     * Works with patterns like asd*g, also is pretty fast.
      */
     public static boolean fast_match(String regex, String data) {
         List<String> strings = charSplit(regex, '*');
+
+        if (strings.size() == 1)
+            return data.equals(regex);
+
         if (!(data.startsWith(strings.get(0)) && data.endsWith(strings.get(strings.size() - 1))))
             return false;
-        int s = 0, f = 0;
 
+        int s, f;
 
         for (String str : strings) {
             s = data.indexOf(str, 0);
@@ -242,6 +246,12 @@ public class SU {
     }
 
     public static String removeAllTags(String toProcess) {
-        return toProcess.replaceAll("<.*?>", "");
+        int s;
+        while ((s = toProcess.indexOf('<')) != -1) {
+            int f = toProcess.indexOf('>', s);
+            toProcess = toProcess.substring(0, s) + toProcess.substring(f + 1);
+        }
+        return toProcess;
     }
+
 }

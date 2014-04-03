@@ -1,17 +1,27 @@
 package com.cab404.libtabun.pages;
 
+import com.cab404.libtabun.data.CommonInfo;
+import com.cab404.libtabun.modules.CommonInfoModule;
+import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.modular.Page;
+
 /**
  * @author cab404
  */
-public abstract class MainPage {
+public class MainPage extends Page {
 
-    public abstract String getURL();
+    public CommonInfo c_inf;
 
-    protected void parse() {
-
+    @Override
+    public String getURL() {
+        return "/";
     }
 
-    public void fetch() {
+    @Override
+    protected void parse(HTMLTree page) {
+        U.v(page.getTree(page.xPathFirstTag("body")).tags.size());
+        c_inf = new CommonInfoModule().extractData(page, getURL());
     }
 
 }

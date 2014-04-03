@@ -7,12 +7,36 @@ import java.util.Map;
  * @author cab404
  */
 public class Tag {
+
+    public static enum Type {
+        STANDALONE, CLOSING, OPENING, COMMENT
+    }
+
     public int index;
     public int start, end;
     public String name, text;
-    public boolean isClosing;    // Тег типа </x>
-    public boolean isStandalone; // Тег типа <x/>
-    public boolean isComment; // Тег типа <!-- x --> и <! x>
+    public Type type;
+
+    // Тег типа </x>
+    public boolean isClosing() {
+        return type == Type.CLOSING;
+    }
+
+    // Тег типа <x/>
+    public boolean isStandalone() {
+        return type == Type.STANDALONE;
+    }
+
+    // Тег типа <!-- x --> и <! x>
+    public boolean isComment() {
+        return type == Type.COMMENT;
+    }
+
+    public boolean isOpening() {
+        return type == Type.OPENING;
+    }
+
+
     public Map<String, String> props;
 
     public Tag() {
@@ -24,13 +48,17 @@ public class Tag {
     }
 
     @Override public String toString() {
-        return new StringBuilder()
-                .append("== TAG ==").append("\n")
-                .append("Code: '").append(text).append("' \n")
-                .append("Name: '").append(name).append("' \n")
-                .append("StA: ").append(isStandalone).append(" \n")
-                .append("Cl: ").append(isClosing).append(" \n")
-                .append("Cm: ").append(isComment).append(" \n")
-                .toString();
+        if (isComment()) return text;
+
+        StringBuilder builder = new StringBuilder().append("<");
+
+        if (isClosing()) builder.append("/");
+        builder.append(name);
+
+        if (isStandalone()) builder.append("/");
+        builder.append(">");
+
+
+        return builder.toString();
     }
 }

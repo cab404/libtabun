@@ -2,7 +2,7 @@ package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
-import com.cab404.libtabun.util.html_parser.HTMLParser;
+import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -45,21 +45,21 @@ public class BlogList implements PaginatedPart {
             if (reading) builder.append(line).append('\n');
             if (line.trim().equals("</tbody>")) {
 
-                HTMLParser main = new HTMLParser(builder.toString());
+                HTMLTree main = new HTMLTree(builder.toString());
                 labels.clear();
 
                 for (int tag_id : main.getAllIDsByName("tr")) {
-                    if (main.get(tag_id).isClosing) continue;
+                    if (main.get(tag_id).isClosing()) continue;
 
                     BlogLabel lab = new BlogLabel();
-                    HTMLParser doc = main.getParserForIndex(tag_id);
+                    HTMLTree doc = main.getTree(tag_id);
                     try {
                         lab.name = doc.getContents(doc.getTagIndexByProperty("class", "blog-name"));
                         lab.votes = U.parseFloat(doc.getContents(doc.getTagIndexForParamRegex("class", "^\\Qcell-rating\\E.+")));
                         lab.readers = U.parseInt(doc.getContents(doc.getTagIndexByProperty("class", "cell-readers")));
                         lab.url_name = SU.bsub(doc.getTagByProperty("class", "blog-name").props.get("href"), "/blog/", "/");
                         labels.add(lab);
-                    } catch (HTMLParser.TagNotFoundException unchecked) {
+                    } catch (HTMLTree.TagNotFoundException unchecked) {
                         // Поисковые пегасы ничего не нашли.
                         return false;
                     }

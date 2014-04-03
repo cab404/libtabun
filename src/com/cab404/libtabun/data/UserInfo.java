@@ -1,4 +1,4 @@
-package com.cab404.libtabun.parts;
+package com.cab404.libtabun.data;
 
 import java.util.ArrayList;
 import java.util.Map;
