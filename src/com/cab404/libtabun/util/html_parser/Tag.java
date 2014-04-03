@@ -55,6 +55,11 @@ public class Tag {
         if (isClosing()) builder.append("/");
         builder.append(name);
 
+        for (Map.Entry<String, String> e : props.entrySet()) {
+            builder.append(" ");
+            builder.append(e.getKey()).append("=").append("\"").append(e.getValue()).append("\"");
+        }
+
         if (isStandalone()) builder.append("/");
         builder.append(">");
 

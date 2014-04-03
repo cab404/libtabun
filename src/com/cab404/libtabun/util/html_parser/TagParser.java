@@ -75,21 +75,35 @@ public class TagParser {
             if (tag.name.charAt(0) == '!')
                 tag.type = Type.COMMENT; // Handling !doctype and others.
 
-            v(tag);
+//            v(tag);
             if (name_and_everything_else.size() == 2) { // Parsing properties.
-                List<String> props = SU.charSplit(name_and_everything_else.get(1), '\"', '\'');
+                String params = name_and_everything_else.get(1).trim();
+                String key = null;
+                int s = 0;
+                boolean quot = false;
+                int mode = 0;       // 0 - ищем конец ключа, 1 - ищем начало значения, 2 - ищем конец значения.
 
-                for (int ind = 0; ind + 1 < props.size(); ind += 2) {
+                for (int index = 0; index < params.length(); index++) {
+                    char current = params.charAt(index);
+                    if (mode == 0 && current == '=') {
+                        key = params.substring(s, index);
+                        mode = 1;
+                        continue;
+                    }
+                    if (mode == 1 && (current == '"' || current == '\'')) {
+                        quot = current == '\'';
+                        s = index + 1;
+                        mode = 2;
+                        continue;
+                    }
+                    if (mode == 2 && current == (quot ? '\'' : '"')) {
+                        tag.props.put(key.trim(), params.substring(s, index));
+                        s = index + 1;
+                        mode = 0;
+                    }
 
-                    String key = props.get(ind).trim();
-                    key = key.substring(0, key.length() - 1);
-
-                    String value = props.get(ind + 1);
-
-//                    v(key + ": " + value);
-
-                    tag.props.put(key, value);
                 }
+
             }
 //            v("\n");
 
