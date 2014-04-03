@@ -13,81 +13,88 @@ import java.util.regex.Pattern;
  */
 public class HTMLTree implements Iterable<Tag> {
 
-    int offset = 0;
-    SimpleLevelAnalyzer leveled;
+    int start = 0;
+    int end = 0;
+
+    private LevelAnalyzer leveled;
+    private List<Tag> tags;
+    public final String html;
 
     @Override
     public Iterator<Tag> iterator() {
-        return tags.iterator();
+        return new Iterator<Tag>() {
+            int i = start;
+            @Override public boolean hasNext() {
+                return i < end;
+            }
+            @Override public Tag next() {
+                return tags.get(i++);
+            }
+            @Override public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
-    public Tag get(int id) {
-        return tags.get(id);
+    public Tag get(int index) {
+        return tags.get(index + start);
+    }
+
+    public int size() {
+        return end - start;
+    }
+
+    public int getLevel(int index) {
+        return leveled.tags.get(index + start).level;
+    }
+
+    public int getLevel(Tag tag) {
+        return leveled.tags.get(tag.index).level;
     }
 
 
-    public List<Tag> tags;
-    public String html;
-
-    private HTMLTree() {
+    private HTMLTree(HTMLTree tree) {
         tags = new ArrayList<>();
+        this.html = tree.html;
     }
 
     public HTMLTree(String parse) {
-        this();
+        tags = new ArrayList<>();
         html = parse;
         tags = TagParser.parse(parse);
+        tags = Collections.unmodifiableList(tags);
+        end = tags.size();
 
-        for (int i = 0; i < tags.size(); )
-            if (tags.get(i).isComment())
-                tags.remove(i);
-            else i++;
 
-        leveled = new SimpleLevelAnalyzer();
-
+        leveled = new LevelAnalyzer();
         for (Tag tag : tags)
             leveled.add(tag);
+        leveled.fixLayout();
 
-        U.v(leveled);
-
-        for (int i = 0; i < tags.size(); i++)
+        for (int i = 0; i < end; i++)
             tags.get(i).index = i;
     }
 
     public List<Tag> getAllTagsByProperty(String key, String value) {
         ArrayList<Tag> _return = new ArrayList<>();
-        for (Tag tag : this) {
-            if (value.equals(tag.props.get(key))) _return.add(tag);
-        }
-        return _return;
-    }
-
-    public List<Integer> getAllIDsByName(String div) {
-        ArrayList<Integer> _return = new ArrayList<>();
-        for (int i = 0; i != tags.size(); i++) {
-            if (div.equals(tags.get(i).name)) _return.add(i);
-        }
-        return _return;
-    }
-
-    public List<Integer> getAllIDsByProperty(String key, String value) {
-        ArrayList<Integer> _return = new ArrayList<>();
-        for (int i = 0; i != tags.size(); i++) {
-            if (value.equals(tags.get(i).props.get(key))) _return.add(i);
-        }
+        for (Tag tag : this)
+            if (value.equals(tag.props.get(key)))
+                _return.add(tag);
         return _return;
     }
 
     public List<Tag> getAllTagsByName(String name) {
         ArrayList<Tag> _return = new ArrayList<>();
-        for (Tag tag : this) {
-            if (tag.name.equals(name)) _return.add(tag);
-        }
+        for (Tag tag : this)
+            if (tag.name.equals(name))
+                _return.add(tag);
         return _return;
     }
 
     public Tag getTagByName(String name) {
-        for (Tag tag : this) if (tag.name.equals(name)) return tag;
+        for (Tag tag : this)
+            if (tag.name.equals(name))
+                return tag;
         throw new TagNotFoundException();
     }
 
@@ -96,14 +103,14 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public int getTagIndexByProperty(String key, String value) {
-        for (int i = 0; i != tags.size(); i++) {
-            if (value.equals(tags.get(i).props.get(key))) return i;
-        }
+        for (int i = 0; i != tags.size(); i++)
+            if (value.equals(tags.get(i).props.get(key)))
+                return i;
         throw new TagNotFoundException();
     }
 
-    public int getIndexForTag(Tag tag) {
-        return tag.index - offset;
+    private int getIndexForTag(Tag tag) {
+        return tag.index - start;
     }
 
     public int getTagIndexForName(String name) {
@@ -121,45 +128,30 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
 
-    public int getClosingTag(int opening_tag_index) {
-        int level = 0, check_index;
+    public int getClosingTag(Tag tag) {
 
-        Tag tag = tags.get(opening_tag_index);
+        int index = getIndexForTag(tag) + 1, level = getLevel(tag);
+        for (; index < end; index++) {
 
-        for (check_index = opening_tag_index; check_index < tags.size(); check_index++) {
-            Tag check = tags.get(check_index);
+            Tag check = get(index);
+            int c_level = getLevel(check);
 
-            if (check.isClosing()) level--;
-            if (check.isOpening()) level++;
+            if (c_level == level)
+                return getIndexForTag(check);
 
-            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
-                return check_index;
         }
 
         throw new TagNotFoundException();
     }
 
-    public String getContents(Tag tag) {
-        return getContents(getIndexForTag(tag));
+    public String getContents(int index) {
+        return getContents(get(index));
     }
 
-    public String getContents(int index) {
-        int level = 0, check_index;
+    public String getContents(Tag tag) {
 
-        // Рисуем кружочки.
-        Tag tag = tags.get(index);
-        // Рисуем остальную сову.
-        for (check_index = index; check_index < tags.size(); check_index++) {
-            Tag check = tags.get(check_index);
+        return html.substring(tag.end, get(getClosingTag(tag)).start);
 
-            if (check.isClosing()) level--;
-            if (check.isOpening()) level++;
-
-            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
-                return html.substring(tag.end, check.start);
-        }
-
-        return "";
     }
 
 
@@ -167,57 +159,46 @@ public class HTMLTree implements Iterable<Tag> {
      * Возвращает уровень тегов целиком.
      */
     public HTMLTree getTree(Tag tag) {
-        return getTree(getIndexForTag(tag));
+        return getTree(tag.index);
     }
 
     /**
      * Возвращает уровень тегов целиком.
      */
     public HTMLTree getTree(int index) {
-        HTMLTree _return = new HTMLTree();
-        _return.offset = index;
-        _return.html = html;
+        Tag start = get(index);
+        if (start.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
+        if (start.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
 
-        Tag tag = tags.get(index);
-        if (tag.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
-        if (tag.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
-
-        int level = 0, findex;
-        for (findex = index; findex != tags.size(); findex++) {
-            Tag check = tags.get(findex);
-            _return.tags.add(check);
-
-            if (check.isClosing()) level--;
-            if (check.isOpening()) level++;
-
-            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
-                break;
-        }
+        HTMLTree _return = new HTMLTree(this);
+        _return.leveled = leveled;
+        _return.start = index;
+        _return.tags = tags;
+        _return.end = getClosingTag(start) + 1;
 
         return _return;
     }
 
     public List<Tag> getTopChildren(Tag tag) {
-        if (tag.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
-        if (tag.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
+        if (tag.isClosing()) throw new RuntimeException("Попытка достать теги верхнего уровня для закрывающего тега!");
+        if (tag.isStandalone()) throw new RuntimeException("Попытка достать теги верхнего уровня для standalone-тега!");
 
-        int level = 0, index = getIndexForTag(tag);
 
         ArrayList<Tag> _return = new ArrayList<>();
 
-        for (; index != tags.size(); index++) {
-            Tag check = tags.get(index);
 
-            level += check.isClosing() ? -1 : 0;
+        int index = getIndexForTag(tag) + 1, level = getLevel(tag);
 
-//            U.v(level + U.tabs(level) + check.text);
+        for (; index < tags.size(); index++) {
 
-            if (level == 1 && check.isOpening())
-                _return.add(check);
+            Tag check = get(index);
+            int c_level = leveled.tags.get(check.index).level;
 
-            level += check.isClosing() ? 0 : +1;
+            if (getLevel(check) - 1 == level)
+                if (check.isOpening() || check.isStandalone())
+                    _return.add(check);
 
-            if (level == 0 && check.isClosing() && check.name.equals(tag.name))
+            if (c_level == level)
                 break;
 
         }
@@ -227,7 +208,15 @@ public class HTMLTree implements Iterable<Tag> {
 
     @Override
     public String toString() {
-        return leveled.toString();
+        StringBuilder out = new StringBuilder();
+        int shift = getLevel(0);
+
+        for (Tag tag : this)
+            out
+                    .append(U.tabs(getLevel(tag) - shift))
+                    .append(tag)
+                    .append("\n");
+        return out.toString();
     }
 
     public static class TagNotFoundException extends RuntimeException {
@@ -240,12 +229,16 @@ public class HTMLTree implements Iterable<Tag> {
         }
     }
 
+    public List<Tag> copyList() {
+        return new ArrayList<>(tags.subList(start, end));
+    }
+
 
     /**
      * Very simple implementation of XPath language interpreter.
      */
     public List<Tag> xPath(String path) {
-        ArrayList<Tag> results = new ArrayList<>(tags);
+        List<Tag> results = copyList();
 
         List<String> request = SU.charSplit(path, '/');
 
@@ -311,13 +304,13 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     /**
-     * Довольно простой эвристический анализатор HTML.
+     * Довольно простой эвристический анализатор ошибок HTML.
      */
-    private static class SimpleLevelAnalyzer {
+    private static class LevelAnalyzer {
         LinkedList<LeveledTag> tags;
         LinkedList<String> opened_tags;
 
-        private SimpleLevelAnalyzer() {
+        private LevelAnalyzer() {
             tags = new LinkedList<>();
             opened_tags = new LinkedList<>();
         }
@@ -335,7 +328,7 @@ public class HTMLTree implements Iterable<Tag> {
         /**
          * Ищет открывающий тег для текущей позиции.
          */
-        LeveledTag findBackOpening(String name) {
+        private LeveledTag findBackOpening(String name) {
             int level = 1;
             for (int i = tags.size() - 1; i >= 0; i--) {
                 LeveledTag checking = tags.get(i);
@@ -355,10 +348,8 @@ public class HTMLTree implements Iterable<Tag> {
         /**
          * Делаем из незакрытых тегов теги standalone (<tag/>)
          */
-        void fixLyingLoners(LeveledTag start) {
+        private void fixLyingLoners(LeveledTag start) {
             HashMap<String, Integer> levels = new HashMap<>();
-
-            int fixed_level = tags.getLast().level;
 
             for (int i = tags.size() - 1; i > start.index; i--) {
                 LeveledTag checking = tags.get(i);
@@ -389,25 +380,27 @@ public class HTMLTree implements Iterable<Tag> {
 
             }
 
-            for (int i = start.index + 1; i < tags.size() - 1; i++) {
-                LeveledTag curr = tags.get(i);
-
-                if (curr.tag.isClosing())
-                    fixed_level--;
-
-                curr.level = fixed_level;
-
-                if (curr.tag.isOpening())
-                    fixed_level++;
-
-            }
-
         }
 
+        /**
+         * Перерасставляет отступы.
+         */
+        public void fixLayout() {
+            int layer = 0;
+            for (LeveledTag curr : tags) {
+
+                if (curr.tag.isClosing())
+                    layer--;
+
+                curr.level = layer;
+
+                if (curr.tag.isOpening())
+                    layer++;
+
+            }
+        }
 
         public void add(Tag tag) {
-            if (tag.isComment()) return;
-
             if (tag.isClosing()) {
                 int level;
                 LeveledTag opening = findBackOpening(tag.name);
@@ -426,7 +419,7 @@ public class HTMLTree implements Iterable<Tag> {
             }
         }
 
-        int currentLevel() {
+        private int currentLevel() {
             if (tags.isEmpty()) return 0;
             else {
                 LeveledTag last = tags.getLast();
@@ -437,7 +430,7 @@ public class HTMLTree implements Iterable<Tag> {
             }
         }
 
-        int lastLevel() {
+        private int lastLevel() {
             if (tags.isEmpty())
                 return 0;
             else

@@ -1,7 +1,6 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.Tag.Type;
 
 import java.util.ArrayList;
@@ -13,25 +12,16 @@ import java.util.List;
  * @author cab404
  */
 public class TagParser {
-    public static final boolean logging = false;
-    //
-    @SuppressWarnings("ConstantConditions")
-    public static void v(Object obj) {
-        if (logging)
-            U.v(obj);
-    }
 
     private static final String
             COMM_START = "!--",
             COMM_END = "-->";
 
     public static ArrayList<Tag> parse(String toParse) {
-//        v(" == Started parsing, HTMLParser2 == ");
         ArrayList<Tag> out = new ArrayList<>();
         int i, j = 0;
         while (true) {
 
-//            v(toParse);
             i = toParse.indexOf('<', j);
             j = toParse.indexOf('>', i);
 
@@ -54,7 +44,6 @@ public class TagParser {
                 tag.name = COMM_START;
                 j = toParse.indexOf(COMM_END, i) + 3;
                 tag.text = toParse.substring(i, j);
-                v(tag);
                 out.add(tag);
                 continue;
             }
@@ -75,13 +64,13 @@ public class TagParser {
             if (tag.name.charAt(0) == '!')
                 tag.type = Type.COMMENT; // Handling !doctype and others.
 
-//            v(tag);
-            if (name_and_everything_else.size() == 2) { // Parsing properties.
+            if (name_and_everything_else.size() == 2) {
+                // Parsing properties.
                 String params = name_and_everything_else.get(1).trim();
                 String key = null;
                 int s = 0;
                 boolean quot = false;
-                int mode = 0;       // 0 - ищем конец ключа, 1 - ищем начало значения, 2 - ищем конец значения.
+                int mode = 0; // 0 - ищем конец ключа, 1 - ищем начало значения, 2 - ищем конец значения.
 
                 for (int index = 0; index < params.length(); index++) {
                     char current = params.charAt(index);
@@ -105,14 +94,11 @@ public class TagParser {
                 }
 
             }
-//            v("\n");
-
 
             out.add(tag);
 
         }
 
-//        v(String.format(" == Finished parsing, HTMLParser2, found %d tags == ", out.size()));
         return out;
     }
 

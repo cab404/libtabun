@@ -57,11 +57,11 @@ public class PaWPoL extends Part {
             }
             pl.blog = new Blog();
             pl.blog.name = raw.getContents(blog_tag);
-            pl.blog.url_name = SU.bsub(raw.tags.get(blog_tag).props.get("href"), "/blog/", "/");
+            pl.blog.url_name = SU.bsub(raw.get(blog_tag).props.get("href"), "/blog/", "/");
 
             int time_tag = raw.getTagIndexForName("time");
             pl.time = raw.getContents(time_tag).trim();
-            pl.date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
+            pl.date = U.convertDatetime(raw.get(time_tag).props.get("datetime"));
             pl.votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + pl.id)).trim();
             try {
                 U.parseInt(pl.votes);

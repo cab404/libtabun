@@ -114,11 +114,11 @@ public class Post extends PaWPoL.PostLabel {
                 }
                 blog = new Blog();
                 blog.name = raw.getContents(blog_tag);
-                blog.url_name = SU.bsub(raw.tags.get(blog_tag).props.get("href"), "/blog/", "/");
+                blog.url_name = SU.bsub(raw.get(blog_tag).props.get("href"), "/blog/", "/");
 
                 int time_tag = raw.getTagIndexForName("time");
                 time = raw.getContents(time_tag).trim();
-                date = U.convertDatetime(raw.tags.get(time_tag).props.get("datetime"));
+                date = U.convertDatetime(raw.get(time_tag).props.get("datetime"));
                 votes = raw.getContents(raw.getTagIndexByProperty("id", "vote_total_topic_" + id)).trim();
                 try {
                     U.parseInt(votes);

@@ -1,11 +1,12 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
-import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.json.simple.JSONObject;
 
@@ -48,11 +49,11 @@ public class BlogList implements PaginatedPart {
                 HTMLTree main = new HTMLTree(builder.toString());
                 labels.clear();
 
-                for (int tag_id : main.getAllIDsByName("tr")) {
-                    if (main.get(tag_id).isClosing()) continue;
+                for (Tag tag : main.getAllTagsByName("tr")) {
+                    if (tag.isClosing()) continue;
 
                     BlogLabel lab = new BlogLabel();
-                    HTMLTree doc = main.getTree(tag_id);
+                    HTMLTree doc = main.getTree(tag);
                     try {
                         lab.name = doc.getContents(doc.getTagIndexByProperty("class", "blog-name"));
                         lab.votes = U.parseFloat(doc.getContents(doc.getTagIndexForParamRegex("class", "^\\Qcell-rating\\E.+")));

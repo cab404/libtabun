@@ -304,14 +304,14 @@ public class Letter extends Part {
             for (Tag tr : list.getAllTagsByName("tr")) {
                 if (tr.isClosing()) continue;
                 Label label = new Label();
-                HTMLTree parser = list.getTree(list.getIndexForTag(tr));
+                HTMLTree parser = list.getTree(tr);
 
                 // Достаём всё из заголовка
                 int title = parser.getTagIndexByProperty("class", "js-title-talk");
 
                 label.name = parser.getContents(title);
-                label.id = U.parseInt(SU.bsub(parser.tags.get(title).props.get("href"), "read/", "/"));
-                label.last_message = parser.tags.get(title).props.get("title");
+                label.id = U.parseInt(SU.bsub(parser.get(title).props.get("href"), "read/", "/"));
+                label.last_message = parser.get(title).props.get("title");
 
                 // Достаём участников, всех до единого!
                 java.util.List<Tag> contacts =
