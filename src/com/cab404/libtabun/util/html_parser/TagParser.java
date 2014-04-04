@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author cab404
  */
-public class TagParser {
+class TagParser {
 
     private static final String
             COMM_START = "!--",

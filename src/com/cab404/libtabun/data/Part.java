@@ -1,4 +1,6 @@
-package com.cab404.libtabun.parts;
+package com.cab404.libtabun.data;
+
+import com.cab404.libtabun.parts.LivestreetKey;
 
 import java.util.Calendar;
 

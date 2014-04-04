@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author cab404
  */
-public class BlogList implements Module<List<PostLabel>> {
+public class PostLabelListModule implements Module<List<PostLabel>> {
 
     @Override public List<PostLabel> extractData(HTMLTree parser, String url) {
         return null;

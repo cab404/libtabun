@@ -31,7 +31,7 @@ public class UserInfoModule implements Module<UserInfo> {
             data.name = data.name == null ? "" : data.name;
 
         } catch (Exception e) {
-            throw new RuntimeException("Пользователя не существует, или произошло незнамо что.\n" + tree.html, e);
+            throw new RuntimeException("Пользователя не существует, или произошло незнамо что.", e);
         }
 
         {

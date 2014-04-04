@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 /**
@@ -19,6 +20,21 @@ import java.util.TimeZone;
 public class U {
     public static final String path = "tabun.everypony.ru";
     public static final HttpHost host = new HttpHost(path, 80);
+
+    private static HashMap<Thread, Timer> timers;
+
+    /**
+     * Возвращает таймер для текущего потока.
+     */
+    public static Timer timer() {
+        if (timers == null) timers = new HashMap<>();
+        Timer timer = timers.get(Thread.currentThread());
+        if (timer == null) {
+            timer = new Timer();
+            timers.put(Thread.currentThread(), timer);
+        }
+        return timer;
+    }
 
     /**
      * Делает абсолютно то же, что и Log.v("Luna Log", obj.toString()),
@@ -146,6 +162,9 @@ public class U {
 
     }
 
+    /**
+     * Simple estimated time logger.
+     */
     public static class Timer {
         long time;
 
@@ -153,16 +172,34 @@ public class U {
             set();
         }
 
+        /**
+         * Starts the timer.
+         */
         public void set() {
             time = System.nanoTime();
         }
 
+        /**
+         * Returns time from previous {@link com.cab404.libtabun.util.U.Timer#set} invoke in nanoseconds.
+         */
         public long get() {
             return System.nanoTime() - time;
         }
 
+        /**
+         * Returns time from previous {@link com.cab404.libtabun.util.U.Timer#set} invoke in milliseconds.
+         */
         public long getMs() {
             return (System.nanoTime() - time) / 1000000;
+        }
+
+        /** */
+        public void log(String tag) {
+            U.v(tag.replace(":time:", getMs() + " ms"));
+        }
+
+        public void logNano(String tag) {
+            U.v(tag.replace(":time:", get() + " ns"));
         }
 
     }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Простой парсер HTML
+ * Простой парсер HTML. Даже ошибки немного исправляет.
  *
  * @author cab404
  */
@@ -66,19 +66,13 @@ public class HTMLTree implements Iterable<Tag> {
         tags = new ArrayList<>();
         html = parse;
 
-        U.Timer timer = new U.Timer();
         tags = TagParser.parse(parse);
-        U.v("Parsed tags in " + timer.getMs() + "ms.");
 
         tags = Collections.unmodifiableList(tags);
         end = tags.size();
 
-
-        timer.set();
         leveled = new LevelAnalyzer(this);
         leveled.fixLayout();
-
-        U.v("Performed error analysis in " + timer.getMs() + "ms.");
 
         for (int i = 0; i < end; i++)
             tags.get(i).index = i;
@@ -145,7 +139,7 @@ public class HTMLTree implements Iterable<Tag> {
             Tag check = get(index);
             int c_level = getLevel(check);
 
-            if (c_level == level)
+            if (c_level == level && check.name.equals(tag.name))
                 return getIndexForTag(check);
 
         }

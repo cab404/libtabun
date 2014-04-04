@@ -1,7 +1,6 @@
 package com.cab404.libtabun.data;
 
 import com.cab404.libtabun.parts.Blog;
-import com.cab404.libtabun.parts.Part;
 
 /**
  * @author cab404

@@ -1,5 +1,6 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.data.Part;
 import com.cab404.libtabun.data.PostLabel;
 import com.cab404.libtabun.data.UserInfo;
 import com.cab404.libtabun.facility.ResponseFactory;

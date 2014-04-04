@@ -70,6 +70,28 @@ class LevelAnalyzer {
 
         }
 
+        for (int i = start.tag.index + 1; i < tags.size(); i++) {
+            LeveledTag tag = tags.get(i);
+            if (tag.tag.isStandalone()) {
+                int c_level = levels.get(tag.tag.name);
+                if (c_level > 0) {
+                    tag.tag.type = Tag.Type.OPENING;
+                    levels.put(tag.tag.name, --c_level);
+                }
+            }
+        }
+
+        for (int i = start.tag.index + 1; i < tags.size(); i++) {
+            LeveledTag tag = tags.get(i);
+            if (tag.tag.isClosing()) {
+                int c_level = levels.get(tag.tag.name);
+                if (c_level > 0) {
+                    tag.tag.type = Tag.Type.STANDALONE;
+                    levels.put(tag.tag.name, --c_level);
+                }
+            }
+        }
+
     }
 
     /**
