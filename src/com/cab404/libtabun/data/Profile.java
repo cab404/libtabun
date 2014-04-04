@@ -7,14 +7,14 @@ import java.util.Map;
  *
  * @author cab404
  */
-public class UserInfo {
+public class Profile {
     public float strength, votes;
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
     public int id;
     public ArrayList<Userdata> personal;
     public ArrayList<Contact> contacts;
 
-    public UserInfo() {
+    public Profile() {
         personal = new ArrayList<>();
         contacts = new ArrayList<>();
         name = nick = about = small_icon = big_icon = mid_icon = photo = "";

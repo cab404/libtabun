@@ -122,12 +122,6 @@ public class U {
         return calendar;
     }
 
-    public static String tabs(int num) {
-        StringBuilder tabs = new StringBuilder();
-        for (int i = 0; i < num; i++) tabs.append("\t");
-        return tabs.toString();
-    }
-
     public static abstract class TextPartParser implements ResponseFactory.Parser {
 
 

@@ -1,17 +1,17 @@
 package com.cab404.libtabun.pages;
 
-import com.cab404.libtabun.data.UserInfo;
+import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.modules.UserInfoModule;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 
 /**
  * @author cab404
  */
-public class UserdataPage extends MainPage {
+public class ProfilePage extends TabunPage {
     public final String username;
-    public UserInfo user_info;
+    public Profile user_info;
 
-    public UserdataPage(String username) {
+    public ProfilePage(String username) {
         this.username = username;
     }
 

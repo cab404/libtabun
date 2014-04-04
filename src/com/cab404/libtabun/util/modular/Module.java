@@ -10,5 +10,5 @@ import com.cab404.libtabun.util.html_parser.HTMLTree;
  * @author cab404
  */
 public interface Module<T> {
-    public abstract T extractData(HTMLTree parser, String url);
+    public abstract T extractData(HTMLTree page, String url);
 }

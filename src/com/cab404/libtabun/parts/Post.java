@@ -1,7 +1,7 @@
 package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.data.PostLabel;
-import com.cab404.libtabun.data.UserInfo;
+import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -132,7 +132,7 @@ public class Post extends PostLabel {
                     tags[i] = raw.getContents(raw_tags.get(i));
                 }
 
-                author = new UserInfo();
+                author = new Profile();
                 author.nick = raw.getContents(raw.getTagIndexByProperty("rel", "author"));
                 author.small_icon = raw.getTagByProperty("alt", "avatar").props.get("src");
                 author.fillImages();

@@ -254,4 +254,43 @@ public class SU {
         return toProcess;
     }
 
+    public static String tabs(int num) {
+        StringBuilder tabs = new StringBuilder();
+        for (int i = 0; i < num; i++) tabs.append("\t");
+        return tabs.toString();
+    }
+
+
+    public static enum FillType {
+        RIGHT, LEFT, CENTER
+    }
+    public static String fillSpaces(String fill, int num, int offset, FillType type) {
+        int left = 0, right = 0;
+        num -= offset * 2;
+
+        switch (type) {
+            case RIGHT:
+                right = offset;
+                left = offset + num - fill.length();
+                break;
+            case LEFT:
+                left = offset;
+                right = offset + num - fill.length();
+                break;
+            case CENTER:
+                right = (int) Math.floor((float) num / 2) + offset;
+                left = (int) Math.ceil((float) num / 2) + offset;
+                break;
+        }
+
+        return spaces(left) + fill + spaces(right);
+
+    }
+
+    public static String spaces(int num) {
+        StringBuilder spaces = new StringBuilder();
+        for (int i = 0; i < num; i++)
+            spaces.append(" ");
+        return spaces.toString();
+    }
 }

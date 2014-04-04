@@ -7,7 +7,7 @@ import com.cab404.libtabun.parts.Blog;
  */
 public class PostLabel extends Part {
     public String name, votes;
-    public UserInfo author;
+    public Profile author;
     public String content, time;
     public String[] tags;
     public Blog blog;

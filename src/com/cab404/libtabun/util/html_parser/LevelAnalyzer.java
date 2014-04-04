@@ -1,6 +1,6 @@
 package com.cab404.libtabun.util.html_parser;
 
-import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.SU;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -131,7 +131,7 @@ class LevelAnalyzer {
     @Override public String toString() {
         StringBuilder builder = new StringBuilder();
         for (LeveledTag tag : tags) {
-            builder.append(U.tabs(tag.level)).append(tag.tag).append("\n");
+            builder.append(SU.tabs(tag.level)).append(tag.tag).append("\n");
         }
         return builder.toString();
     }

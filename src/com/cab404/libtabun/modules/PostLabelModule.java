@@ -29,7 +29,7 @@ public class PostLabelModule implements Module<PostLabel> {
         LETTER
     }
 
-    @Override public PostLabel extractData(HTMLTree parser, String url) {
+    @Override public PostLabel extractData(HTMLTree page, String url) {
         return null;
     }
 

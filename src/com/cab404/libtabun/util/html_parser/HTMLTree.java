@@ -1,7 +1,6 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -216,7 +215,7 @@ public class HTMLTree implements Iterable<Tag> {
 
         for (Tag tag : this)
             out
-                    .append(U.tabs(getLevel(tag) - shift))
+                    .append(SU.tabs(getLevel(tag) - shift))
                     .append(tag)
                     .append("\n");
         return out.toString();

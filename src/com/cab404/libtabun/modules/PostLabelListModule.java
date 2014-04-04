@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class PostLabelListModule implements Module<List<PostLabel>> {
 
-    @Override public List<PostLabel> extractData(HTMLTree parser, String url) {
+    @Override public List<PostLabel> extractData(HTMLTree page, String url) {
         return null;
     }
 

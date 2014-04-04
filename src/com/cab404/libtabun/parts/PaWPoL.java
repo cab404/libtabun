@@ -2,7 +2,7 @@ package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.data.Part;
 import com.cab404.libtabun.data.PostLabel;
-import com.cab404.libtabun.data.UserInfo;
+import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
@@ -66,7 +66,7 @@ public class PaWPoL extends Part {
             }
 
 
-            pl.author = new UserInfo();
+            pl.author = new Profile();
             pl.author.nick = raw.getContents(raw.getTagIndexByProperty("rel", "author"));
             pl.author.small_icon = raw.getTagByProperty("alt", "avatar").props.get("src");
             pl.author.fillImages();

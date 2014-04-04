@@ -33,8 +33,7 @@ public class RU {
 
             return response;
         } catch (IOException e) {
-            U.w(e);
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -49,4 +48,7 @@ public class RU {
     public static HttpResponse exec(HttpRequestBase request) {
         return exec(request, null);
     }
+
+
+
 }

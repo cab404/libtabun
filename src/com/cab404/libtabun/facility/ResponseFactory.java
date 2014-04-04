@@ -1,6 +1,5 @@
 package com.cab404.libtabun.facility;
 
-import com.cab404.libtabun.util.U;
 import org.apache.http.HttpResponse;
 
 import java.io.BufferedReader;
@@ -26,12 +25,14 @@ public class ResponseFactory {
      * @param response Сбснна, откуда слушать.
      */
     public static void read(HttpResponse response, Parser listener) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
-        String line;
         try {
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
+            String line;
             while ((line = reader.readLine()) != null && listener.line(line)) ;
+
         } catch (IOException e) {
-            U.w(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -43,22 +44,48 @@ public class ResponseFactory {
      * @param status   Статус загрузки ответа.
      */
     public static void read(HttpResponse response, Parser listener, StatusListener status) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
-        String line;
-
-
-        long length = response.getEntity().getContentLength();
-        if (length == -1) length = 1;
-
-        long loaded = 0;
         try {
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
+            String line;
+
+            long length = response.getEntity().getContentLength();
+            if (length == -1) length = 1;
+            long loaded = 0;
+
             while ((line = reader.readLine()) != null) {
                 listener.line(line);
                 loaded += line.length();
-                status.onProgressChange((float) loaded / (float) length);
+                status.onProgressChange(loaded, length);
             }
+
         } catch (IOException e) {
-            U.w(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @see String read(HttpResponse, Parser)
+     */
+    public static String read(HttpResponse response, StatusListener status) {
+        try {
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
+            String line, page = "";
+
+            long length = response.getEntity().getContentLength();
+            if (length == -1) length = 1;
+            long loaded = 0;
+
+            while ((line = reader.readLine()) != null) {
+                page += line + "\n";
+                status.onProgressChange(loaded, length);
+            }
+
+            return page;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -66,32 +93,48 @@ public class ResponseFactory {
      * @see String read(HttpResponse, Parser)
      */
     public static String read(HttpResponse response) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
-        String line, page = "";
         try {
-            while ((line = reader.readLine()) != null) {
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
+            String line, page = "";
+
+            while ((line = reader.readLine()) != null)
                 page += line + "\n";
-            }
+
+            return page;
 
         } catch (IOException e) {
-            U.w(e);
+            throw new RuntimeException(e);
         }
-        return page;
     }
 
+    /**
+     * Слушалка всяких там событий.
+     */
     public static interface StatusListener {
 
+        /**
+         * Вызывается во время запроса пакета.
+         */
         public void onResponseStart();
+        /**
+         * Nuff said.
+         */
+        public void onResponseFail(Throwable t);
+        /**
+         * Вызывается при успешном завершении запроса.
+         */
         public void onResponseFinished();
 
         public void onLoadingStarted();
-        public void onProgressChange(float progress);
+        public void onLoadingFail(Throwable t);
+        public void onProgressChange(long loaded, long length);
         public void onLoadingFinished();
 
         public void onParseStarted();
+        public void onParseFail(Throwable t);
         public void onParseFinished();
 
-        public void onFail();
         public void onFinish();
 
     }
@@ -111,7 +154,7 @@ public class ResponseFactory {
                 return response.getEntity().getContent();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return null;
