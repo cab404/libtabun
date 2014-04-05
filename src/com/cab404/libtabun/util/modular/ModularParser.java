@@ -37,4 +37,7 @@ public class ModularParser implements ResponseFactory.Parser {
 
         return false;
     }
+    @Override public void finished() {
+
+    }
 }

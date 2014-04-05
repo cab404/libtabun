@@ -44,5 +44,8 @@ public class LivestreetKey {
             }
             return true;
         }
+        @Override public void finished() {
+
+        }
     }
 }

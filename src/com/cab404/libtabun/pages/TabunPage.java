@@ -5,7 +5,7 @@ import com.cab404.libtabun.modules.CommonInfoModule;
 import com.cab404.libtabun.modules.LSKeyModule;
 import com.cab404.libtabun.parts.LivestreetKey;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
-import com.cab404.libtabun.util.modular.Page;
+import com.cab404.libtabun.util.loaders.Page;
 
 /**
  * @author cab404

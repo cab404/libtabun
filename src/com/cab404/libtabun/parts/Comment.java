@@ -98,6 +98,9 @@ public class Comment extends Part {
 
             return true;
         }
+        @Override public void finished() {
+
+        }
     }
 
     public String edit(User user, Part post, String text) {

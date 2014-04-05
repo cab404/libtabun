@@ -1,13 +1,13 @@
 package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.data.Part;
-import com.cab404.libtabun.util.html_parser.HTMLTree;
-import com.cab404.libtabun.util.html_parser.Tag;
-import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -61,6 +61,9 @@ public class Letter extends Part {
 
             return true;
         }
+        @Override public void finished() {
+
+        }
 
 
     }
@@ -83,6 +86,9 @@ public class Letter extends Part {
         }
         @Override public boolean isEnd(String str) {
             return str.trim().endsWith("</li>");
+        }
+        @Override public void finished() {
+
         }
     }
 
@@ -114,6 +120,7 @@ public class Letter extends Part {
             return str.equals("</article>");
         }
 
+        @Override public void finished() {}
     }
 
 
@@ -247,6 +254,9 @@ public class Letter extends Part {
             @Override public boolean isEnd(String str) {
                 return str.trim().startsWith("</section>");
             }
+            @Override public void finished() {
+
+            }
         }
 
     }
@@ -279,6 +289,9 @@ public class Letter extends Part {
                 }
 
                 return true;
+            }
+            @Override public void finished() {
+
             }
         }
 

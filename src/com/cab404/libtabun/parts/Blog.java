@@ -115,5 +115,8 @@ public class Blog extends PaWPoL implements PaginatedPart {
             }
             return true;
         }
+        @Override public void finished() {
+
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.Tag.Type;
 
 import java.util.ArrayList;
@@ -13,12 +12,12 @@ import java.util.List;
  * @author cab404
  */
 class TagParser {
-    StringBuffer buffer, fb;
+    StringBuilder buffer, full_data;
     ArrayList<Tag> tags;
 
     TagParser() {
-        fb = new StringBuffer();
-        buffer = new StringBuffer();
+        full_data = new StringBuilder();
+        buffer = new StringBuilder();
         tags = new ArrayList<>();
     }
 
@@ -31,9 +30,9 @@ class TagParser {
     int prev = 0;
     int i, j = 0;
 
-    void line(String line) {
+    synchronized void process(String line) {
         buffer.append(line);
-        fb.append(line);
+        full_data.append(line);
 
         while (true) {
 
@@ -46,12 +45,6 @@ class TagParser {
             tag.start = prev + i;
             tag.end = prev + j + 1;
             tag.text = buffer.substring(i, j + 1);
-
-            U.v("");
-            U.v(tag.text);
-            U.v(prev + "." + tag.start + ":" + tag.end + ":");
-            U.v(fb.subSequence(tag.start, tag.end));
-
 
             String inner = buffer.substring(i + 1, j);
             int l = inner.length() - 1;

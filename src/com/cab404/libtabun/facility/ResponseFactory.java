@@ -16,20 +16,22 @@ public class ResponseFactory {
 
     public static interface Parser {
         public boolean line(String line);
+        public void finished();
     }
 
     /**
-     * Каждую новую полученную строку пропускает через listener
+     * Каждую новую полученную строку пропускает через parser
      *
-     * @param listener Parser, слушающий каждую новую строку
+     * @param parser Parser, слушающий каждую новую строку
      * @param response Сбснна, откуда слушать.
      */
-    public static void read(HttpResponse response, Parser listener) {
+    public static void read(HttpResponse response, Parser parser) {
         try {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
             String line;
-            while ((line = reader.readLine()) != null && listener.line(line)) ;
+            while ((line = reader.readLine()) != null && parser.line(line)) ;
+            parser.finished();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -37,13 +39,13 @@ public class ResponseFactory {
     }
 
     /**
-     * Каждую новую полученную строку пропускает через listener
+     * Каждую новую полученную строку пропускает через parser
      *
-     * @param listener Parser, слушающий каждую новую строку
+     * @param parser Parser, слушающий каждую новую строку
      * @param response Сбснна, откуда слушать.
      * @param status   Статус загрузки ответа.
      */
-    public static void read(HttpResponse response, Parser listener, StatusListener status) {
+    public static void read(HttpResponse response, Parser parser, StatusListener status) {
         try {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(getRightInputStream(response)));
@@ -54,10 +56,11 @@ public class ResponseFactory {
             long loaded = 0;
 
             while ((line = reader.readLine()) != null) {
-                listener.line(line);
+                parser.line(line);
                 loaded += line.length();
                 status.onProgressChange(loaded, length);
             }
+            parser.finished();
 
         } catch (IOException e) {
             throw new RuntimeException(e);

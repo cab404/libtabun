@@ -26,4 +26,7 @@ public class KeyFetcher implements ResponseFactory.Parser {
         }
         return true;
     }
+    @Override public void finished() {
+
+    }
 }

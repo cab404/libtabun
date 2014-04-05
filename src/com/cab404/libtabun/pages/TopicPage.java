@@ -2,7 +2,7 @@ package com.cab404.libtabun.pages;
 
 import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
-import com.cab404.libtabun.util.modular.Page;
+import com.cab404.libtabun.util.loaders.Page;
 
 import java.io.FileWriter;
 import java.io.IOException;

@@ -289,5 +289,8 @@ public class User {
             }
             return true;
         }
+        @Override public void finished() {
+
+        }
     }
 }

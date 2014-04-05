@@ -80,6 +80,9 @@ public class PaWPoL extends Part {
             return str.trim().equals("</article> <!-- /.topic -->");
         }
 
+        @Override public void finished() {
+
+        }
     }
 
     public static class PostLabelListParser implements ResponseFactory.Parser {
@@ -119,6 +122,9 @@ public class PaWPoL extends Part {
                 }
                 return true;
             } else return false;
+        }
+        @Override public void finished() {
+
         }
     }
 }

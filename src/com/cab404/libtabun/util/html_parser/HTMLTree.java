@@ -1,7 +1,6 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +20,7 @@ public class HTMLTree implements Iterable<Tag> {
 
     private LevelAnalyzer leveled;
     private List<Tag> tags;
-    public final String html;
+    public final StringBuilder html;
 
 
     @Override
@@ -44,10 +43,6 @@ public class HTMLTree implements Iterable<Tag> {
         return tags.get(index + start);
     }
 
-    public int size() {
-        return end - start;
-    }
-
     public int getLevel(int index) {
         return leveled.get(index + start).getLevel();
     }
@@ -62,20 +57,22 @@ public class HTMLTree implements Iterable<Tag> {
         this.html = tree.html;
     }
 
-    public HTMLTree(String parse) {
-        html = parse;
-
+    private static TagParser fromString(String text) {
         TagParser parser = new TagParser();
+        parser.process(text);
+        return parser;
+    }
 
-        for (String line : SU.charSplit(parse, '\n'))
-            parser.line(line + "\n");
+    @Deprecated
+    public HTMLTree(String text) {
+        this(fromString(text));
+    }
 
-        tags = parser.tags;
+    public HTMLTree(TagParser parser) {
+        html = parser.full_data;
 
-        U.v(html.substring(tags.get(3).start, tags.get(4).end));
+        tags = Collections.unmodifiableList(parser.tags);
 
-
-        tags = Collections.unmodifiableList(tags);
         end = tags.size();
 
         leveled = new LevelAnalyzer(this);
@@ -230,10 +227,6 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public static class TagNotFoundException extends RuntimeException {
-        public TagNotFoundException(String s) {
-            super(s);
-        }
-
         public TagNotFoundException() {
             super();
         }

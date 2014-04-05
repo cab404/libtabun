@@ -141,6 +141,9 @@ public class Topic extends TopicLabel {
             if (reading) text.append(line).append("\n");
             return true;
         }
+        @Override public void finished() {
+
+        }
     }
 
     /**
@@ -178,6 +181,9 @@ public class Topic extends TopicLabel {
 
 
             return true;
+        }
+        @Override public void finished() {
+
         }
 
         public void onCommentLoad(Comment comment, int left, int total) {
@@ -225,6 +231,9 @@ public class Topic extends TopicLabel {
                     return false;
             }
             return true;
+        }
+        @Override public void finished() {
+
         }
     }
 

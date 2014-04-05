@@ -69,6 +69,9 @@ public class BlogList implements PaginatedPart {
             }
             return true;
         }
+        @Override public void finished() {
+
+        }
     }
 
     int currentPage = 0;

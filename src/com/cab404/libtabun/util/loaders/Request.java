@@ -1,8 +1,9 @@
-package com.cab404.libtabun.util.modular;
+package com.cab404.libtabun.util.loaders;
 
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.RU;
 import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.modular.Cookies;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
@@ -13,7 +14,10 @@ public abstract class Request {
 
 
     public abstract HttpRequestBase getRequest();
-    public abstract void handleResponse(String response);
+
+    public abstract void finished(ResponseFactory.Parser parser);
+    public abstract ResponseFactory.Parser getParser();
+
 
     public void fetch(Cookies cookies, ResponseFactory.StatusListener statusListener) {
 
@@ -32,9 +36,9 @@ public abstract class Request {
         statusListener.onResponseFinished();
 
         statusListener.onLoadingStarted();
-        String data = null;
+        ResponseFactory.Parser parser = getParser();
         try {
-            data = ResponseFactory.read(response, statusListener);
+            ResponseFactory.read(response, parser, statusListener);
         } catch (Throwable e) {
             U.w("Page: Loading fail");
             U.w(e);
@@ -44,7 +48,7 @@ public abstract class Request {
 
         statusListener.onParseStarted();
         try {
-            handleResponse(data);
+            finished(parser);
         } catch (Throwable e) {
             U.w("Page: Parsing fail");
             U.w(e);
@@ -61,6 +65,6 @@ public abstract class Request {
      * Downloads and parses page.
      */
     public void fetch(Cookies cookies) {
-        fetch(cookies, new ResponseFactory.StatusListener() {});
+        fetch(cookies, new ResponseFactory.StatusListener() { });
     }
 }

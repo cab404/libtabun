@@ -4,14 +4,14 @@ import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.parts.LivestreetKey;
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.modular.Request;
+import com.cab404.libtabun.util.loaders.ShortRequest;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.json.simple.JSONObject;
 
 /**
  * @author cab404
  */
-public class LoginRequest extends Request {
+public class LoginRequest extends ShortRequest {
 
     private final String login;
     private final String password;
