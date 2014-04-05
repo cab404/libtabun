@@ -1,6 +1,7 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.Tag.Type;
 
 import java.util.ArrayList;
@@ -12,49 +13,66 @@ import java.util.List;
  * @author cab404
  */
 class TagParser {
+    StringBuffer buffer;
+    ArrayList<Tag> tags;
+
+    TagParser() {
+        buffer = new StringBuffer();
+        tags = new ArrayList<>();
+    }
 
     private static final String
             COMM_START = "!--",
-            COMM_END = "-->";
+            COMM_END = "-->",
+            TAG_START = "<",
+            TAG_END = ">";
 
-    public static ArrayList<Tag> parse(String toParse) {
-        ArrayList<Tag> out = new ArrayList<>();
-        int i, j = 0;
+    int prev = 0;
+    int fi = 0, fj = 0;
+    int i, j = 0;
+
+    void line(String line) {
+        buffer.append(line);
+
         while (true) {
 
-            i = toParse.indexOf('<', j);
-            j = toParse.indexOf('>', i);
-
+            i = buffer.indexOf(TAG_START, j);
+            j = buffer.indexOf(TAG_END, i);
             if (i == -1 || j == -1) break;
+
+            fi = prev + i;
+            fj = prev + j;
+
+            U.v(fi + ":" + fj);
 
 
             Tag tag = new Tag();
             tag.type = Type.OPENING;
-            tag.start = i;
-            tag.end = j + 1;
-            tag.text = toParse.substring(i, j + 1);
+            tag.start = fi;
+            tag.end = fj + 1;
+            tag.text = buffer.substring(i, j + 1);
 
 
-            String inner = toParse.substring(i + 1, j);
+            String inner = buffer.substring(i + 1, j);
             int l = inner.length() - 1;
 
 
             if (inner.startsWith(COMM_START)) {
                 tag.type = Type.COMMENT;
                 tag.name = COMM_START;
-                j = toParse.indexOf(COMM_END, i) + 3;
-                tag.text = toParse.substring(i, j);
-                out.add(tag);
+                j = buffer.indexOf(COMM_END, i) + 3;
+                tag.text = buffer.substring(i, j);
+                tags.add(tag);
                 continue;
             }
 
 
             if (inner.charAt(0) == '/') {
                 tag.type = Type.CLOSING;
-                inner = toParse.substring(i + 2, j);
+                inner = buffer.substring(i + 2, j);
             } else if (inner.charAt(l) == '/') {
                 tag.type = Type.STANDALONE;
-                inner = toParse.substring(i + 1, j - 1);
+                inner = buffer.substring(i + 1, j - 1);
             }
 
 
@@ -95,11 +113,12 @@ class TagParser {
 
             }
 
-            out.add(tag);
+            U.v(buffer);
+            buffer.delete(0, j + 1);
+            prev += j + 1;
+            j = 0;
 
         }
-
-        return out;
     }
 
 }

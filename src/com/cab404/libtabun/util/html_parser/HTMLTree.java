@@ -62,10 +62,14 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public HTMLTree(String parse) {
-        tags = new ArrayList<>();
         html = parse;
 
-        tags = TagParser.parse(parse);
+        TagParser parser = new TagParser();
+
+        for (String line : SU.charSplit(parse, '\n'))
+            parser.line(line);
+
+        tags = parser.tags;
 
         tags = Collections.unmodifiableList(tags);
         end = tags.size();
