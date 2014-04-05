@@ -1,6 +1,7 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,9 +68,12 @@ public class HTMLTree implements Iterable<Tag> {
         TagParser parser = new TagParser();
 
         for (String line : SU.charSplit(parse, '\n'))
-            parser.line(line);
+            parser.line(line + "\n");
 
         tags = parser.tags;
+
+        U.v(html.substring(tags.get(3).start, tags.get(4).end));
+
 
         tags = Collections.unmodifiableList(tags);
         end = tags.size();

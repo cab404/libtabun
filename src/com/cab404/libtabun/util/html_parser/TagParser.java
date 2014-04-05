@@ -13,10 +13,11 @@ import java.util.List;
  * @author cab404
  */
 class TagParser {
-    StringBuffer buffer;
+    StringBuffer buffer, fb;
     ArrayList<Tag> tags;
 
     TagParser() {
+        fb = new StringBuffer();
         buffer = new StringBuffer();
         tags = new ArrayList<>();
     }
@@ -28,29 +29,28 @@ class TagParser {
             TAG_END = ">";
 
     int prev = 0;
-    int fi = 0, fj = 0;
     int i, j = 0;
 
     void line(String line) {
         buffer.append(line);
+        fb.append(line);
 
         while (true) {
 
-            i = buffer.indexOf(TAG_START, j);
+            i = buffer.indexOf(TAG_START, 0);
             j = buffer.indexOf(TAG_END, i);
             if (i == -1 || j == -1) break;
 
-            fi = prev + i;
-            fj = prev + j;
-
-            U.v(fi + ":" + fj);
-
-
             Tag tag = new Tag();
             tag.type = Type.OPENING;
-            tag.start = fi;
-            tag.end = fj + 1;
+            tag.start = prev + i;
+            tag.end = prev + j + 1;
             tag.text = buffer.substring(i, j + 1);
+
+            U.v("");
+            U.v(tag.text);
+            U.v(prev + "." + tag.start + ":" + tag.end + ":");
+            U.v(fb.subSequence(tag.start, tag.end));
 
 
             String inner = buffer.substring(i + 1, j);
@@ -60,9 +60,10 @@ class TagParser {
             if (inner.startsWith(COMM_START)) {
                 tag.type = Type.COMMENT;
                 tag.name = COMM_START;
-                j = buffer.indexOf(COMM_END, i) + 3;
+                j = buffer.indexOf(COMM_END, i) + 2;
                 tag.text = buffer.substring(i, j);
                 tags.add(tag);
+                step();
                 continue;
             }
 
@@ -113,12 +114,14 @@ class TagParser {
 
             }
 
-            U.v(buffer);
-            buffer.delete(0, j + 1);
-            prev += j + 1;
-            j = 0;
-
+            step();
+            tags.add(tag);
         }
+    }
+
+    private void step() {
+        buffer.delete(0, j + 1);
+        prev += j + 1;
     }
 
 }
