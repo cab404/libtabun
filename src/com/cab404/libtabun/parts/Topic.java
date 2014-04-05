@@ -1,6 +1,6 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.data.PostLabel;
+import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Post extends PostLabel {
+public class Topic extends TopicLabel {
     public static enum Type {
         QUIZ, SIMPLE
     }
@@ -27,7 +27,7 @@ public class Post extends PostLabel {
     /**
      * Создаёт пустой пост ниоткуда. Заполнять самим.
      */
-    public Post() {
+    public Topic() {
         comment_list = new ArrayList<>();
         blog = new Blog();
         name = time = content = votes = "";
@@ -37,7 +37,7 @@ public class Post extends PostLabel {
     /**
      * Загружает заголовок поста со всеми пряниками. Для загрузки комментариев пните fetchNewComments
      */
-    public Post(User user, int num) {
+    public Topic(User user, int num) {
         this();
         key = user.key;
         id = num;

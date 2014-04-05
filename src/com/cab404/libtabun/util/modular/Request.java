@@ -61,21 +61,6 @@ public abstract class Request {
      * Downloads and parses page.
      */
     public void fetch(Cookies cookies) {
-        fetch(cookies, new ResponseFactory.StatusListener() {
-            @Override public void onResponseStart() {}
-            @Override public void onResponseFail(Throwable t) {}
-            @Override public void onResponseFinished() {}
-
-            @Override public void onLoadingStarted() {}
-            @Override public void onLoadingFail(Throwable t) {}
-            @Override public void onProgressChange(long loaded, long length) {}
-            @Override public void onLoadingFinished() {}
-
-            @Override public void onParseStarted() {}
-            @Override public void onParseFail(Throwable t) {}
-            @Override public void onParseFinished() {}
-
-            @Override public void onFinish() {}
-        });
+        fetch(cookies, new ResponseFactory.StatusListener() {});
     }
 }

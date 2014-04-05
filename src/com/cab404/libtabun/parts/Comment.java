@@ -161,7 +161,7 @@ public class Comment extends Part {
     }
 
     public static Comment getByID(User user, int comment_id) {
-        Post post = new Post(user, Comment.getPostNum(user, comment_id));
+        Topic post = new Topic(user, Comment.getPostNum(user, comment_id));
         post.fetchNewComments(user, comment_id - 1);
         return post.getCommentByID(comment_id);
     }

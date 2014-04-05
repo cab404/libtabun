@@ -1,6 +1,6 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.data.PostLabel;
+import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Blog extends PaWPoL implements PaginatedPart {
     public String name, url_name;
-    public ArrayList<PostLabel> posts;
+    public ArrayList<TopicLabel> posts;
     public int numpages = 0;
     public int curpage = 0;
     public LivestreetKey key;
@@ -54,7 +54,7 @@ public class Blog extends PaWPoL implements PaginatedPart {
 
     @Override public boolean loadPage(User user, int page) {
         curpage = page;
-        ArrayList<PostLabel> tmp = new ArrayList<>();
+        ArrayList<TopicLabel> tmp = new ArrayList<>();
         tmp.addAll(posts);
 
         ResponseFactory.read(

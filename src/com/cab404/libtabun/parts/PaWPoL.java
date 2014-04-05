@@ -1,7 +1,7 @@
 package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.data.Part;
-import com.cab404.libtabun.data.PostLabel;
+import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
@@ -22,7 +22,7 @@ import java.util.List;
 public class PaWPoL extends Part {
 
     public static class PostLabelParser extends U.TextPartParser {
-        public PostLabel pl = new PostLabel();
+        public TopicLabel pl = new TopicLabel();
 
         @Override public void process(StringBuilder text) {
             HTMLTree raw = new HTMLTree(text.toString());
@@ -108,7 +108,7 @@ public class PaWPoL extends Part {
 
         private final EndsWith endsWith;
         private PostLabelParser plp;
-        public ArrayList<PostLabel> labels;
+        public ArrayList<TopicLabel> labels;
 
         @Override
         public boolean line(String line) {

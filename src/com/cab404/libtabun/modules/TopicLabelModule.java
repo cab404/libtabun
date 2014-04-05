@@ -1,6 +1,6 @@
 package com.cab404.libtabun.modules;
 
-import com.cab404.libtabun.data.PostLabel;
+import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.modular.Module;
 
@@ -9,7 +9,12 @@ import com.cab404.libtabun.util.modular.Module;
  *
  * @author cab404
  */
-public class PostLabelModule implements Module<PostLabel> {
+public class TopicLabelModule implements Module<TopicLabel> {
+
+    private Mode mode;
+    public TopicLabelModule(Mode mode) {
+        this.mode = mode;
+    }
 
     /**
      * Варианты разделения дерева.
@@ -29,7 +34,23 @@ public class PostLabelModule implements Module<PostLabel> {
         LETTER
     }
 
-    @Override public PostLabel extractData(HTMLTree page, String url) {
+    @Override public TopicLabel extractData(HTMLTree page, String url) {
+
+        switch (mode) {
+            case POST:
+                page = page.getTree(page.xPathFirstTag("html/body/" +
+                        "div&id=container/" +
+                        "div&id=wrapper/" +
+                        "div&id=content-wrapper/" +
+                        "div&id=content/" +
+                        "article"));
+                break;
+            case LETTER:
+
+                break;
+
+        }
+
         return null;
     }
 

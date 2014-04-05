@@ -193,8 +193,8 @@ public class User {
     /**
      * Post? Post! Создаёт новый пост (всю информацию пихать в post, .blog.id важен)
      */
-    public Post postPost(Post post) {
-        Post psto = new Post();
+    public Topic postPost(Topic post) {
+        Topic psto = new Topic();
 
         ResponseFactory.read(
                 execute(

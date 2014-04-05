@@ -5,7 +5,7 @@ import com.cab404.libtabun.parts.Blog;
 /**
  * @author cab404
  */
-public class PostLabel extends Part {
+public class TopicLabel extends Part {
     public String name, votes;
     public Profile author;
     public String content, time;
@@ -19,7 +19,7 @@ public class PostLabel extends Part {
     public int comments = 0, comments_new = 0;
 
 
-    public PostLabel() {
+    public TopicLabel() {
         name = votes = time = content = "";
     }
 }

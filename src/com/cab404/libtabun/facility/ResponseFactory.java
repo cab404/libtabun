@@ -79,6 +79,7 @@ public class ResponseFactory {
 
             while ((line = reader.readLine()) != null) {
                 page += line + "\n";
+                loaded += line.length() + 1;
                 status.onProgressChange(loaded, length);
             }
 
@@ -111,31 +112,28 @@ public class ResponseFactory {
     /**
      * Слушалка всяких там событий.
      */
-    public static interface StatusListener {
+    public static abstract class StatusListener {
 
-        /**
-         * Вызывается во время запроса пакета.
-         */
-        public void onResponseStart();
-        /**
-         * Nuff said.
-         */
-        public void onResponseFail(Throwable t);
-        /**
-         * Вызывается при успешном завершении запроса.
-         */
-        public void onResponseFinished();
+        public void onResponseStart() {}
+        public void onResponseFail(Throwable t) {
+            throw new RuntimeException(t);
+        }
+        public void onResponseFinished() {}
 
-        public void onLoadingStarted();
-        public void onLoadingFail(Throwable t);
-        public void onProgressChange(long loaded, long length);
-        public void onLoadingFinished();
+        public void onLoadingStarted() {}
+        public void onLoadingFail(Throwable t) {
+            throw new RuntimeException(t);
+        }
+        public void onProgressChange(long loaded, long length) {}
+        public void onLoadingFinished() {}
 
-        public void onParseStarted();
-        public void onParseFail(Throwable t);
-        public void onParseFinished();
+        public void onParseStarted() {}
+        public void onParseFail(Throwable t) {
+            throw new RuntimeException(t);
+        }
+        public void onParseFinished() {}
 
-        public void onFinish();
+        public void onFinish() {}
 
     }
 

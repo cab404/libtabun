@@ -1,7 +1,6 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.CommonInfo;
-import com.cab404.libtabun.parts.LivestreetKey;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
@@ -37,10 +36,6 @@ public class CommonInfoModule implements Module<CommonInfo> {
                 SU.removeAllTags(
                         page.xPathStr("ul/li/span&class=rating ") // ПРОБЕЛ ВАЖЕН!
                 ).trim()
-        );
-
-        info.key = new LivestreetKey(url,
-                SU.bsub(page.xPathFirstTag("ul/li&class=item-signout/a").get("href"), "", "=")
         );
 
         return info;
