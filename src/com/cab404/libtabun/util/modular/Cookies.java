@@ -18,7 +18,7 @@ public class Cookies {
         this.cookies = new HashMap<>();
     }
 
-    public Header getCookies() {
+    public synchronized Header getCookies() {
         String out = "";
 
         for (Map.Entry<String, String> cookie : cookies.entrySet())
@@ -27,7 +27,7 @@ public class Cookies {
         return new BasicHeader("Cookie", out);
     }
 
-    public void handleCookies(Header[] headers) {
+    public synchronized void handleCookies(Header[] headers) {
         for (Header header : headers)
             addCookies(header.getValue());
     }

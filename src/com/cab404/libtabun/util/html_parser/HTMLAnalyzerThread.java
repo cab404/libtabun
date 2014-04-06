@@ -13,6 +13,7 @@ public class HTMLAnalyzerThread extends Thread implements TagParser.TagHandler {
     private CopyOnWriteArrayList<Tag> queue;
     private LevelAnalyzer analyzer;
     private final Object working_lock;
+    public boolean started = false;
 
 
     public HTMLAnalyzerThread() {
@@ -24,14 +25,17 @@ public class HTMLAnalyzerThread extends Thread implements TagParser.TagHandler {
 
     public LevelAnalyzer getLevelAnalyzer() {
         U.Timer timer = new U.Timer();
-        synchronized (working_lock) {
-            timer.log("Waited analyzer for :time:");
-            return analyzer;
-        }
+        if (started)
+            synchronized (working_lock) {
+                timer.log("Waited analyzer for :time:");
+                return analyzer;
+            }
+        else throw new RuntimeException("Not yet started!");
     }
 
     @Override public void run() {
         synchronized (working_lock) {
+            started = true;
 
             while (true) {
 
@@ -48,8 +52,6 @@ public class HTMLAnalyzerThread extends Thread implements TagParser.TagHandler {
     }
 
     @Override public void handle(Tag tag) {
-        if (!isAlive())
-            start();
         queue.add(tag);
     }
 

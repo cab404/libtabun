@@ -261,6 +261,15 @@ public class SU {
         return tabs.toString();
     }
 
+    public static String table(int column, String... entries) {
+        StringBuilder line = new StringBuilder("|");
+        for (String entry : entries)
+            line
+                    .append(fillSpaces(entry, column, 0, FillType.CENTER))
+                    .append("|");
+        return line.toString();
+    }
+
 
     public static enum FillType {
         RIGHT, LEFT, CENTER
@@ -279,8 +288,8 @@ public class SU {
                 right = offset + num - fill.length();
                 break;
             case CENTER:
-                right = (int) Math.floor((float) num / 2) + offset;
-                left = (int) Math.ceil((float) num / 2) + offset;
+                right = (int) Math.floor((float) (num - fill.length()) / 2) + offset;
+                left = (int) Math.ceil((float) (num - fill.length()) / 2) + offset;
                 break;
         }
 

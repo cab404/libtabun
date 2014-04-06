@@ -58,7 +58,7 @@ public class ResponseFactory {
             while ((line = reader.readLine()) != null) {
                 parser.line(line);
                 loaded += line.length();
-                status.onProgressChange(loaded, length);
+                status.onLoadingProgress(loaded, length);
             }
             parser.finished();
 
@@ -83,7 +83,7 @@ public class ResponseFactory {
             while ((line = reader.readLine()) != null) {
                 page += line + "\n";
                 loaded += line.length() + 1;
-                status.onProgressChange(loaded, length);
+                status.onLoadingProgress(loaded, length);
             }
 
             return page;
@@ -127,7 +127,7 @@ public class ResponseFactory {
         public void onLoadingFail(Throwable t) {
             throw new RuntimeException(t);
         }
-        public void onProgressChange(long loaded, long length) {}
+        public void onLoadingProgress(long loaded, long length) {}
         public void onLoadingFinished() {}
 
         public void onParseStarted() {}

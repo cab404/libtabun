@@ -5,6 +5,7 @@ import com.cab404.libtabun.util.RU;
 import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.modular.Cookies;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
@@ -27,13 +28,18 @@ public abstract class Request {
         HttpResponse response;
         try {
             response = RU.exec(request, cookies);
+            if (response.getStatusLine().getStatusCode() / 100 != 2) {
+                ErrorResponse resp = new ErrorResponse(response.getStatusLine().toString());
+                resp.setStatusLine(response.getStatusLine());
+                statusListener.onResponseFail(resp);
+            }
         } catch (Throwable e) {
             U.w("Page: Response fail");
             U.w(e);
             statusListener.onResponseFail(e);
             return;
         }
-        U.v(response.getStatusLine());
+//        U.v(response.getStatusLine());
         statusListener.onResponseFinished();
 
         statusListener.onLoadingStarted();
@@ -67,5 +73,18 @@ public abstract class Request {
      */
     public void fetch(Cookies cookies) {
         fetch(cookies, new ResponseFactory.StatusListener() { });
+    }
+
+    public static class ErrorResponse extends Exception {
+        StatusLine error;
+        public ErrorResponse(String s) {
+            super();
+        }
+        private void setStatusLine(StatusLine line) {
+            this.error = line;
+        }
+        public StatusLine getStatusLine() {
+            return error;
+        }
     }
 }

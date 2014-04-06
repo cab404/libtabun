@@ -15,13 +15,16 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
     private CopyOnWriteArrayList<String> queue;
     private TagParser parser;
     private HTMLAnalyzerThread bonded_analyzer;
+    public boolean started = false;
 
     public TagParser getTagParser() {
         U.Timer timer = new U.Timer();
-        synchronized (working_lock) {
-            timer.log("Waited parser for :time:");
-            return parser;
-        }
+        if (started)
+            synchronized (working_lock) {
+                timer.log("Waited parser for :time:");
+                return parser;
+            }
+        else throw new RuntimeException("Not yet started!");
     }
 
     public void bondWithAnalyzer(HTMLAnalyzerThread bonded_analyzer) {
@@ -37,6 +40,7 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
 
     @Override public void run() {
         synchronized (working_lock) {
+            started = true;
 
             while (true) {
 
@@ -53,18 +57,13 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
 
                 }
             }
-
+            if (bonded_analyzer != null)
+                bonded_analyzer.finished();
         }
-
-        if (bonded_analyzer != null)
-            bonded_analyzer.finished();
 
     }
 
     @Override public boolean line(String line) {
-        if (!this.isAlive())
-            start();
-
         queue.add(line);
 
         return true;

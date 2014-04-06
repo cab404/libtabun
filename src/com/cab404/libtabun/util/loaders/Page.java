@@ -37,12 +37,18 @@ public abstract class Page extends Request {
     @Override public ResponseFactory.Parser getParser() {
         content = new HTMLAnalyzerThread();
         HTMLTagParserThread parser = new HTMLTagParserThread(content);
+        content.start();
+        parser.start();
+
+        content.setName(getURL() + " analyzer thread.");
+        parser.setName(getURL() + " parser thread.");
+
         parser.bondWithAnalyzer(content);
+
         return parser;
     }
 
     @Override public void fetch(Cookies cookies, ResponseFactory.StatusListener statusListener) {
         super.fetch(cookies, statusListener);
-
     }
 }
