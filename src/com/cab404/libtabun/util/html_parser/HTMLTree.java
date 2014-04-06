@@ -1,7 +1,6 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -172,14 +171,9 @@ public class HTMLTree implements Iterable<Tag> {
         if (opening.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
         if (opening.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
 
-        U.v(get(getClosingTag(opening)));
-
         HTMLTree _return = new HTMLTree(this);
         _return.start = opening.index;
         _return.end = getClosingTag(opening) + 1;
-        U.v("test");
-        U.v(_return);
-        U.v("tested");
 
         return _return;
     }

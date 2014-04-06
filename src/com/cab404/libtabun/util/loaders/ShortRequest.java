@@ -12,7 +12,7 @@ public abstract class ShortRequest extends Request {
     public abstract void handleResponse(String response);
 
 
-    @Override public void finished(ResponseFactory.Parser parser) {
+    @Override public void response(ResponseFactory.Parser parser) {
         handleResponse(((Stringifyer) parser).text.toString());
     }
 

@@ -3,6 +3,7 @@ package com.cab404.libtabun.util.loaders;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.html_parser.*;
+import com.cab404.libtabun.util.modular.Cookies;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
@@ -26,7 +27,7 @@ public abstract class Page extends Request {
      */
     protected abstract void parse(HTMLTree page);
 
-    @Override public void finished(ResponseFactory.Parser parser) {
+    @Override public void response(ResponseFactory.Parser parser) {
         TagParser tag_parser = ((HTMLTagParserThread) parser).getTagParser();
         LevelAnalyzer level_analyzer = content.getLevelAnalyzer();
 
@@ -40,5 +41,8 @@ public abstract class Page extends Request {
         return parser;
     }
 
+    @Override public void fetch(Cookies cookies, ResponseFactory.StatusListener statusListener) {
+        super.fetch(cookies, statusListener);
 
+    }
 }

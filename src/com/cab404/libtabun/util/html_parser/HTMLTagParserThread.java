@@ -48,7 +48,8 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
                     if (line == null)
                         break;
 
-                    parser.process(line);
+                    parser.process(line + "\n");
+
 
                 }
             }

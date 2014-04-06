@@ -15,7 +15,7 @@ public abstract class Request {
 
     public abstract HttpRequestBase getRequest();
 
-    public abstract void finished(ResponseFactory.Parser parser);
+    public abstract void response(ResponseFactory.Parser parser);
     public abstract ResponseFactory.Parser getParser();
 
 
@@ -33,6 +33,7 @@ public abstract class Request {
             statusListener.onResponseFail(e);
             return;
         }
+        U.v(response.getStatusLine());
         statusListener.onResponseFinished();
 
         statusListener.onLoadingStarted();
@@ -48,7 +49,7 @@ public abstract class Request {
 
         statusListener.onParseStarted();
         try {
-            finished(parser);
+            response(parser);
         } catch (Throwable e) {
             U.w("Page: Parsing fail");
             U.w(e);

@@ -21,6 +21,9 @@ public class LevelAnalyzer {
     public void add(Tag tag) {
         tag.index = tags.size();
         tags.add(new LeveledTag(tag, currentLevel()));
+//        Добавить код распределения парсинга сюда.
+//        if (tag.isClosing())
+//            fixLyingLoners(findOpening(tag.index).tag.index, tags.size());
     }
 
     public LeveledTag get(int index) {
@@ -31,6 +34,7 @@ public class LevelAnalyzer {
     public class LeveledTag {
         public final Tag tag;
         private int level;
+        private boolean fixed = false;
 
         public int getLevel() {
             return level;
@@ -48,6 +52,7 @@ public class LevelAnalyzer {
         for (int i = start; i < end; i++) {
             LeveledTag checking = tags.get(i);
             if (checking.tag.isComment()) continue;
+            if (checking.fixed) continue;
 
             int c_level;
 
@@ -76,12 +81,11 @@ public class LevelAnalyzer {
     private void fixLyingLoners(int start, int end) {
         Map<String, Integer> levels = analyzeSlice(start, end);
 
-//        for (String key : levels.keySet())
-//            U.v(SU.fillSpaces(key, 20, 1, SU.FillType.LEFT) + ": " + levels.get(key));
-
         for (int i = start; i < end; i++) {
-
             LeveledTag tag = tags.get(i);
+            if (tag.fixed) continue;
+            tag.fixed = true;
+
             if (tag.tag.isComment()) continue;
 
             int c_level = levels.get(tag.tag.name);
@@ -108,18 +112,28 @@ public class LevelAnalyzer {
 
         }
 
+        for (Map.Entry<String, Integer> e : levels.entrySet())
+            if (e.getValue() != 0)
+                throw new RuntimeException("Parsing error - cannot resolve tree at tag " + e.getKey());
+
     }
 
-    public LeveledTag findOpening(LeveledTag tag) {
+    public LeveledTag findOpening(int index) {
         LeveledTag end = tags.getLast();
         int c_level = 0;
-        for (int i = tag.tag.index; i >= 0; i--) {
+        for (int i = index; i >= 0; i--) {
             LeveledTag curr = get(i);
             if (curr.tag.name.equals(end.tag.name)) {
                 if (curr.tag.isOpening()) {
                     c_level++;
                     if (c_level == 0)
                         return curr;
+                }
+                if (curr.tag.isStandalone()) {
+                    if (c_level == -1) {
+                        curr.tag.type = Tag.Type.OPENING;
+                        return curr;
+                    }
                 }
 
                 if (curr.tag.isClosing())
