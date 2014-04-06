@@ -30,7 +30,8 @@ public class HTMLAnalyzerThread extends Thread implements TagParser.TagHandler {
                 timer.log("Waited analyzer for :time:");
                 return analyzer;
             }
-        else throw new RuntimeException("Not yet started!");
+        else
+            return null;
     }
 
     @Override public void run() {

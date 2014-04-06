@@ -19,12 +19,14 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
 
     public TagParser getTagParser() {
         U.Timer timer = new U.Timer();
+
         if (started)
             synchronized (working_lock) {
                 timer.log("Waited parser for :time:");
                 return parser;
             }
-        else throw new RuntimeException("Not yet started!");
+        else
+            return null;
     }
 
     public void bondWithAnalyzer(HTMLAnalyzerThread bonded_analyzer) {
