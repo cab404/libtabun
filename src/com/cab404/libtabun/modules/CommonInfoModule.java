@@ -24,6 +24,7 @@ public class CommonInfoModule implements Module<CommonInfo> {
             return info;
         }
 
+        U.v(page);
 
         info.username = page.xPathStr("a&class=username");
         info.avatar = page.xPathFirstTag("a/img&alt=avatar").get("src");

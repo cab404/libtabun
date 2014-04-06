@@ -1,9 +1,9 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -19,28 +19,29 @@ public class HTMLTree implements Iterable<Tag> {
     int end = 0;
 
     private LevelAnalyzer leveled;
-    private List<Tag> tags;
     public final StringBuilder html;
-
 
     @Override
     public Iterator<Tag> iterator() {
         return new Iterator<Tag>() {
-            int i = start;
+            int i = 0;
             @Override public boolean hasNext() {
-                return i < end;
+                return i < size();
             }
             @Override public Tag next() {
-                return tags.get(i++);
+                return get(i++);
             }
             @Override public void remove() {
                 throw new UnsupportedOperationException();
             }
         };
     }
+    private int size() {
+        return end - start;
+    }
 
     public Tag get(int index) {
-        return tags.get(index + start);
+        return leveled.get(index + start).tag;
     }
 
     public int getLevel(int index) {
@@ -53,33 +54,34 @@ public class HTMLTree implements Iterable<Tag> {
 
 
     private HTMLTree(HTMLTree tree) {
-        tags = new ArrayList<>();
         this.html = tree.html;
+        this.leveled = tree.leveled;
     }
 
-    private static TagParser fromString(String text) {
-        TagParser parser = new TagParser();
-        parser.process(text);
-        return parser;
+    public HTMLTree(LevelAnalyzer analyzed, TagParser data) {
+        html = data.full_data;
+        analyzed.fixLayout();
+        leveled = analyzed;
+
+        start = 0;
+        end = leveled.size();
     }
 
-    @Deprecated
     public HTMLTree(String text) {
-        this(fromString(text));
-    }
+        final LevelAnalyzer analyzer = new LevelAnalyzer();
+        TagParser parser = new TagParser(new TagParser.TagHandler() {
+            @Override public void handle(Tag tag) {
+                analyzer.add(tag);
+            }
+        });
+        parser.process(text);
 
-    public HTMLTree(TagParser parser) {
         html = parser.full_data;
+        analyzer.fixLayout();
+        leveled = analyzer;
 
-        tags = Collections.unmodifiableList(parser.tags);
-
-        end = tags.size();
-
-        leveled = new LevelAnalyzer(this);
-        leveled.fixLayout();
-
-        for (int i = 0; i < end; i++)
-            tags.get(i).index = i;
+        start = 0;
+        end = leveled.size();
     }
 
     public List<Tag> getAllTagsByProperty(String key, String value) {
@@ -106,13 +108,13 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public Tag getTagByProperty(String key, String value) {
-        return tags.get(getTagIndexByProperty(key, value));
+        return get(getTagIndexByProperty(key, value));
     }
 
     public int getTagIndexByProperty(String key, String value) {
-        for (int i = 0; i != tags.size(); i++)
-            if (value.equals(tags.get(i).props.get(key)))
-                return i;
+        for (Tag tag : this)
+            if (value.equals(tag.props.get(key)))
+                return getIndexForTag(tag);
         throw new TagNotFoundException();
     }
 
@@ -121,16 +123,18 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public int getTagIndexForName(String name) {
-        for (int i = 0; i != tags.size(); i++) if (tags.get(i).name.equals(name)) return i;
+        for (Tag tag : this)
+            if (tag.name.equals(name))
+                return getIndexForTag(tag);
         throw new TagNotFoundException();
     }
 
     public int getTagIndexForParamRegex(String key, String regex) {
         Pattern pattern = Pattern.compile(regex);
-        for (int i = 0; i != tags.size(); i++) {
-            if (tags.get(i).props.containsKey(key))
-                if (pattern.matcher(tags.get(i).props.get(key)).matches()) return i;
-        }
+        for (Tag tag : this)
+            if (tag.props.containsKey(key))
+                if (pattern.matcher(tag.props.get(key)).matches())
+                    return getIndexForTag(tag);
         throw new TagNotFoundException();
     }
 
@@ -156,34 +160,35 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public String getContents(Tag tag) {
-
         return html.substring(tag.end, get(getClosingTag(tag)).start);
-
     }
 
 
     /**
      * Возвращает уровень тегов целиком.
      */
-    public HTMLTree getTree(Tag tag) {
-        return getTree(tag.index);
+    public HTMLTree getTree(Tag opening) {
+
+        if (opening.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
+        if (opening.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
+
+        U.v(get(getClosingTag(opening)));
+
+        HTMLTree _return = new HTMLTree(this);
+        _return.start = opening.index;
+        _return.end = getClosingTag(opening) + 1;
+        U.v("test");
+        U.v(_return);
+        U.v("tested");
+
+        return _return;
     }
 
     /**
      * Возвращает уровень тегов целиком.
      */
     public HTMLTree getTree(int index) {
-        Tag start = get(index);
-        if (start.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
-        if (start.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
-
-        HTMLTree _return = new HTMLTree(this);
-        _return.leveled = leveled;
-        _return.start = index;
-        _return.tags = tags;
-        _return.end = getClosingTag(start) + 1;
-
-        return _return;
+        throw new UnsupportedOperationException();
     }
 
     public List<Tag> getTopChildren(Tag tag) {
@@ -196,7 +201,7 @@ public class HTMLTree implements Iterable<Tag> {
 
         int index = getIndexForTag(tag) + 1, level = getLevel(tag);
 
-        for (; index < tags.size(); index++) {
+        for (; index < end; index++) {
 
             Tag check = get(index);
             int c_level = getLevel(check);
@@ -220,6 +225,7 @@ public class HTMLTree implements Iterable<Tag> {
 
         for (Tag tag : this)
             out
+                    .append(getLevel(tag) - shift)
                     .append(SU.tabs(getLevel(tag) - shift))
                     .append(tag)
                     .append("\n");
@@ -233,7 +239,10 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public List<Tag> copyList() {
-        return new ArrayList<>(tags.subList(start, end));
+        ArrayList<Tag> ret = new ArrayList<>();
+        for (Tag tag : this)
+            ret.add(tag);
+        return ret;
     }
 
 

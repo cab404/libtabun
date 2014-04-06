@@ -247,8 +247,10 @@ public class SU {
 
     public static String removeAllTags(String toProcess) {
         int s;
+        U.v(toProcess);
         while ((s = toProcess.indexOf('<')) != -1) {
             int f = toProcess.indexOf('>', s);
+            if (f == -1) break;
             toProcess = toProcess.substring(0, s) + toProcess.substring(f + 1);
         }
         return toProcess;

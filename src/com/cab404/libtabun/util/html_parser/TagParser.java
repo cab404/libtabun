@@ -3,7 +3,6 @@ package com.cab404.libtabun.util.html_parser;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.html_parser.Tag.Type;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,14 +10,14 @@ import java.util.List;
  *
  * @author cab404
  */
-class TagParser {
+public class TagParser {
     StringBuilder buffer, full_data;
-    ArrayList<Tag> tags;
+    private TagHandler handler;
 
-    TagParser() {
+    TagParser(TagHandler handler) {
+        this.handler = handler;
         full_data = new StringBuilder();
         buffer = new StringBuilder();
-        tags = new ArrayList<>();
     }
 
     private static final String
@@ -53,9 +52,14 @@ class TagParser {
             if (inner.startsWith(COMM_START)) {
                 tag.type = Type.COMMENT;
                 tag.name = COMM_START;
-                j = buffer.indexOf(COMM_END, i) + 2;
+
+                j = buffer.indexOf(COMM_END, i);
+                if (j == -1) break;
+                j += COMM_START.length();
                 tag.text = buffer.substring(i, j);
-                tags.add(tag);
+                j--;
+
+                handler.handle(tag);
                 step();
                 continue;
             }
@@ -108,13 +112,17 @@ class TagParser {
             }
 
             step();
-            tags.add(tag);
+            handler.handle(tag);
         }
     }
 
     private void step() {
         buffer.delete(0, j + 1);
         prev += j + 1;
+    }
+
+    static abstract interface TagHandler {
+        public void handle(Tag tag);
     }
 
 }

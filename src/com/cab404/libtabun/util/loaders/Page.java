@@ -2,8 +2,7 @@ package com.cab404.libtabun.util.loaders;
 
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.util.html_parser.HTMLTree;
-import com.cab404.libtabun.util.html_parser.ParallelHTMLParser;
+import com.cab404.libtabun.util.html_parser.*;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
@@ -12,6 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
  * @author cab404
  */
 public abstract class Page extends Request {
+    private HTMLAnalyzerThread content;
 
     /**
      * Возвращает url страницы.
@@ -27,15 +27,17 @@ public abstract class Page extends Request {
     protected abstract void parse(HTMLTree page);
 
     @Override public void finished(ResponseFactory.Parser parser) {
-        parse(
-                new HTMLTree(
-                        ((ParallelHTMLParser) parser).getParser()
-                )
-        );
+        TagParser tag_parser = ((HTMLTagParserThread) parser).getTagParser();
+        LevelAnalyzer level_analyzer = content.getLevelAnalyzer();
+
+        parse(new HTMLTree(level_analyzer, tag_parser));
     }
 
     @Override public ResponseFactory.Parser getParser() {
-        return new ParallelHTMLParser();
+        content = new HTMLAnalyzerThread();
+        HTMLTagParserThread parser = new HTMLTagParserThread(content);
+        parser.bondWithAnalyzer(content);
+        return parser;
     }
 
 

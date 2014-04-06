@@ -3,6 +3,8 @@ package com.cab404.libtabun.util.loaders;
 import com.cab404.libtabun.facility.ResponseFactory;
 
 /**
+ * Реквест на какую-нибудь мелочь, которая не требует параллельного парсинга.
+ *
  * @author cab404
  */
 public abstract class ShortRequest extends Request {
@@ -29,9 +31,8 @@ public abstract class ShortRequest extends Request {
             text.append(line).append("\n");
             return true;
         }
-        @Override public void finished() {
 
-        }
+        @Override public void finished() {}
     }
 
 }
