@@ -4,6 +4,8 @@ import com.cab404.libtabun.data.CommonInfo;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import com.cab404.libtabun.util.modular.Module;
 
 /**
@@ -13,7 +15,7 @@ import com.cab404.libtabun.util.modular.Module;
  */
 public class CommonInfoModule implements Module<CommonInfo> {
 
-    @Override public CommonInfo extractData(HTMLTree page, String url) {
+    @Override public CommonInfo extractData(HTMLTree page, AccessProfile profile) {
         CommonInfo info = new CommonInfo();
 
         try {
@@ -23,6 +25,12 @@ public class CommonInfoModule implements Module<CommonInfo> {
             info.isLoggedIn = false;
             return info;
         }
+
+        Tag tag = page.xPathFirstTag("ul/li/a&class=new-*");
+        if (tag != null) {
+            info.new_messages = U.parseInt(page.getContents(tag));
+        } else
+            info.new_messages = 0;
 
         info.username = page.xPathStr("a&class=username");
         info.avatar = page.xPathFirstTag("a/img&alt=avatar").get("src");

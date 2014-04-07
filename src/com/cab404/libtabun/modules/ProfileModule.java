@@ -5,8 +5,11 @@ import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import com.cab404.libtabun.util.modular.Module;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,9 +17,9 @@ import java.util.List;
  *
  * @author cab404
  */
-public class UserInfoModule implements Module<Profile> {
+public class ProfileModule implements Module<Profile> {
 
-    @Override public Profile extractData(HTMLTree page, String url) {
+    @Override public Profile extractData(HTMLTree page, AccessProfile profile) {
         Profile data = new Profile();
         page = page.getTree(page.xPathFirstTag("body"));
 
@@ -28,7 +31,7 @@ public class UserInfoModule implements Module<Profile> {
             data.nick = page.xPathStr("div&class=profile/h2&itemprop=nickname");
 
             data.name = page.xPathStr("div&class=profile/p&itemprop=name");
-            data.name = data.name == null ? "" : data.name;
+            data.name = data.name == null ? "" : SU.deEntity(data.name);
 
         } catch (Exception e) {
             throw new RuntimeException("Пользователя не существует, или произошло незнамо что.", e);
@@ -50,6 +53,12 @@ public class UserInfoModule implements Module<Profile> {
                 data.personal.add(new Profile.Userdata(key, value));
             }
 
+            List<Tag> friends = page.xPath("div&class=wrapper/div&class=*left/ul&class=user-list-avatar/li/a");
+            data.partial_friend_list = new ArrayList<>();
+            for (Tag tag : friends) {
+                data.partial_friend_list.add(SU.sub(tag.get("href"), "profile/", "/"));
+            }
+            data.partial_friend_list = Collections.unmodifiableList(data.partial_friend_list);
         }
 
         {

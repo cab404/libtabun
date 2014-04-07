@@ -1,50 +1,38 @@
 package com.cab404.libtabun.requests;
 
-import com.cab404.libtabun.facility.MessageFactory;
-import com.cab404.libtabun.facility.RequestFactory;
-import com.cab404.libtabun.parts.LivestreetKey;
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.loaders.ShortRequest;
-import org.apache.http.client.methods.HttpRequestBase;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import org.json.simple.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * @author cab404
  */
-public class LoginRequest extends ShortRequest {
+public class LoginRequest extends LSRequest {
 
     private final String login;
     private final String password;
-    private LivestreetKey key;
     private boolean isLoggedIn;
 
-    public LoginRequest(String login, String password, LivestreetKey key) {
+    public LoginRequest(String login, String password) {
         this.login = login;
         this.password = password;
-        this.key = key;
     }
 
-    @Override public HttpRequestBase getRequest() {
-        String packet = "";
-        packet += "&login=" + SU.rl(login);
-        packet += "&password=" + SU.rl(password);
-        packet += "&security_ls_key=" + key;
-        packet += "&remember=on";
-        packet += "&return-path=/";
-
-        return RequestFactory
-                .post("/login/ajax-login/")
-                .addReferer(key.address)
-                .setBody(packet)
-                .XMLRequest()
-                .build();
+    @Override public String getURL(AccessProfile profile) {
+        return "/login/ajax-login/";
     }
 
-    @Override public void handleResponse(String response) {
-        response = SU.drl(response);
-        JSONObject parsed = MessageFactory.processJSONwithMessage(response);
+    @Override public void getData(HashMap<String, String> data) {
+        data.put("password", SU.rl(password));
+        data.put("login", SU.rl(login));
+        data.put("return-path", "/");
+        data.put("remember", "on");
+    }
 
-        isLoggedIn = !(boolean) parsed.get("bStateError");
+    @Override public void handle(JSONObject object) {
+        isLoggedIn = !(boolean) object.get("bStateError");
     }
 
     public boolean isLoggedIn() {

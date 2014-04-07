@@ -2,10 +2,7 @@ package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.util.SU;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Довольно простой эвристический анализатор ошибок HTML.
@@ -22,8 +19,11 @@ public class LevelAnalyzer {
         tag.index = tags.size();
         tags.add(new LeveledTag(tag, currentLevel()));
 //        Добавить код распределения парсинга сюда.
-//        if (tag.isClosing())
-//            fixLyingLoners(findOpening(tag.index).tag.index, tags.size());
+        if (tag.isClosing()) {
+            LeveledTag opening = findOpening(tag.index);
+            fixLyingLoners(opening.tag.index, tags.size());
+            fixIndents(opening.tag.index, tags.size());
+        }
     }
 
     public LeveledTag get(int index) {
@@ -145,19 +145,11 @@ public class LevelAnalyzer {
         throw new RuntimeException("WARNING, OPENING TAG NOT FOUND, ABORTING EVERYTHING! PAAANIIIIC!!!!");
     }
 
-    /**
-     * Перерасставляет отступы и закрываем ненужные теги.
-     */
-    public void fixLayout() {
+    void fixIndents(int start, int end) {
         int layer = 0;
 
-        fixLyingLoners(0, size());
-
-//        for (LeveledTag tag : tags())
-//            if (tag.tag.isOpening() && tag.level == 0)
-//                fixLyingLoners(findOpening(tag).tag.index, tag.tag.index);
-
-        for (LeveledTag curr : tags()) {
+        for (int i = start; i < end; i++) {
+            LeveledTag curr = get(i);
 
             if (curr.tag.isClosing())
                 layer--;
@@ -168,6 +160,13 @@ public class LevelAnalyzer {
                 layer++;
 
         }
+    }
+
+    /**
+     * Перерасставляет отступы.
+     */
+    public void fixLayout() {
+        fixIndents(0, tags.size());
     }
 
     private int currentLevel() {
@@ -193,6 +192,10 @@ public class LevelAnalyzer {
                     .append("\n");
         }
         return builder.toString();
+    }
+
+    public List<LeveledTag> getSlice(int start, int end) {
+        return Collections.unmodifiableList(tags.subList(start, end));
     }
 
     private Iterable<LeveledTag> tags() {

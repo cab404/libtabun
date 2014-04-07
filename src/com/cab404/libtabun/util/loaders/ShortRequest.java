@@ -1,6 +1,7 @@
 package com.cab404.libtabun.util.loaders;
 
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.util.modular.AccessProfile;
 
 /**
  * Реквест на какую-нибудь мелочь, которая не требует параллельного парсинга.
@@ -12,7 +13,7 @@ public abstract class ShortRequest extends Request {
     public abstract void handleResponse(String response);
 
 
-    @Override public void response(ResponseFactory.Parser parser) {
+    @Override public void response(ResponseFactory.Parser parser, AccessProfile profile) {
         handleResponse(((Stringifyer) parser).text.toString());
     }
 

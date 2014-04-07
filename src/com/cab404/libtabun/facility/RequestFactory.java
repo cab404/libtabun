@@ -1,16 +1,14 @@
 package com.cab404.libtabun.facility;
 
-import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.modular.AccessProfile;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.BufferedHttpEntity;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.UUID;
 
 /**
@@ -20,6 +18,7 @@ import java.util.UUID;
  */
 public class RequestFactory {
     private final HttpRequestBase request;
+    private AccessProfile host;
 
     private RequestFactory(HttpRequestBase packet) {
         request = packet;
@@ -35,23 +34,39 @@ public class RequestFactory {
     /**
      * Создаёт новый сборщик запроса типа GET
      */
+    @Deprecated
     public static RequestFactory get(String rel_uri) {
+        return get(rel_uri, new AccessProfile());
+    }
+
+    /**
+     * Создаёт новый сборщик запроса типа GET
+     */
+    public static RequestFactory get(String rel_uri, AccessProfile profile) {
         HttpGet get = new HttpGet(rel_uri);
 
-        return new RequestFactory(get)
-                .addStandardHeaders();
+        RequestFactory factory = new RequestFactory(get);
+        factory.host = profile;
+        factory.addStandardHeaders();
+        return factory;
     }
+
 
     /**
      * Создаёт новый сборщик запроса типа POST
      */
-    public static RequestFactory post(String rel_uri) {
+    public static RequestFactory post(String rel_uri, AccessProfile profile) {
         HttpPost post = new HttpPost(rel_uri);
 
-        return new RequestFactory(post)
-                .addStandardHeaders()
-//                .addHeader("Origin", "http://" + U.tabun)
-                ;
+        RequestFactory factory = new RequestFactory(post);
+        factory.host = profile;
+        factory.addStandardHeaders();
+        return factory;
+    }
+
+    @Deprecated
+    public static RequestFactory post(String rel_uri) {
+        return post(rel_uri, new AccessProfile());
     }
 
     public RequestFactory setBody(String body) {
@@ -62,29 +77,29 @@ public class RequestFactory {
      * Присваивает телу запроса данную строку в кодировке UTF-8
      */
     public RequestFactory setBody(String body, boolean isChunked) {
-        try {
-            if (request instanceof HttpPost) {
+//        try {
+        if (request instanceof HttpPost) {
 
-                BasicHttpEntity entity = new BasicHttpEntity();
+            BasicHttpEntity entity = new BasicHttpEntity();
+//
+//                PipedInputStream in = new PipedInputStream();
+//                PipedOutputStream out = new PipedOutputStream(in);
+//                PrintWriter writer = new PrintWriter(out, true);
+//
+//                entity.setContent(in);
+//                entity.setChunked(isChunked);
+//                writer.write(body);
+//                writer.close();
 
-                PipedInputStream in = new PipedInputStream();
-                PipedOutputStream out = new PipedOutputStream(in);
-                PrintWriter writer = new PrintWriter(out, true);
+//                entity.setContentLength(body.length());
+            ((HttpPost) request).setEntity(new StringEntity(body));
 
-                entity.setContent(in);
-                entity.setChunked(isChunked);
-                writer.write(body);
-                writer.close();
-
-                entity.setContentLength(body.length());
-
-                ((HttpPost) request).setEntity(new BufferedHttpEntity(entity));
-            } else {
-                throw new UnsupportedOperationException("Нельзя использовать этот метод на не-post пакетах!");
-            }
-        } catch (IOException ex) {
-            U.w(ex);
+        } else {
+            throw new UnsupportedOperationException("Нельзя использовать этот метод на не-post пакетах!");
         }
+//        } catch (IOException ex) {
+//            U.w(ex);
+//        }
 
         return this;
     }
@@ -114,7 +129,7 @@ public class RequestFactory {
      * Без них обычно, Табун будет ругаться "Hacking attempt!"
      */
     private RequestFactory addStandardHeaders() {
-        request.addHeader("Host", U.path);
+        request.addHeader("Host", host.getHost().getHostName());
         request.addHeader("Connection", "keep-alive");
         request.addHeader("Accept-Encoding", "gzip");
         request.addHeader("User-Agent", "sweetieBot");
@@ -132,7 +147,7 @@ public class RequestFactory {
      * что ключ взят со страницы /404/.
      */
     public RequestFactory addReferer(String referer) {
-        request.addHeader("Referer", "http://" + U.path + referer);
+        request.addHeader("Referer", "http://" + host.getHost().getHostName() + referer);
 
         return this;
     }
@@ -154,6 +169,56 @@ public class RequestFactory {
         request.addHeader("X-Requested-With", "XMLHttpRequest");
 
         return this;
+    }
+
+    private static class StringEntity implements HttpEntity {
+        private final String str;
+
+        private StringEntity(String str) {
+            this.str = str;
+        }
+
+        @Override public boolean isRepeatable() {
+            return true;
+        }
+
+        @Override public boolean isChunked() {
+            return false;
+        }
+
+        @Override public long getContentLength() {
+            return str.length();
+        }
+
+        @Override public Header getContentType() {
+            return null;
+        }
+
+        @Override public Header getContentEncoding() {
+            return null;
+        }
+
+        @Override public InputStream getContent()
+        throws IOException, IllegalStateException {
+            return null;
+        }
+
+        @Override public void writeTo(OutputStream outputStream)
+        throws IOException {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+            writer.write(str);
+            writer.close();
+        }
+
+        @Override public boolean isStreaming() {
+            return false;
+        }
+
+        @Override public void consumeContent()
+        throws IOException {
+
+        }
+
     }
 
 }

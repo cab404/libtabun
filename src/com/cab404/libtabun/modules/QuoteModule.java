@@ -1,6 +1,7 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import com.cab404.libtabun.util.modular.Module;
 
 /**
@@ -8,7 +9,7 @@ import com.cab404.libtabun.util.modular.Module;
  */
 public class QuoteModule implements Module<String> {
 
-    @Override public String extractData(HTMLTree page, String url) {
+    @Override public String extractData(HTMLTree page, AccessProfile profile) {
         return page.xPathStr("html/body/" +
                 "div&id=container/" +
                 "div&id=wrapper/" +

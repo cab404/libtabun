@@ -2,6 +2,7 @@ package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import com.cab404.libtabun.util.modular.Module;
 
 /**
@@ -34,7 +35,7 @@ public class TopicLabelModule implements Module<TopicLabel> {
         LETTER
     }
 
-    @Override public TopicLabel extractData(HTMLTree page, String url) {
+    @Override public TopicLabel extractData(HTMLTree page, AccessProfile profile) {
 
         switch (mode) {
             case POST:

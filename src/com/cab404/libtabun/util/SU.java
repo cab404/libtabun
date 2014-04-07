@@ -261,12 +261,25 @@ public class SU {
         return tabs.toString();
     }
 
-    public static String table(int column, String... entries) {
+    public static String table(Object... entries) {
         StringBuilder line = new StringBuilder("|");
-        for (String entry : entries)
-            line
-                    .append(fillSpaces(entry, column, 0, FillType.CENTER))
-                    .append("|");
+
+        int column = 10;
+        FillType ft = FillType.CENTER;
+
+        for (Object entry : entries) {
+            if (entry instanceof Integer) {
+                column = (Integer) entry;
+            } else
+            if (entry instanceof FillType) {
+                ft = (FillType) entry;
+            } else
+            if (entry instanceof CharSequence) {
+                line
+                        .append(fillSpaces(entry.toString(), column, 0, ft))
+                        .append("|");
+            }
+        }
         return line.toString();
     }
 

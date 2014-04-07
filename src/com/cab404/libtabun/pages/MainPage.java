@@ -2,6 +2,7 @@ package com.cab404.libtabun.pages;
 
 import com.cab404.libtabun.modules.QuoteModule;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.modular.AccessProfile;
 
 /**
  * @author cab404
@@ -13,8 +14,8 @@ public class MainPage extends TabunPage {
         return "/";
     }
 
-    @Override protected void parse(HTMLTree page) {
-        super.parse(page);
-        quote = new QuoteModule().extractData(page, getURL());
+    @Override protected void parse(HTMLTree page, AccessProfile profile) {
+        super.parse(page, profile);
+        quote = new QuoteModule().extractData(page, profile);
     }
 }

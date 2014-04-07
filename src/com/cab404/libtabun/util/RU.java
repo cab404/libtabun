@@ -1,6 +1,6 @@
 package com.cab404.libtabun.util;
 
-import com.cab404.libtabun.util.modular.Cookies;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class RU {
 
-    public static HttpResponse exec(HttpRequestBase request, Cookies cookies, boolean follow, int timeout) {
+    public static HttpResponse exec(HttpRequestBase request, AccessProfile profile, boolean follow, int timeout) {
         try {
             HttpClient client = new DefaultHttpClient();
 
@@ -25,11 +25,11 @@ public class RU {
             client.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
             client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, follow);
 
-            request.addHeader(cookies.getCookies());
+            request.addHeader(profile.getCookies());
 
-            HttpResponse response = client.execute(U.host, request);
+            HttpResponse response = client.execute(profile.getHost(), request);
 
-            cookies.handleCookies(response.getHeaders("Set-Cookie"));
+            profile.handleCookies(response.getHeaders("Set-Cookie"));
 
             return response;
         } catch (IOException e) {
@@ -37,12 +37,12 @@ public class RU {
         }
     }
 
-    public static HttpResponse exec(HttpRequestBase request, Cookies cookies, boolean follow) {
-        return exec(request, cookies, follow, 10000);
+    public static HttpResponse exec(HttpRequestBase request, AccessProfile accessProfile, boolean follow) {
+        return exec(request, accessProfile, follow, 10000);
     }
 
-    public static HttpResponse exec(HttpRequestBase request, Cookies cookies) {
-        return exec(request, cookies, true);
+    public static HttpResponse exec(HttpRequestBase request, AccessProfile accessProfile) {
+        return exec(request, accessProfile, true);
     }
 
     public static HttpResponse exec(HttpRequestBase request) {

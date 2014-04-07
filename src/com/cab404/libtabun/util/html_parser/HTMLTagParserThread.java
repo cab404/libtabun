@@ -1,7 +1,6 @@
 package com.cab404.libtabun.util.html_parser;
 
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.util.U;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -18,11 +17,8 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
     public boolean started = false;
 
     public TagParser getTagParser() {
-        U.Timer timer = new U.Timer();
-
         if (started)
             synchronized (working_lock) {
-                timer.log("Waited parser for :time:");
                 return parser;
             }
         else

@@ -1,7 +1,5 @@
 package com.cab404.libtabun.util.html_parser;
 
-import com.cab404.libtabun.util.U;
-
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -24,10 +22,8 @@ public class HTMLAnalyzerThread extends Thread implements TagParser.TagHandler {
     }
 
     public LevelAnalyzer getLevelAnalyzer() {
-        U.Timer timer = new U.Timer();
         if (started)
             synchronized (working_lock) {
-                timer.log("Waited analyzer for :time:");
                 return analyzer;
             }
         else

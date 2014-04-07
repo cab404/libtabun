@@ -3,7 +3,7 @@ package com.cab404.libtabun.util.loaders;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.RU;
 import com.cab404.libtabun.util.U;
-import com.cab404.libtabun.util.modular.Cookies;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -14,20 +14,19 @@ import org.apache.http.client.methods.HttpRequestBase;
 public abstract class Request {
 
 
-    public abstract HttpRequestBase getRequest();
+    public abstract HttpRequestBase getRequest(AccessProfile accessProfile);
 
-    public abstract void response(ResponseFactory.Parser parser);
+    public abstract void response(ResponseFactory.Parser parser, AccessProfile profile);
     public abstract ResponseFactory.Parser getParser();
 
 
-    public void fetch(Cookies cookies, ResponseFactory.StatusListener statusListener) {
-
-        HttpRequestBase request = getRequest();
+    public void fetch(AccessProfile accessProfile, ResponseFactory.StatusListener statusListener) {
+        HttpRequestBase request = getRequest(accessProfile);
 
         statusListener.onResponseStart();
         HttpResponse response;
         try {
-            response = RU.exec(request, cookies);
+            response = RU.exec(request, accessProfile);
             if (response.getStatusLine().getStatusCode() / 100 != 2) {
                 ErrorResponse resp = new ErrorResponse(response.getStatusLine().toString());
                 resp.setStatusLine(response.getStatusLine());
@@ -55,7 +54,7 @@ public abstract class Request {
 
         statusListener.onParseStarted();
         try {
-            response(parser);
+            response(parser, accessProfile);
         } catch (Throwable e) {
             U.w("Page: Parsing fail");
             U.w(e);
@@ -71,8 +70,8 @@ public abstract class Request {
     /**
      * Downloads and parses page.
      */
-    public void fetch(Cookies cookies) {
-        fetch(cookies, new ResponseFactory.StatusListener() { });
+    public void fetch(AccessProfile accessProfile) {
+        fetch(accessProfile, new ResponseFactory.StatusListener() { });
     }
 
     public static class ErrorResponse extends Exception {

@@ -2,7 +2,6 @@ package com.cab404.libtabun.util;
 
 import com.cab404.libtabun.facility.ResponseFactory;
 import org.apache.http.Header;
-import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import java.io.PrintWriter;
@@ -19,7 +18,6 @@ import java.util.TimeZone;
  */
 public class U {
     public static final String path = "tabun.everypony.ru";
-    public static final HttpHost host = new HttpHost(path, 80);
 
     private static HashMap<Thread, Timer> timers;
 

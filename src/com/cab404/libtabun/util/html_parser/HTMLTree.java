@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Простой парсер HTML. Даже ошибки немного исправляет.
+ * Простой навигатор по HTML.
  *
  * @author cab404
  */
@@ -17,8 +17,8 @@ public class HTMLTree implements Iterable<Tag> {
     int start = 0;
     int end = 0;
 
-    private LevelAnalyzer leveled;
-    public final StringBuilder html;
+    private List<LevelAnalyzer.LeveledTag> leveled;
+    public final CharSequence html;
 
     @Override
     public Iterator<Tag> iterator() {
@@ -60,7 +60,7 @@ public class HTMLTree implements Iterable<Tag> {
     public HTMLTree(LevelAnalyzer analyzed, TagParser data) {
         html = data.full_data;
         analyzed.fixLayout();
-        leveled = analyzed;
+        leveled = analyzed.getSlice(0, analyzed.size());
 
         start = 0;
         end = leveled.size();
@@ -77,7 +77,7 @@ public class HTMLTree implements Iterable<Tag> {
 
         html = parser.full_data;
         analyzer.fixLayout();
-        leveled = analyzer;
+        leveled = analyzer.getSlice(0, analyzer.size());
 
         start = 0;
         end = leveled.size();
@@ -159,8 +159,16 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public String getContents(Tag tag) {
-        return html.substring(tag.end, get(getClosingTag(tag)).start);
+        return html.subSequence(tag.end, get(getClosingTag(tag)).start).toString();
     }
+
+//    public String getContents(int index) {
+//        return getContents(get(index)).toString();
+//    }
+//
+//    public String getContents(Tag tag) {
+//        return html.subSequence(tag.end, get(getClosingTag(tag)).start).toString();
+//    }
 
 
     /**
@@ -181,8 +189,9 @@ public class HTMLTree implements Iterable<Tag> {
     /**
      * Возвращает уровень тегов целиком.
      */
+    @Deprecated
     public HTMLTree getTree(int index) {
-        throw new UnsupportedOperationException();
+        return getTree(get(index));
     }
 
     public List<Tag> getTopChildren(Tag tag) {

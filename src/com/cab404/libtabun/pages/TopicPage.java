@@ -3,6 +3,7 @@ package com.cab404.libtabun.pages;
 import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.loaders.Page;
+import com.cab404.libtabun.util.modular.AccessProfile;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class TopicPage extends Page {
         return "/blog/" + id + ".html";
     }
 
-    @Override protected void parse(HTMLTree page) {
+    @Override protected void parse(HTMLTree page, AccessProfile profile) {
         try {
             FileWriter writer = new FileWriter("post");
             writer.write(page.toString());

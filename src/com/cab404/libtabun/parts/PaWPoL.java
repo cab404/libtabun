@@ -1,13 +1,13 @@
 package com.cab404.libtabun.parts;
 
 import com.cab404.libtabun.data.Part;
-import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.data.Profile;
+import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.util.html_parser.HTMLTree;
-import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
 
 import java.util.ArrayList;
 import java.util.List;

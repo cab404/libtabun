@@ -3,7 +3,7 @@ package com.cab404.libtabun.util.loaders;
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.html_parser.*;
-import com.cab404.libtabun.util.modular.Cookies;
+import com.cab404.libtabun.util.modular.AccessProfile;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
@@ -19,22 +19,22 @@ public abstract class Page extends Request {
      */
     public abstract String getURL();
 
-    @Override public HttpRequestBase getRequest() {
-        return RequestFactory.get(getURL()).build();
+    @Override public HttpRequestBase getRequest(AccessProfile accessProfile) {
+        return RequestFactory.get(getURL(), accessProfile).build();
     }
     /**
      * Занимается данными.
      */
-    protected abstract void parse(HTMLTree page);
+    protected abstract void parse(HTMLTree page, AccessProfile profile);
 
-    @Override public void response(ResponseFactory.Parser parser) {
+    @Override public void response(ResponseFactory.Parser parser, AccessProfile profile) {
         TagParser tag_parser = null;
         while (tag_parser == null)
             tag_parser = ((HTMLTagParserThread) parser).getTagParser();
         LevelAnalyzer level_analyzer = null;
         while (level_analyzer == null) level_analyzer = content.getLevelAnalyzer();
 
-        parse(new HTMLTree(level_analyzer, tag_parser));
+        parse(new HTMLTree(level_analyzer, tag_parser), profile);
     }
 
     @Override public ResponseFactory.Parser getParser() {
@@ -51,7 +51,7 @@ public abstract class Page extends Request {
         return parser;
     }
 
-    @Override public void fetch(Cookies cookies, ResponseFactory.StatusListener statusListener) {
-        super.fetch(cookies, statusListener);
+    @Override public void fetch(AccessProfile accessProfile, ResponseFactory.StatusListener statusListener) {
+        super.fetch(accessProfile, statusListener);
     }
 }

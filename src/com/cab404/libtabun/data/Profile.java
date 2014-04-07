@@ -1,6 +1,7 @@
 package com.cab404.libtabun.data;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,6 +12,7 @@ public class Profile {
     public float strength, votes;
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
     public int id;
+    public List<String> partial_friend_list;
     public ArrayList<Userdata> personal;
     public ArrayList<Contact> contacts;
 
