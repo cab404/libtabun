@@ -1,16 +1,13 @@
 package com.cab404.libtabun.facility;
 
 import com.cab404.libtabun.util.U;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.BufferedHttpEntity;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.UUID;
 
 /**
@@ -62,28 +59,11 @@ public class RequestFactory {
      * Присваивает телу запроса данную строку в кодировке UTF-8
      */
     public RequestFactory setBody(String body, boolean isChunked) {
-        try {
-            if (request instanceof HttpPost) {
+        if (request instanceof HttpPost) {
 
-                BasicHttpEntity entity = new BasicHttpEntity();
-
-                PipedInputStream in = new PipedInputStream();
-                PipedOutputStream out = new PipedOutputStream(in);
-                PrintWriter writer = new PrintWriter(out, true);
-
-                entity.setContent(in);
-                entity.setChunked(isChunked);
-                writer.write(body);
-                writer.close();
-
-                entity.setContentLength(body.length());
-
-                ((HttpPost) request).setEntity(new BufferedHttpEntity(entity));
-            } else {
-                throw new UnsupportedOperationException("Нельзя использовать этот метод на не-post пакетах!");
-            }
-        } catch (IOException ex) {
-            U.w(ex);
+            ((HttpPost) request).setEntity(new StringEntity(body));
+        } else {
+            throw new UnsupportedOperationException("Нельзя использовать этот метод на не-post пакетах!");
         }
 
         return this;
@@ -156,4 +136,53 @@ public class RequestFactory {
         return this;
     }
 
+    private static class StringEntity implements HttpEntity {
+        private final String str;
+
+        private StringEntity(String str) {
+            this.str = str;
+        }
+
+        @Override public boolean isRepeatable() {
+            return true;
+        }
+
+        @Override public boolean isChunked() {
+            return false;
+        }
+
+        @Override public long getContentLength() {
+            return str.length();
+        }
+
+        @Override public Header getContentType() {
+            return null;
+        }
+
+        @Override public Header getContentEncoding() {
+            return null;
+        }
+
+        @Override public InputStream getContent()
+        throws IOException, IllegalStateException {
+            return null;
+        }
+
+        @Override public void writeTo(OutputStream outputStream)
+        throws IOException {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+            writer.write(str);
+            writer.close();
+        }
+
+        @Override public boolean isStreaming() {
+            return false;
+        }
+
+        @Override public void consumeContent()
+        throws IOException {
+
+        }
+
+    }
 }
