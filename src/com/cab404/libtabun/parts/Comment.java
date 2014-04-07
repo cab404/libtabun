@@ -122,6 +122,7 @@ public class Comment extends Part {
             comment.is_new = parser.get(0).get("class").contains("comment-new");
             comment.time = info.xPathFirstTag("li/time").get("datetime");
             comment.avatar = info.xPathFirstTag("li/a/img").get("src");
+            comment.votes = U.parseInt(info.getContents(info.xPathFirstTag("li/span&class=vote-count")));
 
             U.v(comment.avatar);
 
