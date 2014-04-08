@@ -14,11 +14,15 @@ public class HTMLAnalyzerThread extends Thread implements TagParser.TagHandler {
     public boolean started = false;
 
 
-    public HTMLAnalyzerThread() {
+    public HTMLAnalyzerThread(CharSequence data) {
         queue = new CopyOnWriteArrayList<>();
         working_lock = new Object();
-        this.analyzer = new LevelAnalyzer();
+        this.analyzer = new LevelAnalyzer(data);
         setDaemon(true);
+    }
+
+    public void setBlockHandler(LevelAnalyzer.BlockHandler handler) {
+        analyzer.setBlockHandler(handler);
     }
 
     public LevelAnalyzer getLevelAnalyzer() {

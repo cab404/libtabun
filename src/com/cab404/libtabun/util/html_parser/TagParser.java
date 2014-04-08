@@ -11,11 +11,23 @@ import java.util.List;
  * @author cab404
  */
 public class TagParser {
-    StringBuilder buffer, full_data;
+    private StringBuilder buffer;
     private TagHandler handler;
+    private StringBuilder full_data;
 
-    TagParser(TagHandler handler) {
+    /**
+     * Это StringBuilder, но пожалуйста, не меняйте его вручную!
+     * Данные привязаны и обновляются в объекте по мере получения.
+     */
+    public CharSequence getHTML() {
+        return full_data;
+    }
+
+    public void setTagHandler(TagHandler handler) {
         this.handler = handler;
+    }
+
+    TagParser() {
         full_data = new StringBuilder();
         buffer = new StringBuilder();
     }

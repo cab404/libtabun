@@ -147,6 +147,8 @@ public class U {
             return true;
         }
 
+        @Override public void finished() {}
+
         public abstract void process(StringBuilder out);
         public abstract boolean isStart(String str);
         public abstract boolean isEnd(String str);

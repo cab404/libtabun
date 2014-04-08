@@ -60,9 +60,7 @@ public class Comment extends Part {
             comment.votes = U.parseInt(info.getContents(info.xPathFirstTag("li/span&class=vote-count")));
 
         }
-        @Override public void finished() {
-        }
-        
+
         @Override public boolean isStart(String line) {
             return line.contains("<section id=\"comment_id");
         }

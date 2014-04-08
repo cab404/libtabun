@@ -36,19 +36,19 @@ public class HTMLTree implements Iterable<Tag> {
         };
     }
     private int size() {
-        return end - start;
+        return leveled.size();
     }
 
     public Tag get(int index) {
-        return leveled.get(index + start).tag;
+        return leveled.get(index).tag;
     }
 
     public int getLevel(int index) {
-        return leveled.get(index + start).getLevel();
+        return leveled.get(index).getLevel();
     }
 
     public int getLevel(Tag tag) {
-        return leveled.get(tag.index).getLevel();
+        return getLevel(tag.index - start);
     }
 
 
@@ -57,25 +57,31 @@ public class HTMLTree implements Iterable<Tag> {
         this.leveled = tree.leveled;
     }
 
-    public HTMLTree(LevelAnalyzer analyzed, TagParser data) {
-        html = data.full_data;
-        analyzed.fixLayout();
-        leveled = analyzed.getSlice(0, analyzed.size());
+    public HTMLTree(LevelAnalyzer analyzed, CharSequence data) {
+        this(analyzed.getSlice(0, analyzed.size()), data);
+    }
 
-        start = 0;
-        end = leveled.size();
+    public HTMLTree(List<LevelAnalyzer.LeveledTag> analyzed, CharSequence data) {
+        html = data;
+        leveled = analyzed;
+        start = analyzed.get(0).tag.index;
+        end = analyzed.get(analyzed.size() - 1).tag.index;
     }
 
     public HTMLTree(String text) {
-        final LevelAnalyzer analyzer = new LevelAnalyzer();
-        TagParser parser = new TagParser(new TagParser.TagHandler() {
+        final LevelAnalyzer analyzer = new LevelAnalyzer(text);
+
+        TagParser parser = new TagParser();
+
+        parser.setTagHandler(new TagParser.TagHandler() {
             @Override public void handle(Tag tag) {
                 analyzer.add(tag);
             }
         });
-        parser.process(text);
 
-        html = parser.full_data;
+        parser.process(text);
+        html = text;
+
         analyzer.fixLayout();
         leveled = analyzer.getSlice(0, analyzer.size());
 

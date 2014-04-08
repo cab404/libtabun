@@ -16,6 +16,10 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
     private HTMLAnalyzerThread bonded_analyzer;
     public boolean started = false;
 
+    public CharSequence getHTML() {
+        return parser.getHTML();
+    }
+
     public TagParser getTagParser() {
         if (started)
             synchronized (working_lock) {
@@ -29,11 +33,15 @@ public class HTMLTagParserThread extends Thread implements ResponseFactory.Parse
         this.bonded_analyzer = bonded_analyzer;
     }
 
-    public HTMLTagParserThread(TagParser.TagHandler handler) {
+    public HTMLTagParserThread() {
         this.queue = new CopyOnWriteArrayList<>();
         working_lock = new Object();
-        parser = new TagParser(handler);
+        parser = new TagParser();
         setDaemon(true);
+    }
+
+    public void setHandler(TagParser.TagHandler handler) {
+        parser.setTagHandler(handler);
     }
 
     @Override public void run() {

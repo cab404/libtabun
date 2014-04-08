@@ -10,26 +10,42 @@ import java.util.*;
  */
 public class LevelAnalyzer {
     private LinkedList<LeveledTag> tags;
+    private CharSequence linked;
+    private BlockHandler handler;
 
-    LevelAnalyzer() {
+
+    LevelAnalyzer(CharSequence text) {
         tags = new LinkedList<>();
+        linked = text;
     }
 
     public void add(Tag tag) {
         tag.index = tags.size();
         tags.add(new LeveledTag(tag, currentLevel()));
-//        Добавить код распределения парсинга сюда.
+
         if (tag.isClosing()) {
             LeveledTag opening = findOpening(tag.index);
             fixLyingLoners(opening.tag.index, tags.size());
             fixIndents(opening.tag.index, tags.size());
+
+            if (handler != null) {
+                BlockBuilder blockBuilder = new BlockBuilder();
+                blockBuilder.header = opening.tag;
+                blockBuilder.footer = tag;
+                handler.handleBlock(blockBuilder);
+            }
         }
+
     }
 
     public LeveledTag get(int index) {
         return tags.get(index);
     }
     public int size() {return tags.size();}
+
+    public void setBlockHandler(BlockHandler handler) {
+        this.handler = handler;
+    }
 
     public class LeveledTag {
         public final Tag tag;
@@ -215,6 +231,26 @@ public class LevelAnalyzer {
                 };
             }
         };
+    }
+
+    public static interface BlockHandler {
+        public void handleBlock(BlockBuilder builder);
+    }
+
+    public class BlockBuilder {
+        Tag header, footer;
+        private HTMLTree built;
+
+        public Tag getHeaderTag() {
+            return header;
+        }
+
+        public HTMLTree assembleTree() {
+            List<LeveledTag> slice = getSlice(header.index, footer.index + 1);
+            built = built == null ? new HTMLTree(slice, linked) : built;
+            return built;
+        }
+
     }
 
 }
