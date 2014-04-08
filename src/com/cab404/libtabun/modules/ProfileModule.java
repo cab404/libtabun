@@ -38,7 +38,7 @@ public class ProfileModule implements Module<Profile> {
         }
 
         {
-            data.about = page.xPathStr("div&class=*about/p&class=text");
+            data.about = page.xPathStr("div&class=*about/div&class=text");
             data.big_icon = page.xPathFirstTag("div&class=*about/a&class=avatar/img").get("src");
             data.fillImages();
         }

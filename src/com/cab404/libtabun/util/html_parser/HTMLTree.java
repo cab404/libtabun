@@ -187,7 +187,8 @@ public class HTMLTree implements Iterable<Tag> {
         HTMLTree _return = new HTMLTree(this);
         _return.start = opening.index;
         _return.end = getClosingTag(opening) + 1;
-        _return.leveled = this.leveled.subList(_return.start, _return.end);
+
+        _return.leveled = this.leveled.subList(_return.start - start, _return.end);
 
         return _return;
     }

@@ -24,7 +24,6 @@ public class CommonInfoModule implements Module<CommonInfo> {
             info.isLoggedIn = false;
             return info;
         }
-        U.v(page);
 
         Tag tag = page.xPathFirstTag("ul/li/a&class=new-*");
         if (tag != null) {
