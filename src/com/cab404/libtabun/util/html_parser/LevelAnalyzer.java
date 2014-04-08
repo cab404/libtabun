@@ -182,6 +182,7 @@ public class LevelAnalyzer {
      * Перерасставляет отступы.
      */
     public void fixLayout() {
+        fixLyingLoners(0, tags.size());
         fixIndents(0, tags.size());
     }
 
@@ -214,25 +215,6 @@ public class LevelAnalyzer {
         return Collections.unmodifiableList(tags.subList(start, end));
     }
 
-    private Iterable<LeveledTag> tags() {
-        return new Iterable<LeveledTag>() {
-            @Override public Iterator<LeveledTag> iterator() {
-                return new Iterator<LeveledTag>() {
-                    int i = 0;
-                    @Override public boolean hasNext() {
-                        return i < tags.size() - 1;
-                    }
-                    @Override public LeveledTag next() {
-                        return tags.get(++i);
-                    }
-                    @Override public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
-            }
-        };
-    }
-
     public static interface BlockHandler {
         public void handleBlock(BlockBuilder builder);
     }
@@ -246,7 +228,10 @@ public class LevelAnalyzer {
         }
 
         public HTMLTree assembleTree() {
+            fixLyingLoners(header.index, footer.index + 1);
+            fixIndents(header.index, footer.index + 1);
             List<LeveledTag> slice = getSlice(header.index, footer.index + 1);
+
             built = built == null ? new HTMLTree(slice, linked) : built;
             return built;
         }

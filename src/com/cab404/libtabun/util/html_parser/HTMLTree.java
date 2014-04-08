@@ -54,7 +54,6 @@ public class HTMLTree implements Iterable<Tag> {
 
     private HTMLTree(HTMLTree tree) {
         this.html = tree.html;
-        this.leveled = tree.leveled;
     }
 
     public HTMLTree(LevelAnalyzer analyzed, CharSequence data) {
@@ -188,6 +187,7 @@ public class HTMLTree implements Iterable<Tag> {
         HTMLTree _return = new HTMLTree(this);
         _return.start = opening.index;
         _return.end = getClosingTag(opening) + 1;
+        _return.leveled = this.leveled.subList(_return.start, _return.end);
 
         return _return;
     }

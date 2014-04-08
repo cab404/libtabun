@@ -2,7 +2,6 @@ package com.cab404.libtabun.util.loaders;
 
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.*;
 import com.cab404.libtabun.util.modular.AccessProfile;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -30,10 +29,15 @@ public abstract class Page extends Request {
 
     @Override public void response(ResponseFactory.Parser parser, AccessProfile profile) {
         TagParser tag_parser = null;
+        LevelAnalyzer level_analyzer = null;
+
         while (tag_parser == null)
             tag_parser = ((HTMLTagParserThread) parser).getTagParser();
-        LevelAnalyzer level_analyzer = null;
-        while (level_analyzer == null) level_analyzer = content.getLevelAnalyzer();
+
+        while (level_analyzer == null)
+            level_analyzer = content.getLevelAnalyzer();
+
+        level_analyzer.fixLayout();
 
         parse(new HTMLTree(level_analyzer, tag_parser.getHTML()), profile);
     }
@@ -41,14 +45,6 @@ public abstract class Page extends Request {
     @Override public ResponseFactory.Parser getParser() {
         HTMLTagParserThread parser = new HTMLTagParserThread();
         content = new HTMLAnalyzerThread(parser.getHTML());
-
-        content.setBlockHandler(new LevelAnalyzer.BlockHandler() {
-            @Override public void handleBlock(LevelAnalyzer.BlockBuilder builder) {
-                if ("script".equals(builder.getHeaderTag().name)) {
-                    U.v(builder.assembleTree().getContents(0));
-                }
-            }
-        });
 
         parser.setHandler(content);
 
