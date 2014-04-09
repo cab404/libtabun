@@ -6,7 +6,6 @@ import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
-import com.cab404.libtabun.util.modular.Module;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,11 +16,11 @@ import java.util.List;
  *
  * @author cab404
  */
-public class ProfileModule implements Module<Profile> {
+public class ProfileModule extends ModuleImpl<Profile> {
 
     @Override public Profile extractData(HTMLTree page, AccessProfile profile) {
         Profile data = new Profile();
-        page = page.getTree(page.xPathFirstTag("body"));
+//        page = page.getTree(page.xPathFirstTag("body"));
 
         try {
 
@@ -71,8 +70,12 @@ public class ProfileModule implements Module<Profile> {
                 data.contacts.add(new Profile.Contact(key, value));
             }
         }
-
+        finish();
         return data;
+    }
+
+    @Override public boolean doYouLikeIt(Tag tag) {
+        return "body".equals(tag.name);
     }
 
 }

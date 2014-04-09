@@ -17,16 +17,16 @@ public abstract class Request {
     public abstract HttpRequestBase getRequest(AccessProfile accessProfile);
 
     public abstract void response(ResponseFactory.Parser parser, AccessProfile profile);
-    public abstract ResponseFactory.Parser getParser();
+    public abstract ResponseFactory.Parser getParser(AccessProfile profile);
 
 
-    public void fetch(AccessProfile accessProfile, ResponseFactory.StatusListener statusListener) {
-        HttpRequestBase request = getRequest(accessProfile);
+    public void fetch(AccessProfile profile, ResponseFactory.StatusListener statusListener) {
+        HttpRequestBase request = getRequest(profile);
 
         statusListener.onResponseStart();
         HttpResponse response;
         try {
-            response = RU.exec(request, accessProfile);
+            response = RU.exec(request, profile);
             if (response.getStatusLine().getStatusCode() / 100 != 2) {
                 ErrorResponse resp = new ErrorResponse(response.getStatusLine().toString());
                 resp.setStatusLine(response.getStatusLine());
@@ -42,7 +42,7 @@ public abstract class Request {
         statusListener.onResponseFinished();
 
         statusListener.onLoadingStarted();
-        ResponseFactory.Parser parser = getParser();
+        ResponseFactory.Parser parser = getParser(profile);
         try {
             ResponseFactory.read(response, parser, statusListener);
         } catch (Throwable e) {
@@ -54,7 +54,7 @@ public abstract class Request {
 
         statusListener.onParseStarted();
         try {
-            response(parser, accessProfile);
+            response(parser, profile);
         } catch (Throwable e) {
             U.w("Page: Parsing fail");
             U.w(e);

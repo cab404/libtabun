@@ -17,7 +17,7 @@ public abstract class ShortRequest extends Request {
         handleResponse(((Stringifyer) parser).text.toString());
     }
 
-    @Override public ResponseFactory.Parser getParser() {
+    @Override public ResponseFactory.Parser getParser(AccessProfile profile) {
         return new Stringifyer();
     }
 

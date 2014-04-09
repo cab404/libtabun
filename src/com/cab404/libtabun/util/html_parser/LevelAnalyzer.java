@@ -3,19 +3,20 @@ package com.cab404.libtabun.util.html_parser;
 import com.cab404.libtabun.util.SU;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Довольно простой эвристический анализатор ошибок HTML.
  * Не любит работать с субдеревьями, ибо использует индексы прямо из тегов.
  */
 public class LevelAnalyzer {
-    private LinkedList<LeveledTag> tags;
+    private List<LeveledTag> tags;
     private CharSequence linked;
     private BlockHandler handler;
 
 
     LevelAnalyzer(CharSequence text) {
-        tags = new LinkedList<>();
+        tags = new CopyOnWriteArrayList<>();
         linked = text;
     }
 
@@ -135,7 +136,7 @@ public class LevelAnalyzer {
     }
 
     public LeveledTag findOpening(int index) {
-        LeveledTag end = tags.getLast();
+        LeveledTag end = tags.get(tags.size() - 1);
         int c_level = 0;
         for (int i = index; i >= 0; i--) {
             LeveledTag curr = get(i);
@@ -182,14 +183,14 @@ public class LevelAnalyzer {
      * Перерасставляет отступы.
      */
     public void fixLayout() {
-        fixLyingLoners(0, tags.size());
+
         fixIndents(0, tags.size());
     }
 
     private int currentLevel() {
         if (tags.isEmpty()) return 0;
         else {
-            LeveledTag last = tags.getLast();
+            LeveledTag last = tags.get(tags.size() - 1);
             if (last.tag.isOpening())
                 return last.level + 1;
             else if (last.tag.isClosing())

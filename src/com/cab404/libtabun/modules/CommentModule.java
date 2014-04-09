@@ -6,15 +6,15 @@ import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
-import com.cab404.libtabun.util.modular.Module;
 
 /**
  * @author cab404
  */
-public class CommentModule implements Module<Comment> {
+public class CommentModule extends ModuleImpl<Comment> {
 
     @Override public Comment extractData(HTMLTree page, AccessProfile profile) {
         Comment comment = new Comment();
+        page = page.getTree(page.get(0));
         comment.id = U.parseInt(page.get(0).get("id").replace("comment_id_", ""));
 
         try {
@@ -39,6 +39,10 @@ public class CommentModule implements Module<Comment> {
         comment.votes = U.parseInt(info.getContents(info.xPathFirstTag("li/span&class=vote-count")));
 
         return comment;
+    }
+
+    @Override public boolean doYouLikeIt(Tag tag) {
+        return "div".equals(tag.name) && "comment_wrapper".equals(tag.get("class"));
     }
 
 }

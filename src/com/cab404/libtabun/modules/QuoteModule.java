@@ -1,21 +1,26 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
-import com.cab404.libtabun.util.modular.Module;
 
 /**
  * @author cab404
  */
-public class QuoteModule implements Module<String> {
+public class QuoteModule extends ModuleImpl<String> {
 
     @Override public String extractData(HTMLTree page, AccessProfile profile) {
+        finish();
         return page.xPathStr("html/body/" +
                 "div&id=container/" +
                 "div&id=wrapper/" +
                 "aside&id=sidebar/" +
                 "section&class=block block-type-tags/" +
                 "div&class=quote");
+    }
+
+    @Override public boolean doYouLikeIt(Tag tag) {
+        return "div".equals(tag.name) && "quote".equals(tag.props.get("class"));
     }
 
 }

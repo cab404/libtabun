@@ -2,15 +2,15 @@ package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.TopicLabel;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
-import com.cab404.libtabun.util.modular.Module;
 
 /**
  * Парсер заголовков топиков.
  *
  * @author cab404
  */
-public class TopicLabelModule implements Module<TopicLabel> {
+public class TopicLabelModule extends ModuleImpl<TopicLabel> {
 
     private Mode mode;
     public TopicLabelModule(Mode mode) {
@@ -53,6 +53,9 @@ public class TopicLabelModule implements Module<TopicLabel> {
         }
 
         return null;
+    }
+    @Override public boolean doYouLikeIt(Tag tag) {
+        return false;
     }
 
 }

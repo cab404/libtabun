@@ -2,23 +2,32 @@ package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.parts.LivestreetKey;
 import com.cab404.libtabun.util.SU;
+import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
-import com.cab404.libtabun.util.modular.Module;
 
 /**
  * @author cab404
  */
-public class LSKeyModule implements Module<LivestreetKey> {
-
+public class LSKeyModule extends ModuleImpl<LivestreetKey> {
 
     @Override public LivestreetKey extractData(HTMLTree page, AccessProfile profile) {
-        return new LivestreetKey(profile.getHost().getHostName(), SU.sub(
-                page.getContents(page.xPath("html/head/script").get(1)),
+        String js = page.getContents(page.get(0));
+        if (!js.contains("LIVESTREET_SECURITY_KEY")) return null;
+
+        LivestreetKey key = new LivestreetKey(profile.getHost().getHostName(), SU.sub(
+                js,
                 "LIVESTREET_SECURITY_KEY = '",
                 "'"
         ));
+        finish();
+        U.v("Finished " + key.key);
+        return key;
     }
 
+    @Override public boolean doYouLikeIt(Tag tag) {
+        return "script".equals(tag.name);
+    }
 
 }

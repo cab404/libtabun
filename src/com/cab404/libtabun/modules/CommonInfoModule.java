@@ -6,24 +6,23 @@ import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
-import com.cab404.libtabun.util.modular.Module;
 
 /**
  * Окошко юзера сверху страницы.
  *
  * @author cab404
  */
-public class CommonInfoModule implements Module<CommonInfo> {
+public class CommonInfoModule extends ModuleImpl<CommonInfo> {
 
     @Override public CommonInfo extractData(HTMLTree page, AccessProfile profile) {
         CommonInfo info = new CommonInfo();
-        try {
-            page = page.getTree(page.xPathFirstTag("html/body/div&id=container/header/div&class=dropdown-user"));
-            info.isLoggedIn = true;
-        } catch (NullPointerException e) {
-            info.isLoggedIn = false;
-            return info;
-        }
+//        try {
+//            page = page.getTree(page.xPathFirstTag("html/body/div&id=container/header/div&class=dropdown-user"));
+//            info.isLoggedIn = true;
+//        } catch (NullPointerException e) {
+//            info.isLoggedIn = false;
+//            return info;
+//        }
 
         Tag tag = page.xPathFirstTag("ul/li/a&class=new-*");
         if (tag != null) {
@@ -44,7 +43,12 @@ public class CommonInfoModule implements Module<CommonInfo> {
                 ).trim()
         );
 
+        finish();
         return info;
+    }
+
+    @Override public boolean doYouLikeIt(Tag tag) {
+        return "div".equals(tag.name) && "dropdown-user".equals(tag.get("class"));
     }
 
 

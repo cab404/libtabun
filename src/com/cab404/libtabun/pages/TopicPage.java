@@ -1,12 +1,8 @@
 package com.cab404.libtabun.pages;
 
 import com.cab404.libtabun.data.TopicLabel;
-import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.loaders.Page;
-import com.cab404.libtabun.util.modular.AccessProfile;
-
-import java.io.FileWriter;
-import java.io.IOException;
+import com.cab404.libtabun.util.modular.ModularBlockParser;
 
 /**
  * @author cab404
@@ -25,13 +21,20 @@ public class TopicPage extends Page {
         return "/blog/" + id + ".html";
     }
 
-    @Override protected void parse(HTMLTree page, AccessProfile profile) {
-        try {
-            FileWriter writer = new FileWriter("post");
-            writer.write(page.toString());
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Override protected void bindParsers(ModularBlockParser base) {
+
+    }
+
+    //    @Override protected void parse(HTMLTree page, AccessProfile profile) {
+//        try {
+//            FileWriter writer = new FileWriter("post");
+//            writer.write(page.toString());
+//            writer.close();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+    @Override public void handle(Object object, int key) {
+
     }
 }

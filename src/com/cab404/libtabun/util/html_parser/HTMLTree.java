@@ -17,7 +17,7 @@ public class HTMLTree implements Iterable<Tag> {
     int start = 0;
     int end = 0;
 
-    private List<LevelAnalyzer.LeveledTag> leveled;
+    private final List<LevelAnalyzer.LeveledTag> leveled;
     public final CharSequence html;
 
     @Override
@@ -52,8 +52,12 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
 
-    private HTMLTree(HTMLTree tree) {
+    private HTMLTree(HTMLTree tree, int start, int end) {
         this.html = tree.html;
+        this.start = start;
+        this.end = end;
+
+        this.leveled = tree.leveled.subList(start, end);
     }
 
     public HTMLTree(LevelAnalyzer analyzed, CharSequence data) {
@@ -184,13 +188,7 @@ public class HTMLTree implements Iterable<Tag> {
         if (opening.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
         if (opening.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
 
-        HTMLTree _return = new HTMLTree(this);
-        _return.start = opening.index;
-        _return.end = getClosingTag(opening) + 1;
-
-        _return.leveled = this.leveled.subList(_return.start - start, _return.end);
-
-        return _return;
+        return new HTMLTree(this, opening.index, getClosingTag(opening) + 1);
     }
 
     /**

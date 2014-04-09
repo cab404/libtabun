@@ -1,9 +1,10 @@
 package com.cab404.libtabun.util.modular;
 
 import com.cab404.libtabun.util.html_parser.HTMLTree;
+import com.cab404.libtabun.util.html_parser.Tag;
 
 /**
- * This will replace parsers. And will slow everything down, yay :D
+ * This will replace parsers.
  * Represents raw-data -> data step. Should actually be named "extractor",
  * but who cares.
  *
@@ -11,4 +12,7 @@ import com.cab404.libtabun.util.html_parser.HTMLTree;
  */
 public interface Module<T> {
     public abstract T extractData(HTMLTree page, AccessProfile profile);
+    public abstract boolean doYouLikeIt(Tag tag);
+    public abstract boolean haveYouFinished();
+
 }

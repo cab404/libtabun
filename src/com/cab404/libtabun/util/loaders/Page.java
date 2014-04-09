@@ -2,8 +2,12 @@ package com.cab404.libtabun.util.loaders;
 
 import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
-import com.cab404.libtabun.util.html_parser.*;
+import com.cab404.libtabun.util.html_parser.HTMLAnalyzerThread;
+import com.cab404.libtabun.util.html_parser.HTMLTagParserThread;
+import com.cab404.libtabun.util.html_parser.LevelAnalyzer;
+import com.cab404.libtabun.util.html_parser.TagParser;
 import com.cab404.libtabun.util.modular.AccessProfile;
+import com.cab404.libtabun.util.modular.ModularBlockParser;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
@@ -11,21 +15,23 @@ import org.apache.http.client.methods.HttpRequestBase;
  *
  * @author cab404
  */
-public abstract class Page extends Request {
+public abstract class Page extends Request implements ModularBlockParser.ParsedObjectHandler {
     private HTMLAnalyzerThread content;
+    private ModularBlockParser modules;
 
     /**
      * Возвращает url страницы.
      */
     public abstract String getURL();
+    /**
+     * Подключает парсеры в обработку тегов.
+     */
+    protected abstract void bindParsers(ModularBlockParser base);
 
     @Override public HttpRequestBase getRequest(AccessProfile accessProfile) {
         return RequestFactory.get(getURL(), accessProfile).build();
     }
-    /**
-     * Занимается данными.
-     */
-    protected abstract void parse(HTMLTree page, AccessProfile profile);
+
 
     @Override public void response(ResponseFactory.Parser parser, AccessProfile profile) {
         TagParser tag_parser = null;
@@ -39,12 +45,15 @@ public abstract class Page extends Request {
 
         level_analyzer.fixLayout();
 
-        parse(new HTMLTree(level_analyzer, tag_parser.getHTML()), profile);
     }
 
-    @Override public ResponseFactory.Parser getParser() {
+    @Override public ResponseFactory.Parser getParser(AccessProfile profile) {
         HTMLTagParserThread parser = new HTMLTagParserThread();
         content = new HTMLAnalyzerThread(parser.getHTML());
+
+        modules = new ModularBlockParser(this, profile);
+        content.setBlockHandler(modules);
+        bindParsers(modules);
 
         parser.setHandler(content);
 
@@ -59,7 +68,7 @@ public abstract class Page extends Request {
         return parser;
     }
 
-    @Override public void fetch(AccessProfile accessProfile, ResponseFactory.StatusListener statusListener) {
-        super.fetch(accessProfile, statusListener);
+    @Override public void fetch(AccessProfile profile, ResponseFactory.StatusListener statusListener) {
+        super.fetch(profile, statusListener);
     }
 }
