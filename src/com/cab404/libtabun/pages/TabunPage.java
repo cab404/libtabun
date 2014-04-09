@@ -39,6 +39,7 @@ public class TabunPage extends Page {
             }
         });
     }
+
     @Override public void handle(Object object, int key) {
         switch (key) {
             case COMMON_INFO_BLOCK:

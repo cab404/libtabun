@@ -2,6 +2,8 @@ package com.cab404.libtabun.requests;
 
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
+import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.pages.TabunPage;
 import com.cab404.libtabun.parts.LivestreetKey;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.loaders.ShortRequest;
@@ -57,4 +59,23 @@ public abstract class LSRequest extends ShortRequest {
         super.fetch(profile);
     }
 
+    public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
+        this.key = page.key;
+        super.fetch(profile);
+        return ((T) this);
+    }
+
+    /**
+     * Вместо этого используй exec.
+     */
+    @Override public void fetch(AccessProfile accessProfile) {
+        super.fetch(accessProfile);
+    }
+
+    /**
+     * Вместо этого используй exec.
+     */
+    @Override public void fetch(AccessProfile profile, ResponseFactory.StatusListener statusListener) {
+        super.fetch(profile, statusListener);
+    }
 }

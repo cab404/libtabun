@@ -14,8 +14,18 @@ import java.util.regex.Pattern;
  */
 public class HTMLTree implements Iterable<Tag> {
 
-    int start = 0;
-    int end = 0;
+    /*
+    No questions here.
+    Just some stupid caching of start/end positions.
+    DO NOT ASK WHY IT DONE SO DUMB!
+    */
+    private int start = -1, end = -1;
+    public int start() {
+        return start == -1 ? start = leveled.get(0).tag.index : start;
+    }
+    public int end() {
+        return end == -1 ? end = leveled.get(size() - 1).tag.index : end;
+    }
 
     private final List<LevelAnalyzer.LeveledTag> leveled;
     public final CharSequence html;
@@ -48,15 +58,12 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     public int getLevel(Tag tag) {
-        return getLevel(tag.index - start);
+        return getLevel(tag.index - start());
     }
 
 
     private HTMLTree(HTMLTree tree, int start, int end) {
         this.html = tree.html;
-        this.start = start;
-        this.end = end;
-
         this.leveled = tree.leveled.subList(start, end);
     }
 
@@ -67,8 +74,6 @@ public class HTMLTree implements Iterable<Tag> {
     public HTMLTree(List<LevelAnalyzer.LeveledTag> analyzed, CharSequence data) {
         html = data;
         leveled = analyzed;
-        start = analyzed.get(0).tag.index;
-        end = analyzed.get(analyzed.size() - 1).tag.index;
     }
 
     public HTMLTree(String text) {
@@ -88,8 +93,6 @@ public class HTMLTree implements Iterable<Tag> {
         analyzer.fixLayout();
         leveled = analyzer.getSlice(0, analyzer.size());
 
-        start = 0;
-        end = leveled.size();
     }
 
     public List<Tag> getAllTagsByProperty(String key, String value) {
@@ -127,7 +130,7 @@ public class HTMLTree implements Iterable<Tag> {
     }
 
     private int getIndexForTag(Tag tag) {
-        return tag.index - start;
+        return tag.index - start();
     }
 
     public int getTagIndexForName(String name) {
@@ -150,7 +153,7 @@ public class HTMLTree implements Iterable<Tag> {
     public int getClosingTag(Tag tag) {
 
         int index = getIndexForTag(tag) + 1, level = getLevel(tag);
-        for (; index < end; index++) {
+        for (; index < end(); index++) {
 
             Tag check = get(index);
             int c_level = getLevel(check);
@@ -188,7 +191,7 @@ public class HTMLTree implements Iterable<Tag> {
         if (opening.isClosing()) throw new RuntimeException("Попытка достать парсер для закрывающего тега!");
         if (opening.isStandalone()) throw new RuntimeException("Попытка достать парсер для standalone-тега!");
 
-        return new HTMLTree(this, opening.index, getClosingTag(opening) + 1);
+        return new HTMLTree(this, opening.index - start(), getClosingTag(opening) + 1);
     }
 
     /**
@@ -209,7 +212,7 @@ public class HTMLTree implements Iterable<Tag> {
 
         int index = getIndexForTag(tag) + 1, level = getLevel(tag);
 
-        for (; index < end; index++) {
+        for (; index < end(); index++) {
 
             Tag check = get(index);
             int c_level = getLevel(check);

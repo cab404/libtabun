@@ -14,7 +14,7 @@ public class CommentModule extends ModuleImpl<Comment> {
 
     @Override public Comment extractData(HTMLTree page, AccessProfile profile) {
         Comment comment = new Comment();
-        page = page.getTree(page.get(0));
+        page = page.getTree(page.get(1));
         comment.id = U.parseInt(page.get(0).get("id").replace("comment_id_", ""));
 
         try {
@@ -23,8 +23,7 @@ public class CommentModule extends ModuleImpl<Comment> {
             comment.MODERASTIA = true;
         }
 
-        HTMLTree info =
-                page.getTree(page.xPathFirstTag("ul&class=comment-info"));
+        HTMLTree info = page.getTree(page.xPathFirstTag("ul&class=comment-info"));
 
         Tag parent = info.xPathFirstTag("li&class=*parent*/a");
         if (parent == null)
@@ -42,7 +41,7 @@ public class CommentModule extends ModuleImpl<Comment> {
     }
 
     @Override public boolean doYouLikeIt(Tag tag) {
-        return "div".equals(tag.name) && "comment_wrapper".equals(tag.get("class"));
+        return "div".equals(tag.name) && "comment-wrapper".equals(tag.get("class"));
     }
 
 }

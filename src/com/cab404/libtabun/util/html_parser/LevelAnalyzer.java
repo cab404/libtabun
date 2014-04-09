@@ -3,7 +3,6 @@ package com.cab404.libtabun.util.html_parser;
 import com.cab404.libtabun.util.SU;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Довольно простой эвристический анализатор ошибок HTML.
@@ -16,7 +15,7 @@ public class LevelAnalyzer {
 
 
     LevelAnalyzer(CharSequence text) {
-        tags = new CopyOnWriteArrayList<>();
+        tags = new ArrayList<>();
         linked = text;
     }
 
