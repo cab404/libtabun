@@ -18,10 +18,11 @@ import java.util.Map;
  * @author cab404
  */
 public abstract class LSRequest extends ShortRequest {
-
+    private boolean success = false;
 
     @Override public void handleResponse(String response) {
         JSONObject jsonObject = MessageFactory.processJSONwithMessage(response);
+        success = !(boolean) jsonObject.get("bStateError");
         handle(jsonObject);
     }
 
@@ -54,15 +55,18 @@ public abstract class LSRequest extends ShortRequest {
 
     public abstract void handle(JSONObject object);
 
-    public void exec(AccessProfile profile, LivestreetKey key) {
+    public boolean success() {
+        return success;
+    }
+
+    public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
         this.key = key;
         super.fetch(profile);
+        return ((T) this);
     }
 
     public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
-        this.key = page.key;
-        super.fetch(profile);
-        return ((T) this);
+        return exec(profile, page.key);
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.cab404.libtabun.requests;
 
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.modular.AccessProfile;
 import org.json.simple.JSONObject;
 
@@ -30,7 +29,7 @@ public class CommentRequest extends LSRequest {
         data.put("cmt_target_id", post + "");
     }
     @Override public void handle(JSONObject object) {
-        U.v(object);
+
     }
 
 }

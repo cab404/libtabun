@@ -169,29 +169,59 @@ public class SU {
         out += strings[strings.length - 1];
         return out;
     }
+
+    private static String[][] html_entities = {
+            {"&quot;", "\""},
+            {"&rlm;", " ‏"},
+            {"&amp;", "&"},
+            {"&ndash;", "–"},
+            {"&lt;", "<"},
+            {"&mdash;", "—"},
+            {"&gt;", ">"},
+            {"&lsquo;", "‘"},
+            {"&OElig;", "Œ"},
+            {"&rsquo;", "’"},
+            {"&oelig;", "œ"},
+            {"&sbquo;", "‚"},
+            {"&Scaron;", "Š"},
+            {"&ldquo;", "“"},
+            {"&scaron;", "š"},
+            {"&rdquo;", "”"},
+            {"&Yuml;", "Ÿ"},
+            {"&bdquo;", "„"},
+            {"&circ;", "ˆ"},
+            {"&dagger;", "†"},
+            {"&tilde;", "˜"},
+            {"&Dagger;", "‡"},
+            {"&ensp;", " "},
+            {"&permil;", "‰"},
+            {"&emsp;", " "},
+            {"&lsaquo;", "‹"},
+            {"&thinsp;", " "},
+            {"&rsaquo;", "›"},
+            {"&zwnj;", " "},
+            {"&euro;", "€"},
+            {"&zwj;", " "},
+            {"&lrm;", " "},
+            {"&#039;", "'"}
+    };
+
     /**
      * Фух. Эта штука меняет все HTML 4.0 и 2.0 entity на нормальный текст.
      */
     public static String deEntity(String in) {
-        return in
-                .replaceAll("&quot;", "\"").replaceAll("&rlm;", " ‏")
-                .replaceAll("&amp;", "&").replaceAll("&ndash;", "–")
-                .replaceAll("&lt;", "<").replaceAll("&mdash;", "—")
-                .replaceAll("&gt;", ">").replaceAll("&lsquo;", "‘")
-                .replaceAll("&OElig;", "Œ").replaceAll("&rsquo;", "’")
-                .replaceAll("&oelig;", "œ").replaceAll("&sbquo;", "‚")
-                .replaceAll("&Scaron;", "Š").replaceAll("&ldquo;", "“")
-                .replaceAll("&scaron;", "š").replaceAll("&rdquo;", "”")
-                .replaceAll("&Yuml;", "Ÿ").replaceAll("&bdquo;", "„")
-                .replaceAll("&circ;", "ˆ").replaceAll("&dagger;", "†")
-                .replaceAll("&tilde;", "˜").replaceAll("&Dagger;", "‡")
-                .replaceAll("&ensp;", " ").replaceAll("&permil;", "‰")
-                .replaceAll("&emsp;", " ").replaceAll("&lsaquo;", "‹")
-                .replaceAll("&thinsp;", " ").replaceAll("&rsaquo;", "›")
-                .replaceAll("&zwnj;", " ").replaceAll("&euro;", "€")
-                .replaceAll("&zwj;", " ").replaceAll("&lrm;", " ")
-                .replaceAll("&#039;", "'")
-                ;
+        StringBuilder data = new StringBuilder(in);
+        for (String[] replace : html_entities) {
+            String a = replace[0];
+            String b = replace[1];
+
+            int i;
+            while ((i = data.indexOf(a)) != -1) {
+                data.replace(i, i + a.length(), b);
+            }
+
+        }
+        return data.toString();
     }
     /**
      * Фух. Эта штука меняет все HTML 4.0 и 2.0 entity на нормальный текст.
@@ -270,11 +300,9 @@ public class SU {
         for (Object entry : entries) {
             if (entry instanceof Integer) {
                 column = (Integer) entry;
-            } else
-            if (entry instanceof FillType) {
+            } else if (entry instanceof FillType) {
                 ft = (FillType) entry;
-            } else
-            if (entry instanceof CharSequence) {
+            } else if (entry instanceof CharSequence) {
                 line
                         .append(fillSpaces(entry.toString(), column, 0, ft))
                         .append("|");
@@ -315,6 +343,21 @@ public class SU {
         for (int i = 0; i < num; i++)
             spaces.append(" ");
         return spaces.toString();
+    }
+
+    public static CharSequence removeRedundantSpaces(String in) {
+        StringBuilder modify = new StringBuilder(in);
+
+        for (int i = 0; i < modify.length() - 1; ) {
+            if (modify.charAt(i) == ' ') {
+                while ((i + 1 < modify.length() - 1) && modify.charAt(i + 1) == ' ') {
+                    modify.deleteCharAt(i);
+                }
+            }
+            i++;
+        }
+
+        return modify;
     }
 
 }

@@ -38,7 +38,7 @@ public class RU {
     }
 
     public static HttpResponse exec(HttpRequestBase request, AccessProfile accessProfile, boolean follow) {
-        return exec(request, accessProfile, follow, 10000);
+        return exec(request, accessProfile, follow, 60000);
     }
 
     public static HttpResponse exec(HttpRequestBase request, AccessProfile accessProfile) {

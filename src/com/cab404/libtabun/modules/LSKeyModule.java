@@ -2,7 +2,6 @@ package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.parts.LivestreetKey;
 import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
@@ -22,7 +21,6 @@ public class LSKeyModule extends ModuleImpl<LivestreetKey> {
                 "'"
         ));
         finish();
-        U.v("Finished " + key.key);
         return key;
     }
 

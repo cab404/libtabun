@@ -7,8 +7,6 @@ import com.cab404.libtabun.util.html_parser.HTMLTree;
 import com.cab404.libtabun.util.html_parser.Tag;
 import com.cab404.libtabun.util.modular.AccessProfile;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,15 +47,13 @@ public class ProfileModule extends ModuleImpl<Profile> {
                 String key = SU.sub(page.getContents(keys.get(i)), "", ":");
                 String value = page.getContents(values.get(i));
 
-                data.personal.add(new Profile.Userdata(key, value));
+                data.personal.put(Profile.getDataType(key), value);
             }
 
             List<Tag> friends = page.xPath("div&class=wrapper/div&class=*left/ul&class=user-list-avatar/li/a");
-            data.partial_friend_list = new ArrayList<>();
             for (Tag tag : friends) {
                 data.partial_friend_list.add(SU.sub(tag.get("href"), "profile/", "/"));
             }
-            data.partial_friend_list = Collections.unmodifiableList(data.partial_friend_list);
         }
 
         {
@@ -67,7 +63,7 @@ public class ProfileModule extends ModuleImpl<Profile> {
                 // Да, довольно криво, но так быстрее.
                 String key = SU.sub(foo, "title=\"", "\"");
                 String value = SU.removeAllTags(foo);
-                data.contacts.add(new Profile.Contact(key, value));
+                data.contacts.put(Profile.getContactType(key), value);
             }
         }
         finish();

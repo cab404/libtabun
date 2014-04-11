@@ -1,24 +1,24 @@
 package com.cab404.libtabun.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- *
  * @author cab404
  */
 public class Profile {
     public float strength, votes;
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
     public int id;
-    public List<String> partial_friend_list;
-    public ArrayList<Userdata> personal;
-    public ArrayList<Contact> contacts;
+    public final List<String> partial_friend_list;
+    public final HashMap<UserInfoType, String> personal;
+    public final HashMap<ContactType, String> contacts;
 
     public Profile() {
-        personal = new ArrayList<>();
-        contacts = new ArrayList<>();
+        personal = new HashMap<>();
+        contacts = new HashMap<>();
+        partial_friend_list = new ArrayList<>();
         name = nick = about = small_icon = big_icon = mid_icon = photo = "";
     }
 
@@ -33,113 +33,86 @@ public class Profile {
         big_icon = uni.replace("***", "100x100");
     }
 
+    public static enum ContactType {
+        PHONE("phone", "Телефон"),
+        EMAIL("mail", "Электропочта"),
+        SKYPE("skype", "Skype"),
+        ICQ("icq", "ICQ"),
+        SITE("www", "Сайт"),
+        TWITTER("twitter", "Твиттер"),
+        FACEBOOK("facebook", "Facebook"),
+        VKONTAKTE("vkontakte", "ВК"),
+        ODNOKLASSNIKI("odnoklassniki", "Одноклассники"),;
 
-    public static class Contact implements Map.Entry<String, String> {
+        public String name;
+        public String normal_name;
 
-        public static enum ContactType {
-            PHONE("phone", "Телефон"),
-            EMAIL("mail", "Электропочта"),
-            SKYPE("skype", "Skype"),
-            ICQ("icq", "ICQ"),
-            SITE("www", "Сайт"),
-            TWITTER("twitter", "Твиттер"),
-            FACEBOOK("facebook", "Facebook"),
-            VKONTAKTE("vkontakte", "ВК"),
-            ODNOKLASSNIKI("odnoklassniki", "Одноклассники"),;
-
-            public String name;
-            public String normal_name;
-
-            ContactType(String name, String normal_name) {
-                this.name = name;
-                this.normal_name = normal_name;
-            }
-
-            @Override
-            public String toString() {
-                return name;
-            }
+        ContactType(String name, String normal_name) {
+            this.name = name;
+            this.normal_name = normal_name;
         }
 
-        ContactType type;
-        String value;
-
-        public Contact(String type, String value) {
-            this.value = value;
-            for (ContactType ctype : ContactType.values()) {
-                if (ctype.name.equals(type)) {
-                    this.type = ctype;
-                    break;
-                }
-            }
-            if (this.type == null) throw new Error("Непонятный тип контакта - " + type);
-        }
-
-        @Override public String getKey() {
-            return type.normal_name;
-        }
-
-        @Override public String getValue() {
-            return value;
-        }
-
-        @Override public String setValue(String o) {
-            // Данунафиг
-            return null;
+        @Override
+        public String toString() {
+            return name;
         }
     }
 
-    public static class Userdata implements Map.Entry<String, String> {
+    public static enum UserInfoType {
+        SEX("Пол"),
+        BIRTHDAY("Дата рождения"),
+        PLACE("Местоположение"),
+        CREATED("Создал"),
+        MODERATOR("Модерирует"),
+        HAS_INVITED("Приглашенные"),
+        INVITED_BY("Пригласил"),
+        ADMIN("Администрирует"),
+        BELONGS("Состоит в"),
+        REG_DATE("Зарегистрирован"),
+        LAST_VISITED("Последний визит"),;
 
-        public static enum UserdataType {
-            SEX("Пол"),
-            BIRTHDAY("Дата рождения"),
-            PLACE("Местоположение"),
-            CREATED("Создал"),
-            MODERATOR("Модерирует"),
-            HAS_INVITED("Приглашенные"),
-            INVITED_BY("Пригласил"),
-            ADMIN("Администрирует"),
-            BELONGS("Состоит в"),
-            REG_DATE("Зарегистрирован"),
-            LAST_VISITED("Последний визит"),;
+        public String name;
 
-            public String name;
-
-            UserdataType(String name) {
-                this.name = name;
-            }
-
-            @Override
-            public String toString() {
-                return name;
-            }
+        UserInfoType(String name) {
+            this.name = name;
         }
 
-        public String value;
-        public UserdataType data_type;
 
-        public Userdata(String type, String value) {
-            for (UserdataType dtype : UserdataType.values()) {
-                if (dtype.name.equals(type)) {
-                    data_type = dtype;
-                    break;
-                }
-            }
-            if (data_type == null) throw new RuntimeException("Непонятный тип данных - " + type);
-            this.value = value;
-        }
-
-        @Override public String getKey() {
-            return data_type.name;
-        }
-
-        @Override public String getValue() {
-            return value;
-        }
-
-        @Override public String setValue(String o) {
-            return null; // Данунафиг[1]
+        @Override
+        public String toString() {
+            return name;
         }
     }
+
+    /**
+     * Возвращает тип данных по его нормальному названию на русском языке, перебирая все элементы.
+     * Если не находит, то кидает RuntimeException.
+     * <p/>
+     * Для этого места нормально.
+     * Вряд ли понадобится неимоверно часто доставать типы контактов,
+     * да и самих типов мало.
+     * Иначе я бы добавил бинарный поиск, тем более, что массив данных
+     * не меняется.
+     * Тоже относится и к {@link com.cab404.libtabun.data.Profile#getContactType(String)}.
+     *
+     * @throws java.lang.RuntimeException Если не находит тип данных.
+     */
+    public static UserInfoType getDataType(String name) {
+        for (UserInfoType type : UserInfoType.values())
+            if (type.name.equals(name))
+                return type;
+        throw new RuntimeException("Неподдерживаемый тип данных: " + name);
+    }
+
+    /**
+     * @see com.cab404.libtabun.data.Profile#getDataType(String)
+     */
+    public static ContactType getContactType(String name) {
+        for (ContactType type : ContactType.values())
+            if (type.name.equals(name))
+                return type;
+        throw new RuntimeException("Неподдерживаемый тип данных: " + name);
+    }
+
+
 }
