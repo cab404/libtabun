@@ -1,8 +1,8 @@
 package com.cab404.libtabun.tests;
 
-import com.cab404.libtabun.tests.base.Test;
-import com.cab404.libtabun.tests.base.TestLauncher;
-import com.cab404.libtabun.util.modular.AccessProfile;
+import com.cab404.moonlight.tests.Test;
+import com.cab404.moonlight.tests.TestLauncher;
+import com.cab404.moonlight.util.modular.AccessProfile;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,7 @@
 package com.cab404.libtabun.pages;
 
 import com.cab404.libtabun.modules.QuoteModule;
-import com.cab404.libtabun.util.modular.ModularBlockParser;
+import com.cab404.moonlight.util.modular.ModularBlockParser;
 
 /**
  * @author cab404

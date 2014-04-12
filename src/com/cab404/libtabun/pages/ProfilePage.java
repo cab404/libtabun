@@ -2,8 +2,8 @@ package com.cab404.libtabun.pages;
 
 import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.modules.ProfileModule;
-import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.modular.ModularBlockParser;
+import com.cab404.moonlight.util.SU;
+import com.cab404.moonlight.util.modular.ModularBlockParser;
 
 /**
  * @author cab404

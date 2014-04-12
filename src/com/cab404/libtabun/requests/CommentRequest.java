@@ -1,6 +1,6 @@
 package com.cab404.libtabun.requests;
 
-import com.cab404.libtabun.util.modular.AccessProfile;
+import com.cab404.moonlight.util.modular.AccessProfile;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
