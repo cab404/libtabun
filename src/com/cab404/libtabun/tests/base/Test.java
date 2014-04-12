@@ -1,4 +1,4 @@
-package com.cab404.libtabun.tests;
+package com.cab404.libtabun.tests.base;
 
 import com.cab404.libtabun.util.modular.AccessProfile;
 
@@ -7,6 +7,8 @@ import com.cab404.libtabun.util.modular.AccessProfile;
  */
 public abstract class Test {
 
+    public Test() {}
+
     public void assertEquals(Object a, Object b) {
         if (a == null ? b == null : a.equals(b))
             return;
@@ -14,5 +16,7 @@ public abstract class Test {
     }
 
     public abstract void test(AccessProfile profile);
-    public abstract CharSequence title();
+    public CharSequence title() {
+        return this.getClass().getSimpleName();
+    }
 }

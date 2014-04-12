@@ -1,7 +1,7 @@
 package com.cab404.libtabun.tests;
 
-import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.tests.base.Test;
+import com.cab404.libtabun.tests.base.TestLauncher;
 import com.cab404.libtabun.util.modular.AccessProfile;
 
 import java.util.ArrayList;
@@ -12,13 +12,12 @@ import java.util.ArrayList;
 public class Tests {
 
     public static void main(String[] args) {
-        U.v(SU.removeRedundantSpaces("   test    sa  s      bdr"));
-
         TestLauncher launcher = new TestLauncher(new AccessProfile("tabun.everypony.ru"));
 
         ArrayList<Class<? extends Test>> tests = new ArrayList<>();
 
         tests.add(UserInfoTest.class);
+        tests.add(TopicTest.class);
 
         launcher.launch(tests);
     }

@@ -114,7 +114,7 @@ public class RequestFactory {
 
         for (int i = 0; i != (body.length + 1) / 2; i++) {
             build_body += "--" + boundary + "\r\n";
-            build_body += "Content-Disposition: form-data; name=\"" + body[i * 2] + "\"\r\n\r\n";
+            build_body += "Content-Disposition: form-data; title=\"" + body[i * 2] + "\"\r\n\r\n";
             build_body += body[i * 2 + 1] + "\r\n";
         }
         build_body += boundary + "--\r\n";

@@ -11,7 +11,7 @@ public class Profile {
     public float strength, votes;
     public String name, nick, about, small_icon, mid_icon, big_icon, photo;
     public int id;
-    public final List<String> partial_friend_list;
+    public final List<Profile> partial_friend_list;
     public final HashMap<UserInfoType, String> personal;
     public final HashMap<ContactType, String> contacts;
 
@@ -19,14 +19,13 @@ public class Profile {
         personal = new HashMap<>();
         contacts = new HashMap<>();
         partial_friend_list = new ArrayList<>();
-        name = nick = about = small_icon = big_icon = mid_icon = photo = "";
     }
 
     public void fillImages() {
         String uni = "";
-        if (!small_icon.isEmpty()) uni = small_icon.replace("24x24", "***");
-        else if (!mid_icon.isEmpty()) uni = mid_icon.replace("48x48", "***");
-        else if (!big_icon.isEmpty()) uni = big_icon.replace("100x100", "***");
+           if (small_icon != null && !small_icon.isEmpty()) uni = small_icon.replace("24x24", "***");
+        else if (mid_icon != null && !mid_icon.isEmpty()) uni = mid_icon.replace("48x48", "***");
+        else if (big_icon != null && !big_icon.isEmpty()) uni = big_icon.replace("100x100", "***");
 
         small_icon = uni.replace("***", "24x24");
         mid_icon = uni.replace("***", "48x48");
@@ -59,7 +58,7 @@ public class Profile {
     }
 
     public static enum UserInfoType {
-        SEX("Пол"),
+        GENDER("Пол"),
         BIRTHDAY("Дата рождения"),
         PLACE("Местоположение"),
         CREATED("Создал"),

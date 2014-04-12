@@ -2,10 +2,8 @@ package com.cab404.libtabun.tests;
 
 import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.pages.ProfilePage;
-import com.cab404.libtabun.util.U;
+import com.cab404.libtabun.tests.base.Test;
 import com.cab404.libtabun.util.modular.AccessProfile;
-
-import java.util.Map;
 
 /**
  * @author cab404
@@ -22,15 +20,19 @@ public class UserInfoTest extends Test {
         assertEquals(info.id, 17188);
         assertEquals(info.name, "example");
 
-        for (Map.Entry<Profile.ContactType, String> contact : info.contacts.entrySet())
-            U.v(contact.getKey() + ": " + contact.getValue());
+        assertEquals(info.contacts.get(Profile.ContactType.PHONE), "0000000");
+        assertEquals(info.contacts.get(Profile.ContactType.EMAIL), "exa@mp.le");
+        assertEquals(info.contacts.get(Profile.ContactType.TWITTER), "example");
+        assertEquals(info.contacts.get(Profile.ContactType.VKONTAKTE), "example");
+        assertEquals(info.contacts.get(Profile.ContactType.ODNOKLASSNIKI), "example");
+        assertEquals(info.contacts.get(Profile.ContactType.SITE), "example.com");
 
-        for (Map.Entry<Profile.UserInfoType, String> data : info.personal.entrySet())
-            U.v(data.getKey() + ": " + data.getValue());
+        assertEquals(info.personal.get(Profile.UserInfoType.BIRTHDAY), "6 марта 2014");
+        assertEquals(info.personal.get(Profile.UserInfoType.GENDER), "женский");
     }
 
     @Override public CharSequence title() {
-        return "profile test";
+        return "Profile test";
     }
 
 }

@@ -1,8 +1,9 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.data.Blog;
 import com.cab404.libtabun.data.Part;
 import com.cab404.libtabun.data.Profile;
-import com.cab404.libtabun.data.TopicLabel;
+import com.cab404.libtabun.data.Topic;
 import com.cab404.libtabun.facility.ResponseFactory;
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
@@ -22,14 +23,14 @@ import java.util.List;
 public class PaWPoL extends Part {
 
     public static class PostLabelParser extends U.TextPartParser {
-        public TopicLabel pl = new TopicLabel();
+        public Topic pl = new Topic();
 
         @Override public void process(StringBuilder text) {
             HTMLTree raw = new HTMLTree(text.toString());
 
             pl.id = U.parseInt(SU.sub(raw.getTagByProperty("class", "vote-item vote-up").props.get("onclick"), "(", ","));
-            pl.content = raw.getContents(raw.getTagByProperty("class", "topic-content text")).replace("\t", "").trim();
-            pl.name = SU.removeAllTags(raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap"))).trim();
+            pl.text = raw.getContents(raw.getTagByProperty("class", "topic-text text")).replace("\t", "").trim();
+            pl.title = SU.removeAllTags(raw.getContents(raw.getTagByProperty("class", "topic-title word-wrap"))).trim();
 
             int blog_tag;
             try {
@@ -51,10 +52,10 @@ public class PaWPoL extends Part {
                 pl.votes = "±?";
             }
             List<Tag> raw_tags = raw.getAllTagsByProperty("rel", "tag");
-            pl.tags = new String[raw_tags.size()];
-            for (int i = 0; i != raw_tags.size(); i++) {
-                pl.tags[i] = raw.getContents(raw_tags.get(i));
-            }
+//            pl.tags = new String[raw_tags.size()];
+//            for (int i = 0; i != raw_tags.size(); i++) {
+//                pl.tags[i] = raw.getContents(raw_tags.get(i));
+//            }
 
             String comments = SU.removeAllTags(raw.getContents(raw.getTagIndexByProperty("class", "topic-info-comments")));
             comments = comments.trim().replace("\n", "").replace(" ", "").replace("\t", "");
@@ -111,7 +112,7 @@ public class PaWPoL extends Part {
 
         private final EndsWith endsWith;
         private PostLabelParser plp;
-        public ArrayList<TopicLabel> labels;
+        public ArrayList<Topic> labels;
 
         @Override
         public boolean line(String line) {

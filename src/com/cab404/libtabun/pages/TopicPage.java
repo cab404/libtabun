@@ -1,10 +1,13 @@
 package com.cab404.libtabun.pages;
 
-import com.cab404.libtabun.data.TopicLabel;
+import com.cab404.libtabun.data.Topic;
 import com.cab404.libtabun.modules.CommentModule;
+import com.cab404.libtabun.modules.CommentNumModule;
+import com.cab404.libtabun.modules.TopicModule;
 import com.cab404.libtabun.parts.Comment;
-import com.cab404.libtabun.util.U;
 import com.cab404.libtabun.util.modular.ModularBlockParser;
+
+import java.util.ArrayList;
 
 /**
  * @author cab404
@@ -13,10 +16,12 @@ public class TopicPage extends TabunPage {
 
     private int id;
 
-    TopicLabel header;
+    public Topic header;
+    public ArrayList<Comment> comments;
 
     public TopicPage(int id) {
         this.id = id;
+        this.comments = new ArrayList<>();
     }
 
     @Override public String getURL() {
@@ -25,20 +30,23 @@ public class TopicPage extends TabunPage {
 
     @Override protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
-        base.bind(new CommentModule(), 12);
+        base.bind(new CommentModule(), BLOCK_COMMENT);
+        base.bind(new TopicModule(TopicModule.Mode.TOPIC), BLOCK_TOPIC_HEADER);
+        base.bind(new CommentNumModule(), BLOCK_COMMENT_NUM);
     }
 
-    //    @Override protected void parse(HTMLTree page, AccessProfile profile) {
-//        try {
-//            FileWriter writer = new FileWriter("post");
-//            writer.write(page.toString());
-//            writer.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
     @Override public void handle(Object object, int key) {
         super.handle(object, key);
-        if (key == 12) U.v(((Comment) object).author);
+        switch (key) {
+            case BLOCK_COMMENT:
+                comments.add((Comment) object);
+                break;
+            case BLOCK_TOPIC_HEADER:
+                header = ((Topic) object);
+                break;
+            case BLOCK_COMMENT_NUM:
+                header.comments = (int) object;
+                break;
+        }
     }
 }

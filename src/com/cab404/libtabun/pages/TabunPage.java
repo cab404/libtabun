@@ -18,7 +18,13 @@ public class TabunPage extends Page {
      */
     public CommonInfo c_inf;
     public LivestreetKey key;
-    public static final int COMMON_INFO_BLOCK = 279, LS_KEY_BLOCK = 280;
+
+    public static final int BLOCK_COMMON_INFO = 280;
+    public static final int BLOCK_LS_KEY = 281;
+    public static final int BLOCK_COMMENT = 282;
+    public static final int BLOCK_TOPIC_HEADER = 283;
+    public static final int BLOCK_USER_INFO = 284;
+    public static final int BLOCK_COMMENT_NUM = 285;
 
     @Override
     public String getURL() {
@@ -26,8 +32,8 @@ public class TabunPage extends Page {
     }
 
     @Override protected void bindParsers(ModularBlockParser base) {
-        base.bind(new LSKeyModule(), LS_KEY_BLOCK);
-        base.bind(new CommonInfoModule(), COMMON_INFO_BLOCK);
+        base.bind(new LSKeyModule(), BLOCK_LS_KEY);
+        base.bind(new CommonInfoModule(), BLOCK_COMMON_INFO);
     }
 
     @Override public void fetch(AccessProfile accessProfile) {
@@ -42,10 +48,10 @@ public class TabunPage extends Page {
 
     @Override public void handle(Object object, int key) {
         switch (key) {
-            case COMMON_INFO_BLOCK:
+            case BLOCK_COMMON_INFO:
                 this.c_inf = (CommonInfo) object;
                 break;
-            case LS_KEY_BLOCK:
+            case BLOCK_LS_KEY:
                 this.key = (LivestreetKey) object;
                 break;
         }

@@ -11,7 +11,6 @@ import com.cab404.libtabun.util.modular.ModularBlockParser;
 public class ProfilePage extends TabunPage {
     public final String username;
     public Profile user_info;
-    public static final int USER_INFO_BLOCK = 281;
 
     public ProfilePage(String username) {
         this.username = username;
@@ -23,13 +22,13 @@ public class ProfilePage extends TabunPage {
 
     @Override protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
-        base.bind(new ProfileModule(), USER_INFO_BLOCK);
+        base.bind(new ProfileModule(), BLOCK_USER_INFO);
     }
 
     @Override public void handle(Object object, int key) {
         super.handle(object, key);
         switch (key) {
-            case USER_INFO_BLOCK:
+            case BLOCK_USER_INFO:
                 user_info = (Profile) object;
                 break;
         }

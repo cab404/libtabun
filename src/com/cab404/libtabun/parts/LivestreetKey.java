@@ -1,8 +1,7 @@
 package com.cab404.libtabun.parts;
 
-import com.cab404.libtabun.util.SU;
-import com.cab404.libtabun.facility.RequestFactory;
 import com.cab404.libtabun.facility.ResponseFactory;
+import com.cab404.libtabun.util.SU;
 
 /**
  * @author cab404
@@ -14,15 +13,6 @@ public class LivestreetKey {
     public LivestreetKey(String address, String key) {
         this.address = address;
         this.key = key;
-    }
-
-    public LivestreetKey(User user, String address) {
-        ResponseFactory.read(
-                user.execute(
-                        RequestFactory.get(address).build()
-                ),
-                new KeyParser()
-        );
     }
 
     @Override

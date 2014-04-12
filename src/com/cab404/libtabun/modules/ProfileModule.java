@@ -18,7 +18,6 @@ public class ProfileModule extends ModuleImpl<Profile> {
 
     @Override public Profile extractData(HTMLTree page, AccessProfile profile) {
         Profile data = new Profile();
-//        page = page.getTree(page.xPathFirstTag("body"));
 
         try {
 
@@ -47,12 +46,21 @@ public class ProfileModule extends ModuleImpl<Profile> {
                 String key = SU.sub(page.getContents(keys.get(i)), "", ":");
                 String value = page.getContents(values.get(i));
 
-                data.personal.put(Profile.getDataType(key), value);
+                data.personal.put(Profile.getDataType(key),
+                        SU.removeRecurringChars(
+                                value.replace('\t', ' ').replace('\n', ' ').trim(),
+                                ' '
+                        ).toString()
+                );
             }
 
             List<Tag> friends = page.xPath("div&class=wrapper/div&class=*left/ul&class=user-list-avatar/li/a");
             for (Tag tag : friends) {
-                data.partial_friend_list.add(SU.sub(tag.get("href"), "profile/", "/"));
+                Profile friend = new Profile();
+                friend.nick = SU.sub(tag.get("href"), "profile/", "/");
+                // Иконка идёт следующей, так что достанем её мануально. Это быстрее с любой точки зрения.
+                friend.mid_icon = page.get(tag.index - page.start() + 1).get("src");
+                data.partial_friend_list.add(friend);
             }
         }
 
@@ -63,7 +71,12 @@ public class ProfileModule extends ModuleImpl<Profile> {
                 // Да, довольно криво, но так быстрее.
                 String key = SU.sub(foo, "title=\"", "\"");
                 String value = SU.removeAllTags(foo);
-                data.contacts.put(Profile.getContactType(key), value);
+                data.contacts.put(Profile.getContactType(key),
+                        SU.removeRecurringChars(
+                                value.replace('\t', ' ').replace('\n', ' ').trim(),
+                                ' '
+                        ).toString()
+                );
             }
         }
         finish();

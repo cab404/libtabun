@@ -99,7 +99,7 @@ public class Letter extends Part {
             HTMLTree parser = new HTMLTree(built);
 
             name = parser.getContents(parser.getTagIndexByProperty("class", "topic-title"));
-            text = parser.getContents(parser.getTagIndexByProperty("class", "topic-content text"));
+            text = parser.getContents(parser.getTagIndexByProperty("class", "topic-text text"));
             id = U.parseInt(SU.sub(parser.getTagByProperty("class", "topic-info-favourite").props.get("onclick"), "(", ","));
 
             whoisthere = new ArrayList<>();

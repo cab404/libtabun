@@ -95,6 +95,15 @@ public class HTMLTree implements Iterable<Tag> {
 
     }
 
+    public Tag getTagByID(String id) {
+        for (Tag tag : this)
+            if (tag.props.containsKey("id")) {
+                if (SU.fast_match(id, tag.get("id")))
+                    return tag;
+            }
+        throw new TagNotFoundException();
+    }
+
     public List<Tag> getAllTagsByProperty(String key, String value) {
         ArrayList<Tag> _return = new ArrayList<>();
         for (Tag tag : this)
@@ -197,7 +206,6 @@ public class HTMLTree implements Iterable<Tag> {
     /**
      * Возвращает уровень тегов целиком.
      */
-    @Deprecated
     public HTMLTree getTree(int index) {
         return getTree(get(index));
     }

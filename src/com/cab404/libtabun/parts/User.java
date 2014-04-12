@@ -1,5 +1,6 @@
 package com.cab404.libtabun.parts;
 
+import com.cab404.libtabun.data.Blog;
 import com.cab404.libtabun.data.Part;
 import com.cab404.libtabun.facility.MessageFactory;
 import com.cab404.libtabun.facility.RequestFactory;
@@ -193,27 +194,27 @@ public class User {
     /**
      * Post? Post! Создаёт новый пост (всю информацию пихать в post, .blog.id важен)
      */
-    public Topic postPost(Topic post) {
-        Topic psto = new Topic();
-
-        ResponseFactory.read(
-                execute(
-                        RequestFactory.post("/topic/add")
-                                .addReferer(key.address)
-                                .MultipartRequest(
-                                        "security_ls_key", key.key,
-                                        "blog_id", post.blog.id + "",
-                                        "topic_title", post.name,
-                                        "topic_text", post.content,
-                                        "topic_tags", SU.join(post.tags, ", "),
-                                        "topic_type", "topic",
-                                        "submit_topic_publish", ""
-                                )
-                                .build()
-                ), psto.getParser()
-        );
-        return psto;
-    }
+//    public TopicOld postPost(TopicOld post) {
+//        TopicOld psto = new TopicOld();
+//
+//        ResponseFactory.read(
+//                execute(
+//                        RequestFactory.post("/topic/add")
+//                                .addReferer(key.address)
+//                                .MultipartRequest(
+//                                        "security_ls_key", key.key,
+//                                        "blog_id", post.blog.id + "",
+//                                        "topic_title", post.title,
+//                                        "topic_text", post.text,
+//                                        "topic_tags", SU.join(post.tags, ", "),
+//                                        "topic_type", "topic",
+//                                        "submit_topic_publish", ""
+//                                )
+//                                .build()
+//                ), psto.getParser()
+//        );
+//        return psto;
+//    }
 
     public StreamElement[] loadStream() {
         String body = "security_ls_key=" + key;

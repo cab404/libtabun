@@ -18,9 +18,9 @@ public class CommentModule extends ModuleImpl<Comment> {
         comment.id = U.parseInt(page.get(0).get("id").replace("comment_id_", ""));
 
         try {
-            comment.body = page.getContents(page.xPathFirstTag("section/div/div&class=*text*"));
+            comment.text = page.getContents(page.xPathFirstTag("section/div/div&class=*text*")).trim();
         } catch (Exception ex) {
-            comment.MODERASTIA = true;
+            comment.deleted = true;
         }
 
         HTMLTree info = page.getTree(page.xPathFirstTag("ul&class=comment-info"));
@@ -31,10 +31,12 @@ public class CommentModule extends ModuleImpl<Comment> {
         else
             comment.parent = U.parseInt(SU.bsub(parent.get("onclick"), ",", ");"));
 
-        comment.author = SU.bsub(info.xPathFirstTag("li/a").get("href"), "profile/", "/");
+        comment.author.nick = SU.bsub(info.xPathFirstTag("li/a").get("href"), "profile/", "/");
+        comment.author.small_icon = info.xPathFirstTag("li/a/img").get("src");
+        comment.author.fillImages();
+
         comment.is_new = page.get(0).get("class").contains("comment-new");
         comment.time = info.xPathFirstTag("li/time").get("datetime");
-        comment.avatar = info.xPathFirstTag("li/a/img").get("src");
         comment.votes = U.parseInt(info.getContents(info.xPathFirstTag("li/span&class=vote-count")));
 
         return comment;

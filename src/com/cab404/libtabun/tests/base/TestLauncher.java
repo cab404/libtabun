@@ -1,4 +1,4 @@
-package com.cab404.libtabun.tests;
+package com.cab404.libtabun.tests.base;
 
 import com.cab404.libtabun.util.SU;
 import com.cab404.libtabun.util.U;
@@ -22,7 +22,7 @@ public class TestLauncher {
             U.v(SU.fillSpaces(test.title() + "", 50, 1, SU.FillType.LEFT) + " [  OK  ] ");
             return true;
         } catch (Throwable e) {
-            U.v(SU.fillSpaces(test.title() + "", 50, 1, SU.FillType.LEFT) + " [  fail  ] ");
+            U.v(SU.fillSpaces(test.title() + "", 50, 1, SU.FillType.LEFT) + " [ fail ] ");
             U.w(e);
             return false;
         }

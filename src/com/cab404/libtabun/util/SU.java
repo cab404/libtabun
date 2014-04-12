@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -163,11 +165,14 @@ public class SU {
             return null;
         }
     }
-    public static String join(String[] strings, String delimeter) {
-        String out = "";
-        for (int i = 0; i < strings.length - 1; i++) out += strings[i] + delimeter;
-        out += strings[strings.length - 1];
-        return out;
+    public static String join(Collection<String> strings, String delimeter) {
+        StringBuilder out = new StringBuilder();
+        Iterator<String> iterator = strings.iterator();
+
+        while (iterator.hasNext())
+            out.append(iterator.next()).append(iterator.hasNext() ? delimeter : "");
+
+        return out.toString();
     }
 
     private static String[][] html_entities = {
@@ -222,30 +227,6 @@ public class SU {
 
         }
         return data.toString();
-    }
-    /**
-     * Фух. Эта штука меняет все HTML 4.0 и 2.0 entity на нормальный текст.
-     */
-    public static String reEntity(String in) {
-        return in
-                .replaceAll("&quot;", "\"").replaceAll("&rlm;", " ‏")
-                .replaceAll("&amp;", "&").replaceAll("&ndash;", "–")
-                .replaceAll("&lt;", "<").replaceAll("&mdash;", "—")
-                .replaceAll("&gt;", ">").replaceAll("&lsquo;", "‘")
-                .replaceAll("&OElig;", "Œ").replaceAll("&rsquo;", "’")
-                .replaceAll("&oelig;", "œ").replaceAll("&sbquo;", "‚")
-                .replaceAll("&Scaron;", "Š").replaceAll("&ldquo;", "“")
-                .replaceAll("&scaron;", "š").replaceAll("&rdquo;", "”")
-                .replaceAll("&Yuml;", "Ÿ").replaceAll("&bdquo;", "„")
-                .replaceAll("&circ;", "ˆ").replaceAll("&dagger;", "†")
-                .replaceAll("&tilde;", "˜").replaceAll("&Dagger;", "‡")
-                .replaceAll("&ensp;", " ").replaceAll("&permil;", "‰")
-                .replaceAll("&emsp;", " ").replaceAll("&lsaquo;", "‹")
-                .replaceAll("&thinsp;", " ").replaceAll("&rsaquo;", "›")
-                .replaceAll("&zwnj;", " ").replaceAll("&euro;", "€")
-                .replaceAll("&zwj;", " ").replaceAll("&lrm;", " ")
-                .replaceAll("&#039;", "'")
-                ;
     }
 
     /**
@@ -345,12 +326,15 @@ public class SU {
         return spaces.toString();
     }
 
-    public static CharSequence removeRedundantSpaces(String in) {
+    /**
+     * Убирает подряд стоящие одинаковые символы.
+     */
+    public static CharSequence removeRecurringChars(String in, char remove) {
         StringBuilder modify = new StringBuilder(in);
 
         for (int i = 0; i < modify.length() - 1; ) {
-            if (modify.charAt(i) == ' ') {
-                while ((i + 1 < modify.length() - 1) && modify.charAt(i + 1) == ' ') {
+            if (modify.charAt(i) == remove) {
+                while ((i + 1 < modify.length() - 1) && modify.charAt(i + 1) == remove) {
                     modify.deleteCharAt(i);
                 }
             }
