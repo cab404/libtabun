@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author cab404
  */
-public class Topic{
+public class Topic {
     public String title, votes;
     public Profile author;
     public Blog blog;

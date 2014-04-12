@@ -2,9 +2,9 @@ package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.LivestreetKey;
 import com.cab404.moonlight.util.SU;
-import com.cab404.moonlight.util.html_parser.HTMLTree;
-import com.cab404.moonlight.util.html_parser.Tag;
-import com.cab404.moonlight.util.modular.AccessProfile;
+import com.cab404.moonlight.parser.HTMLTree;
+import com.cab404.moonlight.parser.Tag;
+import com.cab404.moonlight.framework.AccessProfile;
 
 /**
  * @author cab404

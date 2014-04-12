@@ -2,7 +2,7 @@ package com.cab404.libtabun.tests;
 
 import com.cab404.libtabun.pages.TopicPage;
 import com.cab404.moonlight.tests.Test;
-import com.cab404.moonlight.util.modular.AccessProfile;
+import com.cab404.moonlight.framework.AccessProfile;
 
 /**
  * @author cab404

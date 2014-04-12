@@ -6,8 +6,8 @@ import com.cab404.moonlight.facility.ResponseFactory;
 import com.cab404.libtabun.pages.TabunPage;
 import com.cab404.libtabun.data.LivestreetKey;
 import com.cab404.moonlight.util.SU;
-import com.cab404.moonlight.util.loaders.ShortRequest;
-import com.cab404.moonlight.util.modular.AccessProfile;
+import com.cab404.moonlight.framework.ShortRequest;
+import com.cab404.moonlight.framework.AccessProfile;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.json.simple.JSONObject;
 

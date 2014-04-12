@@ -1,6 +1,6 @@
 package com.cab404.libtabun.modules;
 
-import com.cab404.moonlight.util.modular.Module;
+import com.cab404.moonlight.framework.Module;
 
 /**
  * @author cab404

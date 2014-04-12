@@ -5,9 +5,9 @@ import com.cab404.moonlight.facility.ResponseFactory;
 import com.cab404.libtabun.modules.CommonInfoModule;
 import com.cab404.libtabun.modules.LSKeyModule;
 import com.cab404.libtabun.data.LivestreetKey;
-import com.cab404.moonlight.util.loaders.Page;
-import com.cab404.moonlight.util.modular.AccessProfile;
-import com.cab404.moonlight.util.modular.ModularBlockParser;
+import com.cab404.moonlight.framework.Page;
+import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.framework.ModularBlockParser;
 
 /**
  * @author cab404

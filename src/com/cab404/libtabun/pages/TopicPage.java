@@ -5,7 +5,7 @@ import com.cab404.libtabun.modules.CommentModule;
 import com.cab404.libtabun.modules.CommentNumModule;
 import com.cab404.libtabun.modules.TopicModule;
 import com.cab404.libtabun.data.Comment;
-import com.cab404.moonlight.util.modular.ModularBlockParser;
+import com.cab404.moonlight.framework.ModularBlockParser;
 
 import java.util.ArrayList;
 
