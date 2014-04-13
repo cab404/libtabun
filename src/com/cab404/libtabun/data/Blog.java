@@ -9,11 +9,17 @@ import java.util.Calendar;
  * @author cab404
  */
 public class Blog {
-    public String name, url_name;
+    public String name, url_name, about;
     public ArrayList<Topic> posts;
-    public int numpages = 0;
-    public int curpage = 0;
+    public int votes = 0;
 
     public Calendar date;
     public int id;
+
+    public Blog() {}
+
+    public Blog(String url) {
+        this.url_name = url;
+    }
+
 }

@@ -1,8 +1,8 @@
 package com.cab404.libtabun.tests;
 
+import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.tests.Test;
 import com.cab404.moonlight.tests.TestLauncher;
-import com.cab404.moonlight.framework.AccessProfile;
 
 import java.util.ArrayList;
 
@@ -16,8 +16,10 @@ public class Tests {
 
         ArrayList<Class<? extends Test>> tests = new ArrayList<>();
 
-        tests.add(UserInfoTest.class);
+        tests.add(LoginTest.class);
+        tests.add(ProfileTest.class);
         tests.add(TopicTest.class);
+        tests.add(BlogTest.class);
 
         launcher.launch(tests);
     }

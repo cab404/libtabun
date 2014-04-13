@@ -2,6 +2,7 @@ package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Comment;
 import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
 import com.cab404.moonlight.util.SU;
@@ -37,7 +38,7 @@ public class CommentModule extends ModuleImpl<Comment> {
 
         comment.is_new = page.get(0).get("class").contains("comment-new");
         comment.time = info.xPathFirstTag("li/time").get("datetime");
-        comment.votes = U.parseInt(info.getContents(info.xPathFirstTag("li/span&class=vote-count")));
+        comment.votes = U.parseInt(info.xPathStr("li/span&class=vote-count"));
 
         return comment;
     }

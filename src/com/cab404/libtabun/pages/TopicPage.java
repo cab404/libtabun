@@ -39,7 +39,7 @@ public class TopicPage extends TabunPage {
         super.handle(object, key);
         switch (key) {
             case BLOCK_COMMENT:
-                comments.addFirst((Comment) object);
+                comments.add((Comment) object);
                 break;
             case BLOCK_TOPIC_HEADER:
                 header = ((Topic) object);

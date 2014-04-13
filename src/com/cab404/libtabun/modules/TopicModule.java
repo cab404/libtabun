@@ -1,11 +1,12 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Topic;
-import com.cab404.moonlight.util.SU;
-import com.cab404.moonlight.util.U;
+import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
-import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.util.SU;
+import com.cab404.moonlight.util.U;
 
 /**
  * Парсер заголовков топиков.
@@ -27,11 +28,11 @@ public class TopicModule extends ModuleImpl<Topic> {
     @Override public Topic extractData(HTMLTree page, AccessProfile profile) {
         Topic label = new Topic();
         label.text = page.xPathStr("div&class=*text").trim();
-        label.title = page.xPathStr("header/h1");
+        label.title = page.xPathStr("header/h1").trim();
         label.id = U.parseInt(SU.bsub(page.xPathFirstTag("footer/p").get("class"), "-", ""));
 
-        Tag blog = page.xPathFirstTag("header/div/a&class=topic-blog");
-        label.blog.url_name = SU.bsub(blog.get("href"), "blog/", "/");
+        Tag blog = page.xPathFirstTag("header/div/a&class=topic-blog*");
+        label.blog.url_name = blog.get("href").contains("/blog/") ? SU.bsub(blog.get("href"), "/blog/", "/") : null;
         label.blog.name = page.getContents(blog);
 
         label.date = U.convertDatetime(page.xPathFirstTag("footer/ul/li/time").get("datetime"));
@@ -61,7 +62,8 @@ public class TopicModule extends ModuleImpl<Topic> {
 
         if (mode == Mode.LIST) {
             label.comments = U.parseInt(page.xPathStr("footer/ul/li&class=topic-info-comments/a/span"));
-            label.comments_new = U.parseInt(page.xPathStr("footer/ul/li&class=topic-info-comments/a/span&class=count"));
+            String new_comments = page.xPathStr("footer/ul/li&class=topic-info-comments/a/span&class=count");
+            label.comments_new = new_comments == null ? 0 : U.parseInt(new_comments);
         }
 
         return label;

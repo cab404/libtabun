@@ -1,5 +1,6 @@
 package com.cab404.libtabun.modules;
 
+import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
 import com.cab404.moonlight.framework.AccessProfile;

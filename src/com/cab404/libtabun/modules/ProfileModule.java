@@ -1,6 +1,7 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Profile;
+import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.util.SU;
 import com.cab404.moonlight.util.U;
 import com.cab404.moonlight.parser.HTMLTree;

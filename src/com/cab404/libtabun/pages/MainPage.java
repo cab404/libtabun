@@ -8,7 +8,6 @@ import com.cab404.moonlight.framework.ModularBlockParser;
  */
 public class MainPage extends TabunPage {
     public String quote;
-    public static final int QUOTE_BLOCK = 278;
 
     @Override public String getURL() {
         return "/";
@@ -16,13 +15,13 @@ public class MainPage extends TabunPage {
 
     @Override protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
-        base.bind(new QuoteModule(), QUOTE_BLOCK);
+        base.bind(new QuoteModule(), BLOCK_QUOTE);
     }
 
     @Override public void handle(Object object, int key) {
         super.handle(object, key);
         switch (key) {
-            case QUOTE_BLOCK:
+            case BLOCK_QUOTE:
                 this.quote = (String) object;
                 break;
         }

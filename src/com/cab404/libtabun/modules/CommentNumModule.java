@@ -1,9 +1,10 @@
 package com.cab404.libtabun.modules;
 
-import com.cab404.moonlight.util.U;
+import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
-import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.util.U;
 
 /**
  * @author cab404
@@ -11,6 +12,7 @@ import com.cab404.moonlight.framework.AccessProfile;
 public class CommentNumModule extends ModuleImpl<Integer> {
 
     @Override public Integer extractData(HTMLTree page, AccessProfile profile) {
+        finish();
         return U.parseInt(page.getContents(0));
     }
 
