@@ -1,13 +1,13 @@
 package com.cab404.libtabun.pages;
 
+import com.cab404.libtabun.data.Comment;
 import com.cab404.libtabun.data.Topic;
 import com.cab404.libtabun.modules.CommentModule;
 import com.cab404.libtabun.modules.CommentNumModule;
 import com.cab404.libtabun.modules.TopicModule;
-import com.cab404.libtabun.data.Comment;
 import com.cab404.moonlight.framework.ModularBlockParser;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * @author cab404
@@ -17,11 +17,11 @@ public class TopicPage extends TabunPage {
     private int id;
 
     public Topic header;
-    public ArrayList<Comment> comments;
+    public LinkedList<Comment> comments;
 
     public TopicPage(int id) {
         this.id = id;
-        this.comments = new ArrayList<>();
+        this.comments = new LinkedList<>();
     }
 
     @Override public String getURL() {
@@ -39,7 +39,7 @@ public class TopicPage extends TabunPage {
         super.handle(object, key);
         switch (key) {
             case BLOCK_COMMENT:
-                comments.add((Comment) object);
+                comments.addFirst((Comment) object);
                 break;
             case BLOCK_TOPIC_HEADER:
                 header = ((Topic) object);

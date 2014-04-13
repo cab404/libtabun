@@ -1,11 +1,11 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Comment;
-import com.cab404.moonlight.util.SU;
-import com.cab404.moonlight.util.U;
+import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
-import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.util.SU;
+import com.cab404.moonlight.util.U;
 
 /**
  * @author cab404
@@ -14,7 +14,7 @@ public class CommentModule extends ModuleImpl<Comment> {
 
     @Override public Comment extractData(HTMLTree page, AccessProfile profile) {
         Comment comment = new Comment();
-        page = page.getTree(page.get(1));
+
         comment.id = U.parseInt(page.get(0).get("id").replace("comment_id_", ""));
 
         try {
@@ -43,7 +43,7 @@ public class CommentModule extends ModuleImpl<Comment> {
     }
 
     @Override public boolean doYouLikeIt(Tag tag) {
-        return "div".equals(tag.name) && "comment-wrapper".equals(tag.get("class"));
+        return "section".equals(tag.name) && String.valueOf(tag.get("class")).contains("comment");
     }
 
 }
