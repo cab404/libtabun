@@ -27,6 +27,7 @@ public class TabunPage extends Page {
     public static final int BLOCK_USER_INFO = 284;
     public static final int BLOCK_COMMENT_NUM = 285;
     public static final int BLOCK_BLOG_INFO = 286;
+    public static final int BLOCK_STREAM_ITEM = 287;
 
 
     @Override

@@ -20,6 +20,7 @@ public class Tests {
         tests.add(ProfileTest.class);
         tests.add(TopicTest.class);
         tests.add(BlogTest.class);
+        tests.add(StreamTest.class);
 
         launcher.launch(tests);
     }

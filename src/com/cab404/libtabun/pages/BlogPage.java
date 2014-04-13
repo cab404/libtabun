@@ -1,9 +1,12 @@
 package com.cab404.libtabun.pages;
 
 import com.cab404.libtabun.data.Blog;
+import com.cab404.libtabun.data.Topic;
 import com.cab404.libtabun.modules.BlogModule;
 import com.cab404.libtabun.modules.TopicModule;
 import com.cab404.moonlight.framework.ModularBlockParser;
+
+import java.util.List;
 
 /**
  * @author cab404
@@ -11,6 +14,7 @@ import com.cab404.moonlight.framework.ModularBlockParser;
 public class BlogPage extends MainPage {
 
     Blog blog;
+    List<Topic> topics;
 
     public BlogPage(Blog blog) {
         this.blog = blog;
@@ -30,7 +34,9 @@ public class BlogPage extends MainPage {
     @Override public void handle(Object object, int key) {
         super.handle(object, key);
         switch (key) {
-
+            case BLOCK_TOPIC_HEADER:
+                topics.add((Topic) object);
+                break;
         }
     }
 
