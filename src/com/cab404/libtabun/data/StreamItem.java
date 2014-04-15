@@ -11,6 +11,7 @@ public class StreamItem {
         ADD_TOPIC,
         VOTE_USER,
         JOIN_BLOG,
+        VOTE_BLOG,
     }
 
     public Type type;

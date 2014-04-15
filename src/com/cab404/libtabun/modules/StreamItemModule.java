@@ -30,12 +30,17 @@ public class StreamItemModule extends ModuleImpl<StreamItem> {
         item.user.mid_icon = page.xPathFirstTag("a/img").get("src");
         item.user.fillImages();
 
-        Tag data = page.xPath("a").get(4);
+        Tag data;
+        try {
+            data = page.xPath("a").get(1);
+        } catch (Exception ex) {
+            data = page.xPath("span/a").get(1);
+        }
+
         item.data = SU.deEntity(page.getContents(data));
         item.link = data.get("href");
 
         item.date = page.xPathFirstTag("p/span").get("title");
-
 
         return item;
     }

@@ -85,7 +85,7 @@ public class ProfileModule extends ModuleImpl<Profile> {
     }
 
     @Override public boolean doYouLikeIt(Tag tag) {
-        return "body".equals(tag.name);
+        return "div".equals(tag.name) && "content".equals(tag.get("id"));
     }
 
 }
