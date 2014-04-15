@@ -1,6 +1,5 @@
 package com.cab404.libtabun.requests;
 
-import com.cab404.moonlight.util.SU;
 import com.cab404.moonlight.framework.AccessProfile;
 import org.json.simple.JSONObject;
 
@@ -25,8 +24,8 @@ public class LoginRequest extends LSRequest {
     }
 
     @Override public void getData(HashMap<String, String> data) {
-        data.put("password", SU.rl(password));
-        data.put("login", SU.rl(login));
+        data.put("password", password);
+        data.put("login", login);
         data.put("return-path", "/");
         data.put("remember", "on");
     }
