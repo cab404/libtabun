@@ -6,6 +6,7 @@ import com.cab404.libtabun.modules.BlogModule;
 import com.cab404.libtabun.modules.TopicModule;
 import com.cab404.moonlight.framework.ModularBlockParser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,11 +14,12 @@ import java.util.List;
  */
 public class BlogPage extends MainPage {
 
-    Blog blog;
-    List<Topic> topics;
+    public Blog blog;
+    public List<Topic> topics;
 
     public BlogPage(Blog blog) {
         this.blog = blog;
+        topics = new ArrayList<>();
     }
 
     @Override public String getURL() {
@@ -28,12 +30,14 @@ public class BlogPage extends MainPage {
         super.bindParsers(base);
         base.bind(new TopicModule(TopicModule.Mode.LIST), BLOCK_TOPIC_HEADER);
         base.bind(new BlogModule(), BLOCK_BLOG_INFO);
-
     }
 
     @Override public void handle(Object object, int key) {
         super.handle(object, key);
         switch (key) {
+            case BLOCK_BLOG_INFO:
+                blog = (Blog) object;
+                break;
             case BLOCK_TOPIC_HEADER:
                 topics.add((Topic) object);
                 break;

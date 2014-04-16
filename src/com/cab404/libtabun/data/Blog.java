@@ -1,6 +1,5 @@
 package com.cab404.libtabun.data;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -9,17 +8,22 @@ import java.util.Calendar;
  * @author cab404
  */
 public class Blog {
-    public String name, url_name, about;
-    public ArrayList<Topic> posts;
-    public int votes = 0;
+    public String
+            name,
+            url_name,
+            about,
+            icon;
+    public int
+            id;
+    public Calendar
+            creation_date;
+    public float
+            rating = 0;
 
-    public Calendar date;
-    public int id;
+    public boolean
+            restricted = false;
 
     public Blog() {}
-
-    public Blog(String url) {
-        this.url_name = url;
-    }
+    public Blog(String url) {this.url_name = url;}
 
 }
