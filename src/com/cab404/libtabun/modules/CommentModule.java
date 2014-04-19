@@ -13,6 +13,16 @@ import com.cab404.moonlight.util.U;
  */
 public class CommentModule extends ModuleImpl<Comment> {
 
+    private final Mode type;
+
+    public enum Mode {
+        TOPIC, LIST, LETTER
+    }
+
+    public CommentModule(Mode type) {
+        this.type = type;
+    }
+
     @Override public Comment extractData(HTMLTree page, AccessProfile profile) {
         Comment comment = new Comment();
 
@@ -38,7 +48,9 @@ public class CommentModule extends ModuleImpl<Comment> {
 
         comment.is_new = page.get(0).get("class").contains("comment-new");
         comment.time = info.xPathFirstTag("li/time").get("datetime");
-        comment.votes = U.parseInt(info.xPathStr("li/span&class=vote-count"));
+
+        if (type != Mode.LETTER)
+            comment.votes = U.parseInt(info.xPathStr("li/span&class=vote-count"));
 
         return comment;
     }

@@ -1,9 +1,10 @@
 package com.cab404.libtabun.tests;
 
-import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.libtabun.util.TabunAccessProfile;
 import com.cab404.moonlight.tests.Test;
 import com.cab404.moonlight.tests.TestLauncher;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
@@ -11,8 +12,9 @@ import java.util.ArrayList;
  */
 public class Tests {
 
-    public static void main(String[] args) {
-        TestLauncher launcher = new TestLauncher(new AccessProfile("tabun.everypony.ru"));
+    public static void main(String[] args)
+    throws FileNotFoundException {
+        TestLauncher launcher = new TestLauncher(new TabunAccessProfile());
 
         ArrayList<Class<? extends Test>> tests = new ArrayList<>();
 
@@ -21,6 +23,7 @@ public class Tests {
         tests.add(TopicTest.class);
         tests.add(BlogTest.class);
         tests.add(StreamTest.class);
+        tests.add(LetterTest.class);
 
         launcher.launch(tests);
     }

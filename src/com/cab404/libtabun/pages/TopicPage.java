@@ -30,7 +30,7 @@ public class TopicPage extends TabunPage {
 
     @Override protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
-        base.bind(new CommentModule(), BLOCK_COMMENT);
+        base.bind(new CommentModule(CommentModule.Mode.TOPIC), BLOCK_COMMENT);
         base.bind(new TopicModule(TopicModule.Mode.TOPIC), BLOCK_TOPIC_HEADER);
         base.bind(new CommentNumModule(), BLOCK_COMMENT_NUM);
     }

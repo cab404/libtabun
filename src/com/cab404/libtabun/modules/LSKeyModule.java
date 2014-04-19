@@ -17,7 +17,7 @@ public class LSKeyModule extends ModuleImpl<LivestreetKey> {
         if (!js.contains("LIVESTREET_SECURITY_KEY")) return null;
         finish();
 
-        return new LivestreetKey(profile.getHost().getHostName(), SU.sub(
+        return new LivestreetKey("", SU.sub(
                 js,
                 "LIVESTREET_SECURITY_KEY = '",
                 "'"

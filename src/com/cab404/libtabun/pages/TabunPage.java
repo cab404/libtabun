@@ -19,15 +19,19 @@ public class TabunPage extends Page {
     public CommonInfo c_inf;
     public LivestreetKey key;
 
-    public static final int BLOCK_QUOTE = 279;
-    public static final int BLOCK_COMMON_INFO = 280;
-    public static final int BLOCK_LS_KEY = 281;
-    public static final int BLOCK_COMMENT = 282;
-    public static final int BLOCK_TOPIC_HEADER = 283;
-    public static final int BLOCK_USER_INFO = 284;
-    public static final int BLOCK_COMMENT_NUM = 285;
-    public static final int BLOCK_BLOG_INFO = 286;
-    public static final int BLOCK_STREAM_ITEM = 287;
+    public static final int
+            BLOCK_QUOTE = 279,
+            BLOCK_COMMON_INFO = 280,
+            BLOCK_LS_KEY = 281,
+            BLOCK_COMMENT = 282,
+            BLOCK_TOPIC_HEADER = 283,
+            BLOCK_USER_INFO = 284,
+            BLOCK_COMMENT_NUM = 285,
+            BLOCK_BLOG_INFO = 286,
+            BLOCK_STREAM_ITEM = 287,
+            BLOCK_LETTER_HEADER = 288,
+            BLOCK_LETTER_TABLE = 289
+    ;
 
 
     @Override

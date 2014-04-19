@@ -1,9 +1,8 @@
 package com.cab404.libtabun.requests;
 
 import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.framework.EntrySet;
 import org.json.simple.JSONObject;
-
-import java.util.HashMap;
 
 /**
  * @author cab404
@@ -23,7 +22,7 @@ public class LoginRequest extends LSRequest {
         return "/login/ajax-login/";
     }
 
-    @Override public void getData(HashMap<String, String> data) {
+    @Override public void getData(EntrySet<String, String> data) {
         data.put("password", password);
         data.put("login", login);
         data.put("return-path", "/");

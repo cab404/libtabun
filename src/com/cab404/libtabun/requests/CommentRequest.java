@@ -1,9 +1,8 @@
 package com.cab404.libtabun.requests;
 
 import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.framework.EntrySet;
 import org.json.simple.JSONObject;
-
-import java.util.HashMap;
 
 /**
  * @author cab404
@@ -23,7 +22,7 @@ public class CommentRequest extends LSRequest {
         return "/blog/ajaxaddcomment/";
     }
 
-    @Override public void getData(HashMap<String, String> data) {
+    @Override public void getData(EntrySet<String, String> data) {
         data.put("reply", reply + "");
         data.put("comment_text", text + "");
         data.put("cmt_target_id", post + "");
