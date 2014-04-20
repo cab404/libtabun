@@ -1,10 +1,10 @@
 package com.cab404.libtabun.requests;
 
-import com.cab404.moonlight.framework.EntrySet;
-import com.cab404.moonlight.util.U;
-import org.json.simple.JSONObject;
+import org.apache.http.HttpResponse;
 
 /**
+ * LSRequest, который использует multipart/form-data и не отдаёт json.
+ *
  * @author cab404
  */
 public abstract class LSCreateRequest extends LSRequest {
@@ -12,13 +12,25 @@ public abstract class LSCreateRequest extends LSRequest {
         return true;
     }
 
-    @Override public void getData(EntrySet<String, String> data) {
+    protected void onSuccess(String url) {}
+    protected void onFailure(HttpResponse response) {}
 
+    @Override public boolean line(String line) {
+        return false;
     }
 
-    @Override public void handleResponse(String response) {
-        U.v(response);
+    @Override protected void onResponseGain(HttpResponse response) {
+        super.onResponseGain(response);
+
+        if (response.getStatusLine().getStatusCode() == 301) {
+            onSuccess(response.getFirstHeader("Location").getValue());
+            success = true;
+        } else {
+            onFailure(response);
+            success = false;
+        }
     }
 
-    @Override public void handle(JSONObject object) {}
+    @Override protected void handleResponse(String response) {}
+
 }

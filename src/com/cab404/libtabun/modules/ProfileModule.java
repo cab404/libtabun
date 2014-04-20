@@ -25,7 +25,7 @@ public class ProfileModule extends ModuleImpl<Profile> {
             data.id = U.parseInt(SU.bsub(page.xPathFirstTag("div&class=profile/div&class=vote-profile/div&id=*user_*").get("id"), "_", ""));
             data.votes = U.parseFloat(page.xPathStr("div&class=profile/div&class=vote-profile/div/div&class=*count/span"));
             data.strength = U.parseFloat(page.xPathStr("div&class=profile/div&class=strength/div&class=count"));
-            data.nick = page.xPathStr("div&class=profile/h2&itemprop=nickname");
+            data.login = page.xPathStr("div&class=profile/h2&itemprop=nickname");
 
             data.name = page.xPathStr("div&class=profile/p&itemprop=name");
             data.name = data.name == null ? "" : SU.deEntity(data.name);
@@ -58,7 +58,7 @@ public class ProfileModule extends ModuleImpl<Profile> {
             List<Tag> friends = page.xPath("div&class=wrapper/div&class=*left/ul&class=user-list-avatar/li/a");
             for (Tag tag : friends) {
                 Profile friend = new Profile();
-                friend.nick = SU.sub(tag.get("href"), "profile/", "/");
+                friend.login = SU.sub(tag.get("href"), "profile/", "/");
                 // Иконка идёт следующей, так что достанем её мануально. Это быстрее с любой точки зрения.
                 friend.mid_icon = page.get(tag.index - page.start() + 1).get("src");
                 data.partial_friend_list.add(friend);

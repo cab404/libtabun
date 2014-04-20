@@ -17,4 +17,8 @@ public class TabunAccessProfile extends AccessProfile {
         page.fetch(this);
         return new LoginRequest(name, password).exec(this, page).success();
     }
+
+    @Override public String userAgentName() {
+        return "sweetieBot";
+    }
 }

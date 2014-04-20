@@ -23,7 +23,7 @@ public class LetterModule extends ModuleImpl<Letter> {
         for (Tag tag : page.xPath("div/header/a&class=username*"))
             letter.recipients.add(SU.deEntity(page.getContents(tag)));
 
-        letter.starter.nick = SU.deEntity(page.xPathStr("footer/ul/li/a&rel=author"));
+        letter.starter.login = SU.deEntity(page.xPathStr("footer/ul/li/a&rel=author"));
         letter.starter.small_icon = page.xPathFirstTag("footer/ul/li/a/img").get("src");
         letter.starter.fillImages();
 

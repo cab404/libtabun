@@ -2,9 +2,8 @@ package com.cab404.libtabun.requests;
 
 import com.cab404.libtabun.data.LivestreetKey;
 import com.cab404.libtabun.pages.TabunPage;
-import com.cab404.moonlight.facility.MessageFactory;
+import com.cab404.libtabun.util.MessageFactory;
 import com.cab404.moonlight.facility.RequestFactory;
-import com.cab404.moonlight.facility.ResponseFactory;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.EntrySet;
 import com.cab404.moonlight.framework.ShortRequest;
@@ -18,9 +17,9 @@ import java.util.Map;
  * @author cab404
  */
 public abstract class LSRequest extends ShortRequest {
-    private boolean success = false;
+    protected boolean success = false;
 
-    @Override public void handleResponse(String response) {
+    @Override protected void handleResponse(String response) {
         JSONObject jsonObject = MessageFactory.processJSONwithMessage(response);
         success = !(boolean) jsonObject.get("bStateError");
         handle(jsonObject);
@@ -30,9 +29,13 @@ public abstract class LSRequest extends ShortRequest {
     protected boolean isChunked() {
         return false;
     }
+    protected void handle(JSONObject object) {}
+
+    protected abstract void getData(EntrySet<String, String> data);
+    protected abstract String getURL(AccessProfile profile);
 
     private LivestreetKey key;
-    @Override public HttpRequestBase getRequest(AccessProfile profile) {
+    @Override protected HttpRequestBase getRequest(AccessProfile profile) {
 
         EntrySet<String, String> data = new EntrySet<>();
         data.put("security_ls_key", key.key);
@@ -66,12 +69,9 @@ public abstract class LSRequest extends ShortRequest {
         return request.build();
     }
 
-    public abstract String getURL(AccessProfile profile);
-
-    public abstract void getData(EntrySet<String, String> data);
-
-    public abstract void handle(JSONObject object);
-
+    /**
+     * Возвращает bStateError из принятого json-а.
+     */
     public boolean success() {
         return success;
     }
@@ -79,6 +79,7 @@ public abstract class LSRequest extends ShortRequest {
     public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
         this.key = key;
         super.fetch(profile);
+        //noinspection unchecked
         return ((T) this);
     }
 
@@ -86,17 +87,8 @@ public abstract class LSRequest extends ShortRequest {
         return exec(profile, page.key);
     }
 
-    /**
-     * Вместо этого используй exec.
-     */
-    @Override public void fetch(AccessProfile accessProfile) {
+    @Override protected void fetch(AccessProfile accessProfile) {
         super.fetch(accessProfile);
     }
 
-    /**
-     * Вместо этого используй exec.
-     */
-    @Override public void fetch(AccessProfile profile, ResponseFactory.StatusListener statusListener) {
-        super.fetch(profile, statusListener);
-    }
 }

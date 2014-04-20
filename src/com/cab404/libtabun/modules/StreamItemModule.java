@@ -26,7 +26,7 @@ public class StreamItemModule extends ModuleImpl<StreamItem> {
         if (item.type == null) U.v(clazz);
 
         item.user = new Profile();
-        item.user.nick = page.xPathStr("p/a/strong");
+        item.user.login = page.xPathStr("p/a/strong");
         item.user.mid_icon = page.xPathFirstTag("a/img").get("src");
         item.user.fillImages();
 

@@ -4,8 +4,6 @@ import com.cab404.libtabun.data.CommonInfo;
 import com.cab404.libtabun.data.LivestreetKey;
 import com.cab404.libtabun.modules.CommonInfoModule;
 import com.cab404.libtabun.modules.LSKeyModule;
-import com.cab404.moonlight.facility.ResponseFactory;
-import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModularBlockParser;
 import com.cab404.moonlight.framework.Page;
 
@@ -36,22 +34,12 @@ public class TabunPage extends Page {
 
     @Override
     public String getURL() {
-        return "/404";
+        return "/error";
     }
 
     @Override protected void bindParsers(ModularBlockParser base) {
         base.bind(new LSKeyModule(), BLOCK_LS_KEY);
         base.bind(new CommonInfoModule(), BLOCK_COMMON_INFO);
-    }
-
-    @Override public void fetch(AccessProfile accessProfile) {
-        super.fetch(accessProfile, new ResponseFactory.StatusListener() {
-            @Override public void onResponseFail(Throwable t) {
-                if (t instanceof ErrorResponse)
-                    if (((ErrorResponse) t).getStatusLine().getStatusCode() != 404)
-                        throw new RuntimeException(t);
-            }
-        });
     }
 
     @Override public void handle(Object object, int key) {

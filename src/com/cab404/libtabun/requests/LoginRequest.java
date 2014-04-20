@@ -18,18 +18,18 @@ public class LoginRequest extends LSRequest {
         this.password = password;
     }
 
-    @Override public String getURL(AccessProfile profile) {
+    @Override protected String getURL(AccessProfile profile) {
         return "/login/ajax-login/";
     }
 
-    @Override public void getData(EntrySet<String, String> data) {
+    @Override protected void getData(EntrySet<String, String> data) {
         data.put("password", password);
         data.put("login", login);
         data.put("return-path", "/");
         data.put("remember", "on");
     }
 
-    @Override public void handle(JSONObject object) {
+    @Override protected void handle(JSONObject object) {
         isLoggedIn = !(boolean) object.get("bStateError");
     }
 

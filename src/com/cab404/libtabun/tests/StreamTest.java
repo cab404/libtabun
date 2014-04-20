@@ -22,7 +22,7 @@ public class StreamTest extends Test {
 //
 //            for (StreamItem str : streamPage.stream)
 //                if (!str.link.equals(item.link))
-//                    U.v(SU.table(15, str.type + "", 20, str.user.nick + "", 80, str.link + "", str.data + ""));
+//                    U.v(SU.table(15, str.type + "", 20, str.user.login + "", 80, str.link + "", str.data + ""));
 //                else
 //                    break;
 //            item = streamPage.stream.get(0);

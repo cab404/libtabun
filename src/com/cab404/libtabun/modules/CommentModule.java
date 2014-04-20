@@ -42,7 +42,7 @@ public class CommentModule extends ModuleImpl<Comment> {
         else
             comment.parent = U.parseInt(SU.bsub(parent.get("onclick"), ",", ");"));
 
-        comment.author.nick = SU.bsub(info.xPathFirstTag("li/a").get("href"), "profile/", "/");
+        comment.author.login = SU.bsub(info.xPathFirstTag("li/a").get("href"), "profile/", "/");
         comment.author.small_icon = info.xPathFirstTag("li/a/img").get("src");
         comment.author.fillImages();
 

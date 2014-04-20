@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class Profile {
     public float strength, votes;
-    public String name, nick, about, small_icon, mid_icon, big_icon, photo;
+    public String name, login, about, small_icon, mid_icon, big_icon, photo;
     public int id;
     public final List<Profile> partial_friend_list;
     public final HashMap<UserInfoType, String> personal;

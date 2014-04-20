@@ -1,4 +1,4 @@
-package com.cab404.moonlight.facility;
+package com.cab404.libtabun.util;
 
 import com.cab404.moonlight.util.U;
 import org.json.simple.JSONObject;
@@ -17,9 +17,9 @@ public class MessageFactory {
         @Override
         public void show(String title, String body, boolean isError) {
             if (!body.isEmpty()) {
-                U.v(" :::: " + title.trim() + " :::: ");
-                U.v(body);
-                U.v("");
+//                U.v(" :::: " + title.trim() + " :::: ");
+//                U.v(body);
+//                U.v("");
             }
         }
     };
