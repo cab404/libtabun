@@ -1,7 +1,6 @@
 package com.cab404.libtabun.util;
 
 import com.cab404.moonlight.util.U;
-import com.sun.istack.internal.NotNull;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -18,7 +17,7 @@ public class MessageFactory {
         @Override public void show(JSONObject parsed) {}
     };
 
-    public static void setListener(@NotNull MessageListener impl) {
+    public static void setListener(MessageListener impl) {
         MessageFactory.impl = impl;
     }
 
