@@ -6,12 +6,12 @@ import com.cab404.moonlight.framework.EntrySet;
 /**
  * @author cab404
  */
-public class CommentRequest extends LSRequest {
+public class CommentAddRequest extends LSRequest {
 
     private final int reply, post;
     private final String text;
 
-    public CommentRequest(int post, int reply, String text) {
+    public CommentAddRequest(int post, int reply, String text) {
         this.post = post;
         this.text = text;
         this.reply = reply;

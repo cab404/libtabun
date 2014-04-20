@@ -1,6 +1,7 @@
 package com.cab404.libtabun.util;
 
 import com.cab404.moonlight.util.U;
+import com.sun.istack.internal.NotNull;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -13,22 +14,19 @@ import org.json.simple.parser.ParseException;
 public class MessageFactory {
     private static JSONParser parser = new JSONParser();
 
-    public static MessageListener impl = new MessageListener() {
-        @Override
-        public void show(String title, String body, boolean isError) {
-            if (!body.isEmpty()) {
-//                U.v(" :::: " + title.trim() + " :::: ");
-//                U.v(body);
-//                U.v("");
-            }
-        }
+    private static MessageListener impl = new MessageListener() {
+        @Override public void show(JSONObject parsed) {}
     };
+
+    public static void setListener(@NotNull MessageListener impl) {
+        MessageFactory.impl = impl;
+    }
 
     public static JSONObject processJSONwithMessage(String json) {
         try {
             JSONObject parsed = (JSONObject) parser.parse(json);
 
-            impl.show("" + parsed.get("sMsgTitle"), "" + parsed.get("sMsg"), (boolean) parsed.get("bStateError"));
+            impl.show(parsed);
 
             return parsed;
         } catch (ParseException e) {
@@ -45,6 +43,6 @@ public class MessageFactory {
      * и заходить в Табун с неправильным паролем.
      */
     public static interface MessageListener {
-        public void show(String title, String body, boolean isError);
+        public void show(JSONObject parsed);
     }
 }

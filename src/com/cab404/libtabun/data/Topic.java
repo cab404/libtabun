@@ -9,12 +9,12 @@ import java.util.List;
  * @author cab404
  */
 public class Topic {
-    public CharSequence title, votes;
+    public String title, votes;
     public Profile author;
     public Blog blog;
 
-    public CharSequence text;
-    public List<CharSequence> tags;
+    public String text;
+    public List<String> tags;
 
     public Calendar date;
     public int id;

@@ -29,6 +29,7 @@ public abstract class LSCreateRequest extends LSRequest {
             onFailure(response);
             success = false;
         }
+
     }
 
     @Override protected void handleResponse(String response) {}

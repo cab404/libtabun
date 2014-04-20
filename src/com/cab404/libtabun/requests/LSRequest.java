@@ -29,6 +29,7 @@ public abstract class LSRequest extends ShortRequest {
     protected boolean isChunked() {
         return false;
     }
+
     protected void handle(JSONObject object) {}
 
     protected abstract void getData(EntrySet<String, String> data);
@@ -49,7 +50,8 @@ public abstract class LSRequest extends ShortRequest {
 
         if (isLong()) {
 
-            request.MultipartRequest(data);
+            request
+                    .MultipartRequest(data, isChunked());
 
         } else {
 
@@ -57,7 +59,7 @@ public abstract class LSRequest extends ShortRequest {
             for (Map.Entry<String, String> e : data)
                 request_body
                         .append('&')
-                        .append(e.getKey())
+                        .append(SU.rl(e.getKey()))
                         .append('=')
                         .append(SU.rl(e.getValue()));
 
