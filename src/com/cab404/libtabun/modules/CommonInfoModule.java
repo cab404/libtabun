@@ -17,13 +17,6 @@ public class CommonInfoModule extends ModuleImpl<CommonInfo> {
 
     @Override public CommonInfo extractData(HTMLTree page, AccessProfile profile) {
         CommonInfo info = new CommonInfo();
-//        try {
-//            page = page.getTree(page.xPathFirstTag("html/body/div&id=container/header/div&class=dropdown-user"));
-//            info.isLoggedIn = true;
-//        } catch (NullPointerException e) {
-//            info.isLoggedIn = false;
-//            return info;
-//        }
 
         Tag tag = page.xPathFirstTag("ul/li/a&class=new-*");
         if (tag != null) {

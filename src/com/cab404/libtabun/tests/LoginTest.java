@@ -19,6 +19,14 @@ public class LoginTest extends Test {
         password = requestPassword("Password");
 
         assertEquals("Logged in", true, new LoginRequest(login, password).exec(profile, page).success());
+
+        AccessProfile copy = AccessProfile.parseString(profile.serialize());
+
+        TabunPage test = new TabunPage();
+        test.fetch(copy);
+
+        assertNonNull("Copied account usage", test.c_inf);
+
     }
 
 }
