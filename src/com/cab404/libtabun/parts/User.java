@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class User {
 
-    private boolean isLoggedIn = false;
+    public boolean isLoggedIn = false;
     public LivestreetKey key;
     private String login;
     private HashMap<String, String> cookies;
