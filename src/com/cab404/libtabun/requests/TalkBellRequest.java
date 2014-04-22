@@ -46,7 +46,7 @@ public class TalkBellRequest extends LSRequest {
                 for (Object non_parsed_letter : (JSONArray) object.get("aTalksStuff")) {
                     JSONObject letter_data = (JSONObject) non_parsed_letter;
                     Letter letter = new Letter();
-                    responses.add(letter);
+                    new_letters.add(letter);
 
                     letter.title = (String) letter_data.get("title");
                     letter.id = Integer.valueOf(letter_data.get("id").toString());
