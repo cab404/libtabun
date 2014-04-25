@@ -53,4 +53,26 @@ public class Tabun {
 
         return calendar;
     }
+
+    // 2014-02-12T21:20:13+04:00
+    @SuppressWarnings("MagicConstant")
+    public static Calendar parseSQLDate(String date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        List<String> split = SU.split(date, "T");
+        List<String> in_year = SU.split(split.get(0), "-");
+        List<String> in_day = SU.split(SU.split(split.get(1), "+").get(0), ":");
+
+        calendar.set(
+                Integer.parseInt(in_year.get(0)),
+                Integer.parseInt(in_year.get(1)) - 1,
+                Integer.parseInt(in_year.get(2)),
+                Integer.parseInt(in_day.get(0)),
+                Integer.parseInt(in_day.get(1)),
+                Integer.parseInt(in_day.get(2))
+        );
+
+        return calendar;
+    }
+
 }

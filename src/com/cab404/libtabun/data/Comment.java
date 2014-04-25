@@ -8,7 +8,7 @@ import java.util.Calendar;
  * @author cab404
  */
 public class Comment {
-    public String text = "", time = "";
+    public String text = "";
     public Profile author;
     public int votes, parent = 0;
     public boolean deleted = false;

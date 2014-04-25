@@ -28,7 +28,7 @@ public class TabunPage extends Page {
             BLOCK_BLOG_INFO = 286,
             BLOCK_STREAM_ITEM = 287,
             BLOCK_LETTER_HEADER = 288,
-            BLOCK_LETTER_TABLE = 289
+            BLOCK_LETTER_LABEL = 289
     ;
 
 

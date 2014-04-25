@@ -1,9 +1,10 @@
 package com.cab404.libtabun.pages;
 
-import com.cab404.libtabun.data.Letter;
-import com.cab404.libtabun.modules.LetterTableModule;
+import com.cab404.libtabun.data.LetterLabel;
+import com.cab404.libtabun.modules.LetterLabelModule;
 import com.cab404.moonlight.framework.ModularBlockParser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,14 +12,16 @@ import java.util.List;
  */
 public class LetterTablePage extends TabunPage {
     int page;
-    public List<Letter> letters;
+    public List<LetterLabel> letters;
 
     public LetterTablePage(int page) {
+        this();
         this.page = page;
     }
 
     public LetterTablePage() {
         this.page = 1;
+        letters = new ArrayList<>();
     }
 
     @Override public String getURL() {
@@ -27,15 +30,15 @@ public class LetterTablePage extends TabunPage {
 
     @Override protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
-        base.bind(new LetterTableModule(), BLOCK_LETTER_TABLE);
+        base.bind(new LetterLabelModule(), BLOCK_LETTER_LABEL);
     }
 
     @Override public void handle(Object object, int key) {
         super.handle(object, key);
         switch (key) {
-            case BLOCK_LETTER_TABLE:
+            case BLOCK_LETTER_LABEL:
                 //noinspection unchecked
-                letters = (List<Letter>) object;
+                letters.add((LetterLabel) object);
                 break;
         }
     }

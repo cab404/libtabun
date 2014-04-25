@@ -16,11 +16,12 @@ public class LetterTest extends Test {
         LetterTablePage letters = new LetterTablePage(1);
         letters.fetch(profile);
 
-        LetterPage page = new LetterPage(130123);
+        LetterPage page = new LetterPage(131377);
         page.fetch(profile);
 
         assertEquals("Участники", page.header.recipients.toArray(), new String[]{"cab404", "test_pony_n1"});
-        assertEquals("Название", page.header.title, "Test Letter #1");
+        assertEquals("Название", page.header.title, "Royal Test Letter #0");
+        assertEquals("Текст", page.header.text, "Это будет чистое и красивое тестовое письмо.");
         assertEquals("Первый комментарий", page.comments.get(0).text, "— Upstream-ish stuff.");
     }
 

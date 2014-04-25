@@ -1,6 +1,7 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Comment;
+import com.cab404.libtabun.util.Tabun;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
@@ -47,7 +48,8 @@ public class CommentModule extends ModuleImpl<Comment> {
         comment.author.fillImages();
 
         comment.is_new = page.get(0).get("class").contains("comment-new");
-        comment.time = info.xPathFirstTag("li/time").get("datetime");
+
+        comment.date = Tabun.parseSQLDate(info.xPathFirstTag("li/time").get("datetime"));
 
         if (type != Mode.LETTER)
             comment.votes = U.parseInt(info.xPathStr("li/span&class=vote-count"));

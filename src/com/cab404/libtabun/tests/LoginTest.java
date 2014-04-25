@@ -26,6 +26,7 @@ public class LoginTest extends Test {
         test.fetch(copy);
 
         assertNonNull("Copied account usage", test.c_inf);
+        assertEquals("Username from header", login, test.c_inf.username);
 
     }
 
