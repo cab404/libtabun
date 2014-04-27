@@ -26,6 +26,7 @@ public class Tests {
         tests.add(TopicTest.class);
         tests.add(BlogTest.class);
         tests.add(StreamTest.class);
+        tests.add(MainPageTest.class);
         tests.add(UserAutocompleteTest.class);
 
         launcher.launch(tests);
