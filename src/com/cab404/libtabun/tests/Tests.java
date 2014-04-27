@@ -1,8 +1,8 @@
 package com.cab404.libtabun.tests;
 
 import com.cab404.libtabun.util.TabunAccessProfile;
-import com.cab404.moonlight.tests.Test;
-import com.cab404.moonlight.tests.TestLauncher;
+import com.cab404.moonlight.util.tests.Test;
+import com.cab404.moonlight.util.tests.TestLauncher;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

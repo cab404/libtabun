@@ -3,7 +3,7 @@ package com.cab404.libtabun.tests;
 import com.cab404.libtabun.data.Blog;
 import com.cab404.libtabun.pages.BlogPage;
 import com.cab404.moonlight.framework.AccessProfile;
-import com.cab404.moonlight.tests.Test;
+import com.cab404.moonlight.util.tests.Test;
 
 /**
  * @author cab404

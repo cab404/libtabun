@@ -3,7 +3,7 @@ package com.cab404.libtabun.tests;
 import com.cab404.libtabun.pages.LetterPage;
 import com.cab404.libtabun.pages.LetterTablePage;
 import com.cab404.moonlight.framework.AccessProfile;
-import com.cab404.moonlight.tests.Test;
+import com.cab404.moonlight.util.tests.Test;
 
 /**
  * Если что - постучитесь ко мне на табун, добавлю в письмо и тестовый блог.
