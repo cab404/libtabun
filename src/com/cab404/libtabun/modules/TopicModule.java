@@ -1,6 +1,7 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Topic;
+import com.cab404.libtabun.util.Tabun;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
@@ -35,7 +36,7 @@ public class TopicModule extends ModuleImpl<Topic> {
         label.blog.url_name = blog.get("href").contains("/blog/") ? SU.bsub(blog.get("href"), "/blog/", "/") : null;
         label.blog.name = page.getContents(blog);
 
-        label.date = U.convertDatetime(page.xPathFirstTag("footer/ul/li/time").get("datetime"));
+        label.date = Tabun.parseSQLDate(page.xPathFirstTag("footer/ul/li/time").get("datetime"));
 
         if (mode != Mode.LETTER) {
             label.votes = page.getContents(page.getTagByID("vote_total_*")).trim();

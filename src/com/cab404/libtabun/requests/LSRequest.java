@@ -3,7 +3,7 @@ package com.cab404.libtabun.requests;
 import com.cab404.libtabun.data.LivestreetKey;
 import com.cab404.libtabun.pages.TabunPage;
 import com.cab404.libtabun.util.MessageFactory;
-import com.cab404.moonlight.facility.RequestFactory;
+import com.cab404.moonlight.facility.RequestBuilder;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.EntrySet;
 import com.cab404.moonlight.framework.ShortRequest;
@@ -44,7 +44,7 @@ public abstract class LSRequest extends ShortRequest {
 
         String url = getURL(profile);
 
-        RequestFactory request = RequestFactory
+        RequestBuilder request = RequestBuilder
                 .post(url, profile)
                 .addReferer(url);
 

@@ -1,12 +1,12 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Letter;
+import com.cab404.libtabun.util.Tabun;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
 import com.cab404.moonlight.util.SU;
-import com.cab404.moonlight.util.U;
 
 /**
  * @author cab404
@@ -18,7 +18,7 @@ public class LetterModule extends ModuleImpl<Letter> {
 
         letter.title = SU.deEntity(page.xPathStr("header/h1").trim());
         letter.text = SU.deEntity(page.xPathStr("div&class=*text*").trim());
-        letter.date = U.convertDatetime(page.xPathFirstTag("footer/ul/li&class=topic-info-date/time").get("datetime"));
+        letter.date = Tabun.parseSQLDate(page.xPathFirstTag("footer/ul/li&class=topic-info-date/time").get("datetime"));
 
         for (Tag tag : page.xPath("div/header/a&class=username*"))
             letter.recipients.add(SU.deEntity(page.getContents(tag)));
