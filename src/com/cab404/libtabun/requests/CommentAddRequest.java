@@ -10,20 +10,12 @@ public class CommentAddRequest extends LSRequest {
 
     private final int reply, post;
     private final String text;
-    private final Type type;
+    private final String type;
 
-    public static enum Type {
-        TALK, TOPIC
-    }
-
-    public CommentAddRequest(int post, int reply, String text) {
-        this.post = post;
-        this.text = text;
-        this.reply = reply;
-        type = Type.TALK;
-    }
-
-    public CommentAddRequest(Type type, int post, int reply, String text) {
+    /**
+     * @param type Константа из {@link com.cab404.libtabun.data.Types}
+     */
+    public CommentAddRequest(String type, int post, int reply, String text) {
         this.post = post;
         this.text = text;
         this.reply = reply;
@@ -32,19 +24,7 @@ public class CommentAddRequest extends LSRequest {
 
 
     @Override protected String getURL(AccessProfile profile) {
-        String prefix;
-        switch (type) {
-            case TALK:
-                prefix = "/talk";
-                break;
-            case TOPIC:
-                prefix = "/blog";
-                break;
-            default:
-                throw new RuntimeException("Неподдерживаемый тип!");
-        }
-
-        return prefix + "/ajaxaddcomment/";
+        return "/" + type.toLowerCase() + "/ajaxaddcomment/";
     }
 
     @Override protected void getData(EntrySet<String, String> data) {

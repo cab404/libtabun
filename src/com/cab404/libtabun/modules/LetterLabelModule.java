@@ -20,8 +20,9 @@ public class LetterLabelModule extends ModuleImpl<LetterLabel> {
 
         LetterLabel letter = new LetterLabel();
 
-        for (Tag user : page.xPath("td/a&class=*username*"))
+        for (Tag user : page.xPath("td/a&class=*username*")) {
             letter.recipients.add(page.getContents(user));
+        }
 
         letter.title = SU.deEntity(page.xPathStr("td/a&class=js-title-talk"));
         String destronged_title = SU.removeAllTags(letter.title);
@@ -40,10 +41,9 @@ public class LetterLabelModule extends ModuleImpl<LetterLabel> {
         comments = page.xPathStr("td/span&class=new");
         letter.comments_new = comments == null ? 0 : U.parseInt(comments);
 
-//        }
-
         return letter;
     }
+
     @Override public boolean doYouLikeIt(Tag tag) {
         return "tr".equals(tag.name);
     }

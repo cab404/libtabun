@@ -24,11 +24,10 @@ public class MessageFactory {
     public static JSONObject processJSONwithMessage(String json) {
         try {
             JSONObject parsed = (JSONObject) parser.parse(json);
-
             impl.show(parsed);
 
             return parsed;
-        } catch (ParseException e) {
+        } catch (ParseException | VerifyError e) {
             U.w(e);
             U.w(json);
         }
