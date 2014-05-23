@@ -19,11 +19,12 @@ public class MainPage extends TabunPage {
     }
 
     @Override public void handle(Object object, int key) {
-        super.handle(object, key);
         switch (key) {
             case BLOCK_QUOTE:
                 this.quote = (String) object;
                 break;
+            default:
+                super.handle(object, key);
         }
     }
 }

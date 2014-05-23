@@ -26,11 +26,12 @@ public class ProfilePage extends TabunPage {
     }
 
     @Override public void handle(Object object, int key) {
-        super.handle(object, key);
         switch (key) {
             case BLOCK_USER_INFO:
                 user_info = (Profile) object;
                 break;
+            default:
+                super.handle(object, key);
         }
     }
 }

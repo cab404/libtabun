@@ -36,7 +36,6 @@ public class TopicPage extends TabunPage {
     }
 
     @Override public void handle(Object object, int key) {
-        super.handle(object, key);
         switch (key) {
             case BLOCK_COMMENT:
                 comments.add((Comment) object);
@@ -47,6 +46,8 @@ public class TopicPage extends TabunPage {
             case BLOCK_COMMENT_NUM:
                 header.comments = (int) object;
                 break;
+            default:
+                super.handle(object, key);
         }
     }
 }

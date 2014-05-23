@@ -14,7 +14,8 @@ public class Blog {
             about,
             icon;
     public int
-            id;
+            id,
+            readers;
     public Calendar
             creation_date;
     public float

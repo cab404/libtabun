@@ -18,6 +18,12 @@ public class TabunAccessProfile extends AccessProfile {
         return new LoginRequest(name, password).exec(this, page).success();
     }
 
+    public static TabunAccessProfile parseString(String s) {
+        TabunAccessProfile _return = new TabunAccessProfile();
+        _return.setUpFromString(s);
+        return _return;
+    }
+
     @Override public String userAgentName() {
         return "sweetieBot";
     }

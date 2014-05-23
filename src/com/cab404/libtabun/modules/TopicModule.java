@@ -1,5 +1,6 @@
 package com.cab404.libtabun.modules;
 
+import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.data.Topic;
 import com.cab404.libtabun.util.Tabun;
 import com.cab404.moonlight.framework.AccessProfile;
@@ -29,7 +30,7 @@ public class TopicModule extends ModuleImpl<Topic> {
     @Override public Topic extractData(HTMLTree page, AccessProfile profile) {
         Topic label = new Topic();
         label.text = page.xPathStr("div&class=*text").trim();
-        label.title = page.xPathStr("header/h1").trim();
+        label.title = SU.removeAllTags(page.xPathStr("header/h1").trim());
         label.id = U.parseInt(SU.bsub(page.xPathFirstTag("footer/p").get("class"), "-", ""));
 
         Tag blog = page.xPathFirstTag("header/div/a&class=topic-blog*");
@@ -37,6 +38,12 @@ public class TopicModule extends ModuleImpl<Topic> {
         label.blog.name = page.getContents(blog);
 
         label.date = Tabun.parseSQLDate(page.xPathFirstTag("footer/ul/li/time").get("datetime"));
+
+
+        label.author = new Profile();
+        label.author.login = page.xPathStr("header/div/a&rel=author");
+        label.author.small_icon = page.xPathFirstTag("header/div/a/img").get("src");
+        label.author.fillImages();
 
         if (mode != Mode.LETTER) {
             label.votes = page.getContents(page.getTagByID("vote_total_*")).trim();

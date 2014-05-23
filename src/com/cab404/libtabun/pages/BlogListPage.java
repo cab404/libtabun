@@ -1,7 +1,7 @@
 package com.cab404.libtabun.pages;
 
-import com.cab404.libtabun.data.StreamItem;
-import com.cab404.libtabun.modules.StreamItemModule;
+import com.cab404.libtabun.data.Blog;
+import com.cab404.libtabun.modules.BlogLabelModule;
 import com.cab404.moonlight.framework.ModularBlockParser;
 
 import java.util.ArrayList;
@@ -10,32 +10,31 @@ import java.util.List;
 /**
  * @author cab404
  */
-public class StreamPage extends TabunPage {
+public class BlogListPage extends TabunPage {
+    public int page = 1;
+    public List<Blog> blogs;
 
-    public List<StreamItem> stream;
-
-    public StreamPage() {
-        stream = new ArrayList<>();
+    public BlogListPage() {
+        blogs = new ArrayList<>();
     }
 
-
     @Override public String getURL() {
-        return "/stream/all";
+        return "/blogs/page" + page;
     }
 
     @Override protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
-        base.bind(new StreamItemModule(), BLOCK_STREAM_ITEM);
+        base.bind(new BlogLabelModule(), BLOCK_BLOG_INFO);
     }
 
     @Override public void handle(Object object, int key) {
         switch (key) {
-            case BLOCK_STREAM_ITEM:
-                stream.add((StreamItem) object);
+            case BLOCK_BLOG_INFO:
+                blogs.add((Blog) object);
                 break;
-
             default:
                 super.handle(object, key);
         }
     }
+
 }

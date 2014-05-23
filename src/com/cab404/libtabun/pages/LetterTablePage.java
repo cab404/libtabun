@@ -34,12 +34,13 @@ public class LetterTablePage extends TabunPage {
     }
 
     @Override public void handle(Object object, int key) {
-        super.handle(object, key);
         switch (key) {
             case BLOCK_LETTER_LABEL:
                 //noinspection unchecked
                 letters.add((LetterLabel) object);
                 break;
+            default:
+                super.handle(object, key);
         }
     }
 

@@ -33,8 +33,6 @@ public class LetterPage extends TabunPage {
     }
 
     @Override public void handle(Object object, int key) {
-        super.handle(object, key);
-
         switch (key) {
             case BLOCK_LETTER_HEADER:
                 header = (Letter) object;
@@ -42,6 +40,8 @@ public class LetterPage extends TabunPage {
             case BLOCK_COMMENT:
                 comments.add((Comment) object);
                 break;
+            default:
+                super.handle(object, key);
         }
 
     }

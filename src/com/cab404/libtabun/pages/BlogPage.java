@@ -16,14 +16,20 @@ public class BlogPage extends MainPage {
 
     public Blog blog;
     public List<Topic> topics;
+    public int page = 1;
 
     public BlogPage(Blog blog) {
         this.blog = blog;
         topics = new ArrayList<>();
     }
 
+    public BlogPage(Blog blog, int page) {
+        this(blog);
+        this.page = page;
+    }
+
     @Override public String getURL() {
-        return "/blog/" + blog.url_name;
+        return "/blog/" + blog.url_name + "/page" + page;
     }
 
     @Override protected void bindParsers(ModularBlockParser base) {
@@ -33,7 +39,6 @@ public class BlogPage extends MainPage {
     }
 
     @Override public void handle(Object object, int key) {
-        super.handle(object, key);
         switch (key) {
             case BLOCK_BLOG_INFO:
                 blog = (Blog) object;
@@ -41,6 +46,8 @@ public class BlogPage extends MainPage {
             case BLOCK_TOPIC_HEADER:
                 topics.add((Topic) object);
                 break;
+            default:
+                super.handle(object, key);
         }
     }
 
