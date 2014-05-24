@@ -8,5 +8,6 @@ public class Types {
             TOPIC = "Topic",
             BLOG = "Blog",
             USER = "User",
+            TALK = "Talk",
             COMMENT = "Comment";
 }
