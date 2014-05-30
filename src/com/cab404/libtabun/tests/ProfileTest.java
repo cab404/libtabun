@@ -2,8 +2,8 @@ package com.cab404.libtabun.tests;
 
 import com.cab404.libtabun.data.Profile;
 import com.cab404.libtabun.pages.ProfilePage;
-import com.cab404.moonlight.util.tests.Test;
 import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.util.tests.Test;
 
 /**
  * @author cab404
@@ -29,6 +29,8 @@ public class ProfileTest extends Test {
 
         assertEquals("День рождения", info.personal.get(Profile.UserInfoType.BIRTHDAY), "6 марта 2014");
         assertEquals("Пол", info.personal.get(Profile.UserInfoType.GENDER), "женский");
+
+        assertEquals("Фото", info.photo, "http://tabun.everypony.ru/templates/skin/synio/images/user_photo_female.png");
     }
 
 }

@@ -1,12 +1,12 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.Profile;
+import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
-import com.cab404.moonlight.util.SU;
-import com.cab404.moonlight.util.U;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
-import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.util.SU;
+import com.cab404.moonlight.util.U;
 
 import java.util.List;
 
@@ -16,9 +16,14 @@ import java.util.List;
  * @author cab404
  */
 public class ProfileModule extends ModuleImpl<Profile> {
+    Profile data = new Profile();
 
     @Override public Profile extractData(HTMLTree page, AccessProfile profile) {
-        Profile data = new Profile();
+
+        if ("profile-photo-wrapper".equals(page.get(0).get("class"))) {
+            data.photo = page.getTagByID("foto-img").get("src");
+            return null;
+        }
 
         try {
 
@@ -85,7 +90,7 @@ public class ProfileModule extends ModuleImpl<Profile> {
     }
 
     @Override public boolean doYouLikeIt(Tag tag) {
-        return "div".equals(tag.name) && "content".equals(tag.get("id"));
+        return ("content".equals(tag.get("id"))) || ("profile-photo-wrapper".equals(tag.get("class")));
     }
 
 }

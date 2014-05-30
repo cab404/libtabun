@@ -1,9 +1,13 @@
 package com.cab404.libtabun.data;
 
+import java.io.Serializable;
+
 /**
  * @author cab404
  */
-public class LivestreetKey {
+public class LivestreetKey implements Serializable {
+    private static final long serialVersionUID = 0L;
+
     public String address, key;
 
 

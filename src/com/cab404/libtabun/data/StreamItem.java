@@ -10,6 +10,7 @@ public class StreamItem {
         VOTE_TOPIC,
         ADD_TOPIC,
         VOTE_USER,
+        ADD_BLOG,
         JOIN_BLOG,
         VOTE_BLOG,
     }

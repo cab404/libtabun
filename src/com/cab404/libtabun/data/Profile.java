@@ -1,17 +1,19 @@
 package com.cab404.libtabun.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author cab404
  */
-public class Profile {
+public class Profile implements Serializable {
+    private static final long serialVersionUID = 0L;
+
     public float strength, votes;
     public String name, login, about, small_icon, mid_icon, big_icon, photo;
     public int id;
-    public final List<Profile> partial_friend_list;
+    public final ArrayList<Profile> partial_friend_list;
     public final HashMap<UserInfoType, String> personal;
     public final HashMap<ContactType, String> contacts;
 
@@ -23,7 +25,7 @@ public class Profile {
 
     public void fillImages() {
         String uni = "";
-           if (small_icon != null && !small_icon.isEmpty()) uni = small_icon.replace("24x24", "***");
+        if (small_icon != null && !small_icon.isEmpty()) uni = small_icon.replace("24x24", "***");
         else if (mid_icon != null && !mid_icon.isEmpty()) uni = mid_icon.replace("48x48", "***");
         else if (big_icon != null && !big_icon.isEmpty()) uni = big_icon.replace("100x100", "***");
 

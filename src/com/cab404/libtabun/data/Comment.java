@@ -1,5 +1,6 @@
 package com.cab404.libtabun.data;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -7,7 +8,9 @@ import java.util.Calendar;
  *
  * @author cab404
  */
-public class Comment {
+public class Comment implements Serializable {
+    private static final long serialVersionUID = 0L;
+
     public String text = "";
     public Profile author;
     public int votes, parent = 0;

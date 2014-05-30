@@ -1,5 +1,6 @@
 package com.cab404.libtabun.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -8,7 +9,9 @@ import java.util.List;
 /**
  * @author cab404
  */
-public class Topic {
+public class Topic implements Serializable {
+    private static final long serialVersionUID = 0L;
+
     public String title, votes;
     public Profile author;
     public Blog blog;
@@ -21,7 +24,6 @@ public class Topic {
 
     public boolean vote_enabled = false;
     public boolean in_favourites = false;
-    public boolean voted = false;
 
     public int your_vote = 0;
 
