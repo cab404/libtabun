@@ -2,7 +2,8 @@ package com.cab404.libtabun.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author cab404
@@ -14,14 +15,33 @@ public class Profile implements Serializable {
     public String name, login, about, small_icon, mid_icon, big_icon, photo;
     public int id;
     public final ArrayList<Profile> partial_friend_list;
-    public final HashMap<UserInfoType, String> personal;
-    public final HashMap<ContactType, String> contacts;
+    public final List<Map.Entry<UserInfoType, String>> personal;
+    public final List<Map.Entry<ContactType, String>> contacts;
 
     public Profile() {
-        personal = new HashMap<>();
-        contacts = new HashMap<>();
+        personal = new ArrayList<>();
+        contacts = new ArrayList<>();
         partial_friend_list = new ArrayList<>();
     }
+
+    public List<String> get(ContactType type) {
+        ArrayList<String> list = new ArrayList<String>();
+
+        for (Map.Entry<ContactType, String> e : contacts)
+            if (e.getKey().equals(type))
+                list.add(e.getValue());
+
+        return list;
+    }
+
+    public String get(UserInfoType type) {
+        for (Map.Entry<UserInfoType, String> e : personal)
+            if (e.getKey().equals(type))
+                return e.getValue();
+
+        return null;
+    }
+
 
     public void fillImages() {
         String uni = "";

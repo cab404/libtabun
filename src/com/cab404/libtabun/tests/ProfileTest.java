@@ -20,15 +20,15 @@ public class ProfileTest extends Test {
         assertEquals("ID", info.id, 17188);
         assertEquals("Name", info.name, "example");
 
-        assertEquals("Телефон", info.contacts.get(Profile.ContactType.PHONE), "0000000");
-        assertEquals("E-mail", info.contacts.get(Profile.ContactType.EMAIL), "exa@mp.le");
-        assertEquals("Twitter", info.contacts.get(Profile.ContactType.TWITTER), "example");
-        assertEquals("ВКонтакте", info.contacts.get(Profile.ContactType.VKONTAKTE), "example");
-        assertEquals("Одноклассники", info.contacts.get(Profile.ContactType.ODNOKLASSNIKI), "example");
-        assertEquals("Сайт", info.contacts.get(Profile.ContactType.SITE), "example.com");
+        assertEquals("Телефон", info.get(Profile.ContactType.PHONE).get(0), "0000000");
+        assertEquals("E-mail", info.get(Profile.ContactType.EMAIL).get(0), "exa@mp.le");
+        assertEquals("Twitter", info.get(Profile.ContactType.TWITTER).get(0), "example");
+        assertEquals("ВКонтакте", info.get(Profile.ContactType.VKONTAKTE).get(0), "example");
+        assertEquals("Одноклассники", info.get(Profile.ContactType.ODNOKLASSNIKI).get(0), "example");
+        assertEquals("Сайт", info.get(Profile.ContactType.SITE).get(0), "example.com");
 
-        assertEquals("День рождения", info.personal.get(Profile.UserInfoType.BIRTHDAY), "6 марта 2014");
-        assertEquals("Пол", info.personal.get(Profile.UserInfoType.GENDER), "женский");
+        assertEquals("День рождения", info.get(Profile.UserInfoType.BIRTHDAY), "6 марта 2014");
+        assertEquals("Пол", info.get(Profile.UserInfoType.GENDER), "женский");
 
         assertEquals("Фото", info.photo, "http://tabun.everypony.ru/templates/skin/synio/images/user_photo_female.png");
     }

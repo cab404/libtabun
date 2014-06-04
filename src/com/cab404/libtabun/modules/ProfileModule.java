@@ -8,6 +8,7 @@ import com.cab404.moonlight.parser.Tag;
 import com.cab404.moonlight.util.SU;
 import com.cab404.moonlight.util.U;
 
+import java.util.AbstractMap;
 import java.util.List;
 
 /**
@@ -24,6 +25,8 @@ public class ProfileModule extends ModuleImpl<Profile> {
             data.photo = page.getTagByID("foto-img").get("src");
             return null;
         }
+
+
 
         try {
 
@@ -52,11 +55,14 @@ public class ProfileModule extends ModuleImpl<Profile> {
                 String key = SU.sub(page.getContents(keys.get(i)), "", ":");
                 String value = page.getContents(values.get(i));
 
-                data.personal.put(Profile.getDataType(key),
-                        SU.removeRecurringChars(
-                                value.replace('\t', ' ').replace('\n', ' ').trim(),
-                                ' '
-                        ).toString()
+                data.personal.add(
+                        new AbstractMap.SimpleEntry<>(
+                                Profile.getDataType(key),
+                                SU.removeRecurringChars(
+                                        value.replace('\t', ' ').replace('\n', ' ').trim(),
+                                        ' '
+                                ).toString()
+                        )
                 );
             }
 
@@ -77,11 +83,14 @@ public class ProfileModule extends ModuleImpl<Profile> {
                 // Да, довольно криво, но так быстрее.
                 String key = SU.sub(foo, "title=\"", "\"");
                 String value = SU.removeAllTags(foo);
-                data.contacts.put(Profile.getContactType(key),
-                        SU.removeRecurringChars(
-                                value.replace('\t', ' ').replace('\n', ' ').trim(),
-                                ' '
-                        ).toString()
+                data.contacts.add(
+                        new AbstractMap.SimpleEntry<>(
+                                Profile.getContactType(key),
+                                SU.removeRecurringChars(
+                                        value.replace('\t', ' ').replace('\n', ' ').trim(),
+                                        ' '
+                                ).toString()
+                        )
                 );
             }
         }
