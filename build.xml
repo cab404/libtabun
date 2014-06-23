@@ -1,43 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="libtabun" default="jar">
+<project name="libtabun" default="def">
     <property file="build.properties"/>
 
+    <target name="def" depends="run-tests, jar-all, clean"/>
     <target name="clean">
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="build" depends="clean">
+    <target name="build-clean">
 
+        <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
 
         <javac
+                debug="true"
+                debuglevel="lines,vars,source"
                 executable="${jdk.bin}"
-                srcdir="${src.dir}"
                 destdir="${build.dir}"
+                srcdir="${src.dir}"
                 >
 
             <include name="**/*.java"/>
-            <exclude name="**/example/*"/>
+            <exclude name="**/example/*.java"/>
+            <exclude name="**/libtabun/tests/*.java"/>
 
             <classpath>
-                <fileset dir="${lib.dir}"/>
+                <fileset dir="${libs.dir}"/>
             </classpath>
         </javac>
 
     </target>
 
-    <target name="jar-lib" depends="build">
-        <jar destfile="../sweetieBot/libs/libtabun.jar" basedir="${build.dir}"/>
+    <target name="jar-lib" depends="build-clean">
+        <jar destfile="${out.dir}/libtabun.jar" basedir="${build.dir}"/>
     </target>
 
     <target name="jar-sources">
-        <jar destfile="libtabun-sources.jar" basedir="${src.dir}">
-            <exclude name="**/example/*"/>
+        <jar destfile="${out.dir}/libtabun-sources.jar" basedir="${src.dir}">
+            <include name="**/*.java"/>
+            <exclude name="**/example/*.java"/>
+            <exclude name="**/tests/*.java"/>
         </jar>
     </target>
 
-    <target name="jar" depends="jar-lib, jar-sources">
+    <target name="jar-all" depends="jar-lib, jar-sources"/>
+
+    <target name="build-test">
+
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+
+        <javac
+                debug="true"
+                debuglevel="lines,vars,source"
+                executable="${jdk.bin}"
+                destdir="${build.dir}"
+                srcdir="${src.dir}"
+                >
+
+            <include name="**/*.java"/>
+
+            <classpath>
+                <fileset dir="${libs.dir}"/>
+            </classpath>
+        </javac>
     </target>
+
+    <target name="run-tests" depends="build-test">
+        <java classname="com.cab404.libtabun.tests.Tests"
+              failonerror="yes">
+            <arg line="auto"/>
+
+            <classpath path="${build.dir}"/>
+
+            <classpath>
+                <fileset dir="${libs.dir}"/>
+            </classpath>
+
+        </java>
+    </target>
+
 
 </project>
