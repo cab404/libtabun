@@ -20,7 +20,7 @@ public class LSKeyModule extends ModuleImpl<LivestreetKey> {
         return new LivestreetKey("", SU.sub(
                 js,
                 "LIVESTREET_SECURITY_KEY = '",
-                "'"
+                "';"
         ));
     }
 

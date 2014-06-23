@@ -14,6 +14,8 @@ public class CommentAddRequest extends LSRequest {
 
     /**
      * @param type Константа из {@link com.cab404.libtabun.data.Types}
+     *             Для постов - {@link com.cab404.libtabun.data.Types#BLOG}
+     *             Для писем - {@link com.cab404.libtabun.data.Types#TALK}
      */
     public CommentAddRequest(String type, int post, int reply, String text) {
         this.post = post;

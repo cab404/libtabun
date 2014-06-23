@@ -30,6 +30,7 @@ public class TopicModule extends ModuleImpl<Topic> {
     @Override public Topic extractData(HTMLTree page, AccessProfile profile) {
         Topic label = new Topic();
         label.text = page.xPathStr("div&class=*text").trim();
+
         label.title = SU.removeAllTags(page.xPathStr("header/h1")).trim(); // Если header в списках - это ещё и ссылка.
         label.id = U.parseInt(SU.bsub(page.xPathFirstTag("footer/p").get("class"), "-", ""));
 

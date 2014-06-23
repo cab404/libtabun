@@ -8,6 +8,7 @@ import com.cab404.moonlight.framework.AccessProfile;
  * @author cab404
  */
 public class TabunAccessProfile extends AccessProfile {
+
     public TabunAccessProfile() {
         super("tabun.everypony.ru", 80);
     }

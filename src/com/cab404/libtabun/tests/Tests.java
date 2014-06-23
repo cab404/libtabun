@@ -25,6 +25,7 @@ public class Tests {
         }
         tests.add(ProfileTest.class);
         tests.add(TopicTest.class);
+        tests.add(ErrorTest.class);
         tests.add(BlogTest.class);
         tests.add(StreamTest.class);
         tests.add(MainPageTest.class);

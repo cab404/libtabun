@@ -1,7 +1,15 @@
 package com.cab404.libtabun.requests;
 
+import com.cab404.libtabun.data.Comment;
+import com.cab404.libtabun.modules.CommentModule;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.EntrySet;
+import com.cab404.moonlight.parser.HTMLTree;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author cab404
@@ -9,6 +17,7 @@ import com.cab404.moonlight.framework.EntrySet;
 public class RefreshCommentsRequest extends LSRequest {
 
     private String type;
+    public List<Comment> comments = new ArrayList<>();
     private final int id;
     private final int last_comment_id;
 
@@ -22,6 +31,16 @@ public class RefreshCommentsRequest extends LSRequest {
         data.put("idTarget", id + "");
         data.put("typeTarget", type);
         data.put("idCommentLast", last_comment_id + "");
+    }
+
+    @Override protected void handle(JSONObject object) {
+        super.handle(object);
+        CommentModule module =
+                new CommentModule(type.equalsIgnoreCase("topic") ? CommentModule.Mode.LETTER : CommentModule.Mode.TOPIC);
+        for (Object obj : (JSONArray) object.get("aComments")) {
+            HTMLTree c_data = new HTMLTree((String) ((JSONObject) obj).get("html"));
+
+        }
     }
 
     @Override protected String getURL(AccessProfile profile) {

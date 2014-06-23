@@ -3,6 +3,7 @@ package com.cab404.libtabun.pages;
 import com.cab404.libtabun.data.CommonInfo;
 import com.cab404.libtabun.data.LivestreetKey;
 import com.cab404.libtabun.modules.CommonInfoModule;
+import com.cab404.libtabun.modules.ErrorModule;
 import com.cab404.libtabun.modules.LSKeyModule;
 import com.cab404.moonlight.framework.ModularBlockParser;
 import com.cab404.moonlight.framework.Page;
@@ -28,8 +29,8 @@ public class TabunPage extends Page {
             BLOCK_BLOG_INFO = 286,
             BLOCK_STREAM_ITEM = 287,
             BLOCK_LETTER_HEADER = 288,
-            BLOCK_LETTER_LABEL = 289
-    ;
+            BLOCK_LETTER_LABEL = 289,
+            BLOCK_ERROR = 290;
 
 
     @Override
@@ -40,6 +41,7 @@ public class TabunPage extends Page {
     @Override protected void bindParsers(ModularBlockParser base) {
         base.bind(new LSKeyModule(), BLOCK_LS_KEY);
         base.bind(new CommonInfoModule(), BLOCK_COMMON_INFO);
+        base.bind(new ErrorModule(), BLOCK_ERROR);
     }
 
     @Override public void handle(Object object, int key) {

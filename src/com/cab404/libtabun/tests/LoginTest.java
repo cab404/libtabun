@@ -2,6 +2,7 @@ package com.cab404.libtabun.tests;
 
 import com.cab404.libtabun.pages.TabunPage;
 import com.cab404.libtabun.requests.LoginRequest;
+import com.cab404.libtabun.util.TabunAccessProfile;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.util.tests.Test;
 
@@ -18,7 +19,8 @@ public class LoginTest extends Test {
         login = requestString("Login");
         password = requestPassword("Password");
 
-        assertEquals("Logged in", true, new LoginRequest(login, password).exec(profile, page).success());
+        assertEquals("Logged in (long form)", true, new LoginRequest(login, password).exec(profile, page).success());
+        assertEquals("Logged in (short form)", true, new TabunAccessProfile().login(login, password));
 
         AccessProfile copy = AccessProfile.parseString(profile.serialize());
 

@@ -88,6 +88,9 @@ public abstract class LSRequest extends ShortRequest {
     public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
         return exec(profile, page.key);
     }
+    public <T extends LSRequest> T exec(AccessProfile profile) {
+        return exec(profile, new LivestreetKey("/", profile.cookies.get("key")));
+    }
 
     @Override protected void fetch(AccessProfile accessProfile) {
         super.fetch(accessProfile);
