@@ -2,6 +2,8 @@ package com.cab404.libtabun.requests;
 
 import org.apache.http.HttpResponse;
 
+import java.nio.CharBuffer;
+
 /**
  * LSRequest, который использует multipart/form-data и не отдаёт json.
  *
@@ -15,9 +17,7 @@ public abstract class LSCreateRequest extends LSRequest {
     protected void onSuccess(String url) {}
     protected void onFailure(HttpResponse response) {}
 
-    @Override public boolean line(String line) {
-        return false;
-    }
+    @Override public boolean part(CharBuffer part) {return false;}
 
     @Override protected void onResponseGain(HttpResponse response) {
         super.onResponseGain(response);
