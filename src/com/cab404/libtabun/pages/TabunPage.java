@@ -20,6 +20,9 @@ public class TabunPage extends Page {
 	public CommonInfo c_inf;
 	public LivestreetKey key;
 
+	{
+		setMultithreadMode(false);
+	}
 	public static final int
 			BLOCK_QUOTE = 279,
 			BLOCK_COMMON_INFO = 280,
