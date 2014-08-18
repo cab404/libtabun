@@ -11,23 +11,30 @@ import com.cab404.moonlight.util.U;
  */
 public class TopicAddRequest extends LSCreateRequest {
 
-    private Topic topic;
+	private Topic topic;
 
-    public TopicAddRequest(Topic topic) { this.topic = topic; }
+	public TopicAddRequest(Topic topic) { this.topic = topic; }
 
-    @Override protected String getURL(AccessProfile profile) {return "/topic/add";}
+	@Override protected void onRedirect(String to) {
+		super.onRedirect(to);
+		topic.id = U.parseInt(SU.bsub(to, "/", ".html"));
+	}
 
-    @Override protected void getData(EntrySet<String, String> data) {
-        data.put("blog_id", topic.blog.id + "");
-        data.put("topic_title", topic.title);
-        data.put("topic_text", topic.text);
-        data.put("topic_tags", SU.join(topic.tags, ", "));
-        data.put("topic_type", "topic");
-        data.put("submit_talk_add", "");
-    }
+	@Override protected String getURL(AccessProfile profile) {
+		return "/topic/add";
+	}
 
-    @Override protected void onSuccess(String url) {
-        U.v(url);
-    }
+	@Override protected void getData(EntrySet<String, String> data) {
+		data.put("blog_id", topic.blog.id + "");
+		data.put("topic_title", topic.title);
+		data.put("topic_text", topic.text);
+		data.put("topic_tags", SU.join(topic.tags, ", "));
+		data.put("topic_type", "topic");
+		data.put("submit_topic_publish", "");
+	}
+
+	@Override protected void onSuccess(String url) {
+		U.v(url);
+	}
 
 }

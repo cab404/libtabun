@@ -9,31 +9,41 @@ import org.json.simple.JSONObject;
  */
 public class LoginRequest extends LSRequest {
 
-    private final String login;
-    private final String password;
-    private boolean isLoggedIn;
+	private final String login;
+	private final String password;
+	private boolean isLoggedIn;
 
-    public LoginRequest(String login, String password) {
-        this.login = login;
-        this.password = password;
-    }
+	public LoginRequest(String login, String password) {
+		this.login = login;
+		this.password = password;
+	}
 
-    @Override protected String getURL(AccessProfile profile) {
-        return "/login/ajax-login/";
-    }
+	@Override protected void onRedirect(String to) {
+		/* Не должно быть никаких редиректов. И всё тут. */
+		cancel();
+		super.onRedirect(to);
+	}
 
-    @Override protected void getData(EntrySet<String, String> data) {
-        data.put("password", password);
-        data.put("login", login);
-        data.put("return-path", "/");
-        data.put("remember", "on");
-    }
+	@Override public void cancel() {
+		super.cancel();
+		success = false;
+	}
+	@Override protected String getURL(AccessProfile profile) {
+		return "/login/ajax-login/";
+	}
 
-    @Override protected void handle(JSONObject object) {
-        isLoggedIn = !(boolean) object.get("bStateError");
-    }
+	@Override protected void getData(EntrySet<String, String> data) {
+		data.put("password", password);
+		data.put("login", login);
+		data.put("return-path", "/");
+		data.put("remember", "on");
+	}
 
-    public boolean isLoggedIn() {
-        return isLoggedIn;
-    }
+	@Override protected void handle(JSONObject object) {
+		isLoggedIn = !(boolean) object.get("bStateError");
+	}
+
+	public boolean isLoggedIn() {
+		return isLoggedIn;
+	}
 }

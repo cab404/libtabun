@@ -22,6 +22,13 @@ public class TalkBellRequest extends LSRequest {
         new_letters = new ArrayList<>();
     }
 
+
+	@Override protected void onRedirect(String to) {
+		/* Не должно быть никаких редиректов. И всё тут. */
+		cancel();
+		super.onRedirect(to);
+	}
+
     @Override protected void getData(EntrySet<String, String> data) {}
 
     @Override protected String getURL(AccessProfile profile) {

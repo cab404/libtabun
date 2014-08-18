@@ -24,8 +24,8 @@ public class VoteRequest extends LSRequest {
     }
 
     @Override protected void getData(EntrySet<String, String> data) {
-        data.put("id" + type.name, id + "");
         data.put("value", vote + "");
+        data.put("id" + type.name, id + "");
     }
 
     @Override protected String getURL(AccessProfile profile) {

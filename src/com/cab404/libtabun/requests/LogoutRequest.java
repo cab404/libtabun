@@ -14,6 +14,12 @@ public class LogoutRequest extends Request {
 
     private boolean success = false;
 
+	@Override protected void onRedirect(String to) {
+		/* Не должно быть никаких редиректов. И всё тут. */
+		cancel();
+		super.onRedirect(to);
+	}
+
     @Override protected HttpRequestBase getRequest(AccessProfile accessProfile) {
         if (accessProfile.cookies.containsKey("key")) {
             success = true;

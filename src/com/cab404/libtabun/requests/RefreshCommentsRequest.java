@@ -22,6 +22,12 @@ public class RefreshCommentsRequest extends LSRequest {
     private final int id;
     private final int last_comment_id;
 
+	@Override protected void onRedirect(String to) {
+		/* Не должно быть никаких редиректов. И всё тут. */
+		cancel();
+		super.onRedirect(to);
+	}
+
     public RefreshCommentsRequest(Type type, int id, int last_comment_id) {
         this.type = type;
         this.id = id;
