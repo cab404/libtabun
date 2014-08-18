@@ -47,7 +47,7 @@ public class TopicModule extends ModuleImpl<Topic> {
         label.author.fillImages();
 
         if (mode != Mode.LETTER) {
-            label.votes = page.getContents(page.getTagByID("vote_total_*")).trim();
+            label.votes = SU.removeAllTags(page.getContents(page.getTagByID("vote_total_*"))).trim();
 
             String vote_info = page.xPathStr("header/div/div/div&id=vote_area*");
             label.vote_enabled = vote_info.contains("vote-not-self")

@@ -1,5 +1,6 @@
 package com.cab404.libtabun.modules;
 
+import com.cab404.libtabun.data.TabunError;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
@@ -8,14 +9,21 @@ import com.cab404.moonlight.parser.Tag;
 /**
  * @author cab404
  */
-public class ErrorModule extends ModuleImpl<Object> {
+public class ErrorModule extends ModuleImpl<TabunError> {
 
-    @Override public Object extractData(HTMLTree page, AccessProfile profile) {
-        return new Object();
-    }
+	@Override public TabunError extractData(HTMLTree page, AccessProfile profile) {
+		String err_msg = page.xPathStr("h2/span");
 
-    @Override public boolean doYouLikeIt(Tag tag) {
-        return tag.get("class").equals("content-error");
-    }
+		if (err_msg == null) return null;
+
+		if ("404".equals(err_msg)) return TabunError.NOT_FOUND;
+		if ("Нет доступа".equals(err_msg)) return TabunError.ACCESS_DENIED;
+
+		return TabunError.UNKNOWN;
+	}
+
+	@Override public boolean doYouLikeIt(Tag tag) {
+		return tag.get("class").equals("content-error");
+	}
 
 }

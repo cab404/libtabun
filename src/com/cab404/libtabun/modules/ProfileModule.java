@@ -71,7 +71,7 @@ public class ProfileModule extends ModuleImpl<Profile> {
                 Profile friend = new Profile();
                 friend.login = SU.sub(tag.get("href"), "profile/", "/");
                 // Иконка идёт следующей, так что достанем её мануально. Это быстрее с любой точки зрения.
-                friend.mid_icon = page.get(tag.index - page.start() + 1).get("src");
+                friend.mid_icon = page.get(tag.index - page.offset() + 1).get("src");
                 data.partial_friend_list.add(friend);
             }
         }

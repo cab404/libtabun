@@ -78,10 +78,10 @@ public abstract class LSRequest extends ShortRequest {
         return success;
     }
 
+	@SuppressWarnings("unchecked")
     public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
         this.key = key;
         super.fetch(profile);
-        //noinspection unchecked
         return ((T) this);
     }
 

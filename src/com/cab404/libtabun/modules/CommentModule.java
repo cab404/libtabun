@@ -14,51 +14,61 @@ import com.cab404.moonlight.util.U;
  */
 public class CommentModule extends ModuleImpl<Comment> {
 
-    private final Mode type;
+	private final Mode type;
 
-    public enum Mode {
-        TOPIC, LIST, LETTER
-    }
+	public enum Mode {
+		TOPIC, LIST, LETTER
+	}
 
-    public CommentModule(Mode type) {
-        this.type = type;
-    }
+	public CommentModule(Mode type) {
+		this.type = type;
+	}
 
-    @Override public Comment extractData(HTMLTree page, AccessProfile profile) {
-        Comment comment = new Comment();
+	@Override public Comment extractData(HTMLTree page, AccessProfile profile) {
+		Comment comment = new Comment();
 
-        comment.id = U.parseInt(page.get(0).get("id").replace("comment_id_", ""));
+		comment.id = U.parseInt(page.get(0).get("id").replace("comment_id_", ""));
 
-        try {
-            comment.text = page.getContents(page.xPathFirstTag("section/div/div&class=*text*")).trim();
-        } catch (Exception ex) {
-            comment.deleted = true;
-        }
+		try {
+			comment.text = page.getContents(page.xPathFirstTag("section/div/div&class=*text*")).trim();
+		} catch (Exception ex) {
+			comment.deleted = true;
+		}
 
-        HTMLTree info = page.getTree(page.xPathFirstTag("ul&class=comment-info"));
+		Tag info_block = page.xPathFirstTag("ul&class=comment-info");
 
-        Tag parent = info.xPathFirstTag("li&class=*parent*/a");
-        if (parent == null)
-            comment.parent = 0;
-        else
-            comment.parent = U.parseInt(SU.bsub(parent.get("onclick"), ",", ");"));
+		if (info_block == null) {
 
-        comment.author.login = SU.bsub(info.xPathFirstTag("li/a").get("href"), "profile/", "/");
-        comment.author.small_icon = info.xPathFirstTag("li/a/img").get("src");
-        comment.author.fillImages();
+			comment.deleted = true;
 
-        comment.is_new = page.get(0).get("class").contains("comment-new");
+		} else {
 
-        comment.date = Tabun.parseSQLDate(info.xPathFirstTag("li/time").get("datetime"));
+			HTMLTree info = page.getTree(info_block);
 
-        if (type != Mode.LETTER)
-            comment.votes = U.parseInt(info.xPathStr("li/span&class=vote-count"));
+			Tag parent = info.xPathFirstTag("li&class=*parent*/a");
+			if (parent == null)
+				comment.parent = 0;
+			else
+				comment.parent = U.parseInt(SU.bsub(parent.get("onclick"), ",", ");"));
 
-        return comment;
-    }
+			comment.author.login = SU.bsub(info.xPathFirstTag("li/a").get("href"), "profile/", "/");
+			comment.author.small_icon = info.xPathFirstTag("li/a/img").get("src");
+			comment.author.fillImages();
 
-    @Override public boolean doYouLikeIt(Tag tag) {
-        return "section".equals(tag.name) && String.valueOf(tag.get("class")).contains("comment");
-    }
+			comment.is_new = page.get(0).get("class").contains("comment-new");
+
+			comment.date = Tabun.parseSQLDate(info.xPathFirstTag("li/time").get("datetime"));
+
+			if (type != Mode.LETTER)
+				comment.votes = U.parseInt(info.xPathStr("li/span&class=vote-count"));
+
+		}
+
+		return comment;
+	}
+
+	@Override public boolean doYouLikeIt(Tag tag) {
+		return "section".equals(tag.name) && String.valueOf(tag.get("class")).contains("comment");
+	}
 
 }
