@@ -17,83 +17,89 @@ import java.util.Map;
  * @author cab404
  */
 public abstract class LSRequest extends ShortRequest {
-    protected boolean success = false;
+	protected boolean success = false;
 
-    @Override protected void handleResponse(String response) {
-        JSONObject jsonObject = MessageFactory.processJSONwithMessage(response);
-        success = !(boolean) jsonObject.get("bStateError");
-        handle(jsonObject);
-    }
+	public String msg = null;
+	public String title = null;
 
-    protected boolean isLong() {return false;}
-    protected boolean isChunked() {
-        return false;
-    }
 
-    protected void handle(JSONObject object) {}
+	@Override protected void handleResponse(String response) {
+		JSONObject jsonObject = MessageFactory.processJSONwithMessage(response);
+		success = !(boolean) jsonObject.get("bStateError");
+		msg = (String) jsonObject.get("sMsg");
+		title = (String) jsonObject.get("sMsgTitle");
+		handle(jsonObject);
+	}
 
-    protected abstract void getData(EntrySet<String, String> data);
-    protected abstract String getURL(AccessProfile profile);
+	protected boolean isLong() {return false;}
+	protected boolean isChunked() {
+		return false;
+	}
 
-    private LivestreetKey key;
-    @Override protected HttpRequestBase getRequest(AccessProfile profile) {
+	protected void handle(JSONObject object) {}
 
-        EntrySet<String, String> data = new EntrySet<>();
-        data.put("security_ls_key", key.key);
-        getData(data);
+	protected abstract void getData(EntrySet<String, String> data);
+	protected abstract String getURL(AccessProfile profile);
 
-        String url = getURL(profile);
+	private LivestreetKey key;
+	@Override protected HttpRequestBase getRequest(AccessProfile profile) {
 
-        RequestBuilder request = RequestBuilder
-                .post(url, profile)
-                .addReferer(url);
+		EntrySet<String, String> data = new EntrySet<>();
+		data.put("security_ls_key", key.key);
+		getData(data);
 
-        if (isLong()) {
+		String url = getURL(profile);
 
-            request
-                    .MultipartRequest(data, isChunked());
+		RequestBuilder request = RequestBuilder
+				.post(url, profile)
+				.addReferer(url);
 
-        } else {
+		if (isLong()) {
 
-            StringBuilder request_body = new StringBuilder();
-            for (Map.Entry<String, String> e : data)
-                request_body
-                        .append('&')
-                        .append(SU.rl(e.getKey()))
-                        .append('=')
-                        .append(SU.rl(e.getValue()));
+			request
+					.MultipartRequest(data, isChunked());
 
-            request
-                    .XMLRequest()
-                    .setBody(request_body.toString(), isChunked());
-        }
+		} else {
 
-        return request.build();
-    }
+			StringBuilder request_body = new StringBuilder();
+			for (Map.Entry<String, String> e : data)
+				request_body
+						.append('&')
+						.append(SU.rl(e.getKey()))
+						.append('=')
+						.append(SU.rl(e.getValue()));
 
-    /**
-     * Возвращает bStateError из принятого json-а.
-     */
-    public boolean success() {
-        return success;
-    }
+			request
+					.XMLRequest()
+					.setBody(request_body.toString(), isChunked());
+		}
+
+		return request.build();
+	}
+
+	/**
+	 * Возвращает bStateError из принятого json-а.
+	 */
+	public boolean success() {
+		return success;
+	}
 
 	@SuppressWarnings("unchecked")
-    public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
-        this.key = key;
-        super.fetch(profile);
-        return ((T) this);
-    }
+	public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
+		this.key = key;
+		super.fetch(profile);
+		return ((T) this);
+	}
 
-    public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
-        return exec(profile, page.key);
-    }
-    public <T extends LSRequest> T exec(AccessProfile profile) {
-        return exec(profile, new LivestreetKey("/", profile.cookies.get("key")));
-    }
+	public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
+		return exec(profile, page.key);
+	}
+	public <T extends LSRequest> T exec(AccessProfile profile) {
+		return exec(profile, new LivestreetKey("/", profile.cookies.get("key")));
+	}
 
-    @Override protected void fetch(AccessProfile accessProfile) {
-        super.fetch(accessProfile);
-    }
+	@Override protected void fetch(AccessProfile accessProfile) {
+		super.fetch(accessProfile);
+	}
 
 }
