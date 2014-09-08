@@ -22,8 +22,8 @@ public class CommentEditRequest extends LSRequest {
     }
 
     @Override protected void getData(EntrySet<String, String> data) {
-        data.put("text", text + "");
         data.put("commentId", id + "");
+        data.put("text", text + "");
     }
 
 }

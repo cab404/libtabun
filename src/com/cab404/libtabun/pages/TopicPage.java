@@ -4,6 +4,7 @@ import com.cab404.libtabun.data.Comment;
 import com.cab404.libtabun.data.Topic;
 import com.cab404.libtabun.modules.CommentModule;
 import com.cab404.libtabun.modules.CommentNumModule;
+import com.cab404.libtabun.modules.CommentsEnabledModule;
 import com.cab404.libtabun.modules.TopicModule;
 import com.cab404.moonlight.framework.ModularBlockParser;
 
@@ -18,6 +19,7 @@ public class TopicPage extends TabunPage {
 
 	public Topic header;
 	public LinkedList<Comment> comments;
+	public boolean comments_enabled;
 
 	public TopicPage(int id) {
 		this.id = id;
@@ -32,6 +34,7 @@ public class TopicPage extends TabunPage {
 		super.bindParsers(base);
 		base.bind(new CommentModule(CommentModule.Mode.TOPIC), BLOCK_COMMENT);
 		base.bind(new TopicModule(TopicModule.Mode.TOPIC), BLOCK_TOPIC_HEADER);
+		base.bind(new CommentsEnabledModule(), BLOCK_COMMENTS_ENABLED);
 		base.bind(new CommentNumModule(), BLOCK_COMMENT_NUM);
 	}
 
@@ -45,6 +48,9 @@ public class TopicPage extends TabunPage {
 				break;
 			case BLOCK_COMMENT_NUM:
 				header.comments = (int) object;
+				break;
+			case BLOCK_COMMENTS_ENABLED:
+				comments_enabled = true;
 				break;
 			default:
 				super.handle(object, key);

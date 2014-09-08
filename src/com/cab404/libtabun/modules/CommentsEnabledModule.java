@@ -10,7 +10,7 @@ import com.cab404.moonlight.parser.Tag;
  */
 public class CommentsEnabledModule extends ModuleImpl {
 	@Override public Object extractData(HTMLTree page, AccessProfile profile) {
-		return null;
+		return true;
 	}
 	@Override public boolean doYouLikeIt(Tag tag) {
 		return "form".equals(tag.name) && "block_upload_img_content_pc".equals(tag.get("id"));

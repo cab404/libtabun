@@ -36,7 +36,8 @@ public class TabunPage extends Page {
 			BLOCK_LETTER_HEADER = 288,
 			BLOCK_LETTER_LABEL = 289,
 			BLOCK_ERROR = 290,
-			BLOCK_PAGINATION = 291;
+			BLOCK_PAGINATION = 291,
+			BLOCK_COMMENTS_ENABLED = 291;
 
 	@Override protected void onResponseGain(HttpResponse response) {
 		super.onResponseGain(response);
