@@ -21,8 +21,7 @@
                 srcdir="${src.dir}"
                 >
 
-            <include name="**/*.java"/>
-            <exclude name="**/example/*.java"/>
+            <include name="com/**/*.java"/>
             <exclude name="**/libtabun/tests/*.java"/>
 
             <classpath>
@@ -59,7 +58,7 @@
                 srcdir="${src.dir}"
                 >
 
-            <include name="**/*.java"/>
+            <include name="com/**/*.java"/>
 
             <classpath>
                 <fileset dir="${libs.dir}"/>

@@ -27,7 +27,8 @@ public class VoteRequest extends LSRequest {
 
 	@Override protected void handle(JSONObject object) {
 		super.handle(object);
-		result = Integer.parseInt(object.get("iRating") + ""); // Ибо Long, ибо нафиг.
+		if (success)
+			result = Integer.parseInt(object.get("iRating") + ""); // Ибо Long, ибо нафиг.
 	}
 
 	@Override protected void getData(EntrySet<String, String> data) {

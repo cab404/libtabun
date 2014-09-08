@@ -18,14 +18,19 @@ public class PaginatorModule extends ModuleImpl<Paginator> {
 		paginator.page = Integer.parseInt(
 				page.xPathStr("div/ul/li&class=active/span")
 		);
-		paginator.maximum_page = Integer.parseInt(
-				SU.sub(
-						page.xPathFirstTag("div/ul/li/a&title=последняя").get("href"),
-						"page",
-						"/")
-		);
 
-		Tag tmp = null;
+		try {
+			paginator.maximum_page = Integer.parseInt(
+					SU.sub(
+							page.xPathFirstTag("div/ul/li/a&title=последняя").get("href"),
+							"page",
+							"/")
+			);
+		} catch (NullPointerException e) {
+			paginator.maximum_page = paginator.page;
+		}
+
+		Tag tmp;
 
 		tmp = page.xPathFirstTag("div/ul/li&class=prev/a");
 		paginator.prev_href = tmp != null ? tmp.get("href") : null;
