@@ -16,7 +16,7 @@ public class TabunAccessProfile extends AccessProfile {
     public boolean login(String name, String password) {
         TabunPage page = new TabunPage();
         page.fetch(this);
-        return new LoginRequest(name, password).exec(this, page).success();
+        return new LoginRequest(name, password).exec(this).success();
     }
 
     public static TabunAccessProfile parseString(String s) {
