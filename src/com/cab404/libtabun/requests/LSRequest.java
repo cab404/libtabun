@@ -19,6 +19,8 @@ import java.util.Map;
 public abstract class LSRequest extends ShortRequest {
 	protected boolean success = false;
 
+	public static final String LS_KEY_ENTRY = "LIVESTREET_SECURITY_KEY", PHPID_ENTRY = "PHPSESSID";
+
 	public String msg = null;
 	public String title = null;
 
@@ -84,18 +86,20 @@ public abstract class LSRequest extends ShortRequest {
 		return success;
 	}
 
+
 	@SuppressWarnings("unchecked")
 	public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
 		this.key = key;
 		super.fetch(profile);
 		return ((T) this);
 	}
-
+	@Deprecated
 	public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
-		return exec(profile, page.key);
+		return exec(profile);
 	}
+
 	public <T extends LSRequest> T exec(AccessProfile profile) {
-		return exec(profile, new LivestreetKey("/", profile.cookies.get("key")));
+		return exec(profile, new LivestreetKey(profile.cookies.get(LS_KEY_ENTRY)));
 	}
 
 	@Override protected void fetch(AccessProfile accessProfile) {

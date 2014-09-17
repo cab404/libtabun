@@ -13,38 +13,38 @@ import com.cab404.moonlight.util.U;
  */
 public class LetterLabelModule extends ModuleImpl<LetterLabel> {
 
-    @Override public LetterLabel extractData(HTMLTree page, AccessProfile profile) {
+	@Override public LetterLabel extractData(HTMLTree page, AccessProfile profile) {
 
-        // Пропускаем заголовок списка.
-        if (!"td".equals(page.get(1).name)) return null;
+		// Пропускаем заголовок списка.
+		if (!"td".equals(page.get(1).name)) return null;
 
-        LetterLabel letter = new LetterLabel();
+		LetterLabel letter = new LetterLabel();
 
-        for (Tag user : page.xPath("td/a&class=*username*")) {
-            letter.recipients.add(page.getContents(user));
-        }
+		for (Tag user : page.xPath("td/a&class=*username*")) {
+			letter.recipients.add(page.getContents(user));
+		}
 
-        letter.title = SU.deEntity(page.xPathStr("td/a&class=js-title-talk"));
-        String destronged_title = SU.removeAllTags(letter.title);
+		letter.title = SU.deEntity(page.xPathStr("td/a&class=js-title-talk"));
+		String destronged_title = SU.removeAllTags(SU.deEntity(letter.title));
 
-        // Если в заголовке были теги strong, значит, письмо новое. Других способов не нашел.
-        letter.is_new = !destronged_title.equals(letter.title);
-        letter.title = destronged_title;
+		// Если в заголовке были теги strong, значит, письмо новое. Других способов не нашел.
+		letter.is_new = !destronged_title.equals(letter.title);
+		letter.title = destronged_title;
 
-        letter.id = U.parseInt(SU.bsub(page.xPathFirstTag("td/a&class=js-title-talk").get("href"), "read/", "/"));
+		letter.id = U.parseInt(SU.bsub(page.xPathFirstTag("td/a&class=js-title-talk").get("href"), "read/", "/"));
 
-        String comments = page.xPathStr("td/span");
-        letter.comments = comments == null ? 0 : U.parseInt(comments);
+		String comments = page.xPathStr("td/span");
+		letter.comments = comments == null ? 0 : U.parseInt(comments);
 
-        if (comments == null) return letter;
+		if (comments == null) return letter;
 
-        comments = page.xPathStr("td/span&class=new");
-        letter.comments_new = comments == null ? 0 : U.parseInt(comments);
+		comments = page.xPathStr("td/span&class=new");
+		letter.comments_new = comments == null ? 0 : U.parseInt(comments);
 
-        return letter;
-    }
+		return letter;
+	}
 
-    @Override public boolean doYouLikeIt(Tag tag) {
-        return "tr".equals(tag.name);
-    }
+	@Override public boolean doYouLikeIt(Tag tag) {
+		return "tr".equals(tag.name);
+	}
 }

@@ -14,7 +14,7 @@ public class VoteRequest extends LSRequest {
 	private final int id;
 	private final int vote;
 	private final Type type;
-	public int result = -9000;
+	public float result = -9000;
 
 	/**
 	 * @param type Константа из {@link com.cab404.libtabun.data.Type}
@@ -28,7 +28,7 @@ public class VoteRequest extends LSRequest {
 	@Override protected void handle(JSONObject object) {
 		super.handle(object);
 		if (success)
-			result = Integer.parseInt(object.get("iRating") + ""); // Ибо Long, ибо нафиг.
+			result = Float.parseFloat(object.get("iRating") + ""); // Ибо Long, ибо нафиг.
 	}
 
 	@Override protected void getData(EntrySet<String, String> data) {
