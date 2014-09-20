@@ -20,6 +20,8 @@ public abstract class LSRequest extends ShortRequest {
 	protected boolean success = false;
 
 	public static final String LS_KEY_ENTRY = "LIVESTREET_SECURITY_KEY", PHPID_ENTRY = "PHPSESSID";
+	public static final int LS_KEY_LEN = 32;
+
 
 	public String msg = null;
 	public String title = null;
