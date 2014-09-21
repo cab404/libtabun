@@ -1,6 +1,7 @@
 package com.cab404.libtabun.data;
 
-import java.io.Serializable;
+import com.cab404.libtabun.util.JSONable;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -8,20 +9,25 @@ import java.util.List;
 /**
  * @author cab404
  */
-public class Letter implements Serializable {
-    private static final long serialVersionUID = 0L;
+public class Letter extends JSONable {
+	@JSONField
+	public String title;
+	@JSONField
+	public String text;
+	@JSONField
+	public List<String> recipients;
+	@JSONField
+	public Profile starter;
+	@JSONField
+	public Calendar date;
+	@JSONField
+	public int id;
 
-    public String title;
-    public String text;
-    public List<String> recipients;
-    public Profile starter;
-    public Calendar date;
-    public int id;
+	@JSONField
+	public int comments = 0, comments_new = 0;
 
-    public int comments = 0, comments_new = 0;
-
-    public Letter() {
-        recipients = new ArrayList<>();
-        starter = new Profile();
-    }
+	public Letter() {
+		recipients = new ArrayList<>();
+		starter = new Profile();
+	}
 }

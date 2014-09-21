@@ -1,7 +1,7 @@
 package com.cab404.libtabun.pages;
 
 import com.cab404.libtabun.data.CommonInfo;
-import com.cab404.libtabun.data.LSKeyModule;
+import com.cab404.libtabun.modules.LSKeyModule;
 import com.cab404.libtabun.modules.CommonInfoModule;
 import com.cab404.libtabun.modules.ErrorModule;
 import com.cab404.libtabun.modules.PaginatorModule;

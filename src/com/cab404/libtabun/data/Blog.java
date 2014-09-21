@@ -1,6 +1,7 @@
 package com.cab404.libtabun.data;
 
-import java.io.Serializable;
+import com.cab404.libtabun.util.JSONable;
+
 import java.util.Calendar;
 
 /**
@@ -8,26 +9,31 @@ import java.util.Calendar;
  *
  * @author cab404
  */
-public class Blog implements Serializable {
-    private static final long serialVersionUID = 0L;
+public class Blog extends JSONable {
+	private static final long serialVersionUID = 0L;
 
-    public String
-            name,
-            url_name,
-            about,
-            icon;
-    public int
-            id,
-            readers;
-    public Calendar
-            creation_date;
-    public float
-            rating = 0;
+	@JSONField
+	public String
+			name,
+			url_name,
+			about,
+			icon;
+	@JSONField
+	public int
+			id,
+			readers;
+	@JSONField
+	public Calendar
+			creation_date;
+	@JSONField
+	public float
+			rating = 0;
 
-    public boolean
-            restricted = false;
+	@JSONField
+	public boolean
+			restricted = false;
 
-    public Blog() {}
-    public Blog(String url) {this.url_name = url;}
+	public Blog() {}
+	public Blog(String url) {this.url_name = url;}
 
 }

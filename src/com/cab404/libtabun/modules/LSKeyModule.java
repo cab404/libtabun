@@ -1,4 +1,4 @@
-package com.cab404.libtabun.data;
+package com.cab404.libtabun.modules;
 
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
