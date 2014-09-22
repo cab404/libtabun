@@ -21,6 +21,8 @@ public class Comment extends JSONable {
 
 	@JSONField
 	public boolean is_new = false;
+	@JSONField
+	public boolean in_favs = false;
 
 	@JSONField
 	public Calendar date;
