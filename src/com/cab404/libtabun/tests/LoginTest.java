@@ -4,7 +4,6 @@ import com.cab404.libtabun.pages.TabunPage;
 import com.cab404.libtabun.requests.LoginRequest;
 import com.cab404.libtabun.util.TabunAccessProfile;
 import com.cab404.moonlight.framework.AccessProfile;
-import com.cab404.moonlight.util.logging.Log;
 import com.cab404.moonlight.util.tests.Test;
 
 /**
@@ -25,8 +24,6 @@ public class LoginTest extends Test {
 
 
         AccessProfile copy = TabunAccessProfile.parseString(profile.serialize());
-	    Log.v(copy.serialize());
-	    Log.v(profile.serialize());
 	    TabunPage test = new TabunPage();
         test.fetch(copy);
 

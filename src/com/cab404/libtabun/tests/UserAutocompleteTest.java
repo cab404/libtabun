@@ -14,7 +14,7 @@ public class UserAutocompleteTest extends Test {
     @Override public void test(AccessProfile profile) {
         TabunPage tabunPage = new TabunPage();
         tabunPage.fetch(profile);
-        UserAutocompleteRequest req = new UserAutocompleteRequest("Orhide").exec(profile, tabunPage);
+        UserAutocompleteRequest req = new UserAutocompleteRequest("Orhide").exec(profile);
 
         assertEquals("Результаты поиска", req.names.toArray(), new String[]{"orhidea", "Orhideous"});
 

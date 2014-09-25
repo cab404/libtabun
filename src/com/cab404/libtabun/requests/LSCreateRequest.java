@@ -10,7 +10,7 @@ import java.nio.CharBuffer;
  * @author cab404
  */
 public abstract class LSCreateRequest extends LSRequest {
-	@Override protected boolean isLong() {
+	@Override protected boolean isMultipart() {
 		return true;
 	}
 

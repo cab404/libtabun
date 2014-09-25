@@ -15,7 +15,7 @@ public class TalkBellTest extends Test {
         page.fetch(profile);
 
         TalkBellRequest request = new TalkBellRequest();
-        request.exec(profile, page);
+        request.exec(profile);
 
     }
 

@@ -3,7 +3,6 @@ package com.cab404.libtabun.util;
 import com.cab404.libtabun.pages.TabunPage;
 import com.cab404.libtabun.requests.LoginRequest;
 import com.cab404.moonlight.framework.AccessProfile;
-import com.cab404.moonlight.util.logging.Log;
 import org.apache.http.Header;
 
 import static com.cab404.libtabun.requests.LSRequest.LS_KEY_ENTRY;
@@ -25,7 +24,7 @@ public class TabunAccessProfile extends AccessProfile {
 
 		if (ls_key_new != null)
 			if (ls_key_new.length() != LS_KEY_LEN) {
-				Log.v("LSKEY невалиден. SAY HELLO TO THE RANDOM WITH " + ls_key_new);
+				System.out.println("LSKEY невалиден. SAY HELLO TO THE RANDOM WITH " + ls_key_new);
 
 				if (ls_key_cached == null)
 					cookies.remove(LS_KEY_ENTRY);
