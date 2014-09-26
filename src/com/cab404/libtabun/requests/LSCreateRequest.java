@@ -13,9 +13,10 @@ public abstract class LSCreateRequest extends LSRequest {
 	@Override protected boolean isMultipart() {
 		return true;
 	}
-
+	@Override protected boolean isChunked() {return true;}
 	protected void onSuccess(String url) {}
 	protected void onFailure(HttpResponse response) {}
+
 
 	@Override public boolean part(CharBuffer part) {
 		return false;
