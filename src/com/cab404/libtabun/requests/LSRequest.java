@@ -20,6 +20,8 @@ public abstract class LSRequest extends ShortRequest {
 	protected boolean success = false;
 
 	public static final String LS_KEY_ENTRY = "LIVESTREET_SECURITY_KEY", PHPID_ENTRY = "PHPSESSID";
+	public static final int LS_KEY_LEN = 32;
+
 
 	public String msg = null;
 	public String title = null;
@@ -33,7 +35,7 @@ public abstract class LSRequest extends ShortRequest {
 		handle(jsonObject);
 	}
 
-	protected boolean isLong() {return false;}
+	protected boolean isMultipart() {return false;}
 	protected boolean isChunked() {
 		return false;
 	}
@@ -56,7 +58,7 @@ public abstract class LSRequest extends ShortRequest {
 				.post(url, profile)
 				.addReferer(url);
 
-		if (isLong()) {
+		if (isMultipart()) {
 
 			request
 					.MultipartRequest(data, isChunked());
@@ -87,23 +89,28 @@ public abstract class LSRequest extends ShortRequest {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
-		this.key = key;
-		super.fetch(profile);
-		return ((T) this);
+		return exec(profile);
 	}
+
 	@Deprecated
 	public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
 		return exec(profile);
 	}
 
+	/**
+	 * Just like {@link LSRequest#fetch(AccessProfile)}, but chain-y
+	 */
+	@SuppressWarnings("unchecked")
 	public <T extends LSRequest> T exec(AccessProfile profile) {
-		return exec(profile, new LivestreetKey(profile.cookies.get(LS_KEY_ENTRY)));
+		fetch(profile);
+		return ((T) this);
 	}
 
-	@Override protected void fetch(AccessProfile accessProfile) {
-		super.fetch(accessProfile);
+	@Override public void fetch(AccessProfile profile) {
+		this.key = new LivestreetKey(profile.cookies.get(LS_KEY_ENTRY));
+		super.fetch(profile);
 	}
 
 }

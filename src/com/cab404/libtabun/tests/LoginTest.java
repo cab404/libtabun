@@ -22,9 +22,9 @@ public class LoginTest extends Test {
         assertEquals("Logged in (long form)", true, new LoginRequest(login, password).exec(profile, page).success());
         assertEquals("Logged in (short form)", true, new TabunAccessProfile().login(login, password));
 
-        AccessProfile copy = AccessProfile.parseString(profile.serialize());
 
-        TabunPage test = new TabunPage();
+        AccessProfile copy = TabunAccessProfile.parseString(profile.serialize());
+	    TabunPage test = new TabunPage();
         test.fetch(copy);
 
         assertNonNull("Copied account usage", test.c_inf);

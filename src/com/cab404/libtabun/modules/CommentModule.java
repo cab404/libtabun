@@ -59,9 +59,11 @@ public class CommentModule extends ModuleImpl<Comment> {
 
 			comment.date = Tabun.parseSQLDate(info.xPathFirstTag("li/time").get("datetime"));
 
-			if (type != Mode.LETTER)
+			if (type != Mode.LETTER) {
 				comment.votes = U.parseInt(info.xPathStr("li/span&class=vote-count"));
-
+				Tag favs = info.xPathFirstTag("li/div&class=favourite*");
+				comment.in_favs = favs != null && favs.get("class").contains("active");
+			}
 		}
 
 		return comment;

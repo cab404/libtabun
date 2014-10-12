@@ -1,6 +1,7 @@
 package com.cab404.libtabun.data;
 
-import java.io.Serializable;
+import com.cab404.libtabun.util.JSONable;
+
 import java.util.Calendar;
 
 /**
@@ -8,21 +9,28 @@ import java.util.Calendar;
  *
  * @author cab404
  */
-public class Comment implements Serializable {
-    private static final long serialVersionUID = 0L;
+public class Comment extends JSONable {
+	@JSONField
+	public String text = "";
+	@JSONField
+	public Profile author;
+	@JSONField
+	public int votes, parent = 0;
+	@JSONField
+	public boolean deleted = false;
 
-    public String text = "";
-    public Profile author;
-    public int votes, parent = 0;
-    public boolean deleted = false;
+	@JSONField
+	public boolean is_new = false;
+	@JSONField
+	public boolean in_favs = false;
 
-    public boolean is_new = false;
+	@JSONField
+	public Calendar date;
+	@JSONField
+	public int id;
 
-    public Calendar date;
-    public int id;
-
-    public Comment() {
-        author = new Profile();
-    }
+	public Comment() {
+		author = new Profile();
+	}
 
 }

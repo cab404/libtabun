@@ -26,6 +26,14 @@ public class TopicPage extends TabunPage {
 		this.comments = new LinkedList<>();
 	}
 
+	/**
+	 * Если comment_id == true, то загружает пост по id комментария.
+	 */
+	public TopicPage(int id, boolean comment_id) {
+		this.id = id;
+		this.comments = new LinkedList<>();
+	}
+
 	@Override public String getURL() {
 		return "/blog/" + id + ".html";
 	}

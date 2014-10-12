@@ -23,7 +23,7 @@ public class LetterAddRequest extends LSCreateRequest {
     @Override protected String getURL(AccessProfile profile) {return "/talk/add";}
 
     @Override protected void getData(EntrySet<String, String> data) {
-        data.put("talk_users", SU.join(letter.recipients, ", "));
+        data.put("talk_users", SU.join(letter.recipients, ", ").toString());
         data.put("talk_title", letter.title);
         data.put("talk_text", letter.text);
         data.put("submit_talk_add", "");
