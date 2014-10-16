@@ -73,7 +73,7 @@
 
 	<target name="run-tests"
 	        depends="build-test">
-		<java classname="com.cab404.libtabun.tests.Tests"
+		<java classname="com.cab404.libph.tests.Tests"
 		      failonerror="yes">
 			<arg line="auto"/>
 
