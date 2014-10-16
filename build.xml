@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="libtabun"
+<project name="libph"
          default="def">
 	<property file="build.properties"/>
 
@@ -24,7 +24,7 @@
 				>
 
 			<include name="com/**/*.java"/>
-			<exclude name="**/libtabun/tests/*.java"/>
+			<exclude name="**/libph/tests/*.java"/>
 
 			<classpath>
 				<fileset dir="${libs.dir}"/>
@@ -35,15 +35,15 @@
 
 	<target name="jar-lib"
 	        depends="build-clean">
-		<jar destfile="${out.dir}/libtabun.jar"
+		<jar destfile="${out.dir}/libph.jar"
 		     basedir="${build.dir}"/>
 	</target>
 
 	<target name="jar-sources">
-		<jar destfile="${out.dir}/libtabun-sources.jar"
+		<jar destfile="${out.dir}/libph-sources.jar"
 		     basedir="${src.dir}">
 			<include name="com/**/*.java"/>
-			<exclude name="**/libtabun/tests/*.java"/>
+			<exclude name="**/libph/tests/*.java"/>
 		</jar>
 	</target>
 
