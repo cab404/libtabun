@@ -1,5 +1,6 @@
 package com.cab404.libtabun.tests;
 
+import com.cab404.libtabun.requests.TimelineRequest;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.util.tests.Test;
 

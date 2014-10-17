@@ -36,4 +36,8 @@ public class Blog extends JSONable {
 	public Blog() {}
 	public Blog(String url) {this.url_name = url;}
 
+	public String resolveURL() {
+		return "/blog/" + url_name + "/";
+	}
+
 }
