@@ -1,8 +1,7 @@
-package com.cab404.libtabun.tests;
+package com.cab404.libtabun.requests;
 
 import com.cab404.libtabun.data.TimelineEntry;
 import com.cab404.libtabun.modules.TimelineModule;
-import com.cab404.libtabun.requests.LSRequest;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.EntrySet;
 import com.cab404.moonlight.parser.HTMLTree;

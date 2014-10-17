@@ -1,5 +1,7 @@
 package com.cab404.libtabun.util;
 
+import com.cab404.libtabun.data.Blog;
+import com.cab404.libtabun.data.PersonalBlog;
 import com.cab404.moonlight.util.SU;
 
 import java.util.*;
@@ -100,5 +102,20 @@ public class Tabun {
 				fillZeroes((int) MILLISECONDS.toHours(rawOffset), 2) + ":" +
 				fillZeroes((int) MILLISECONDS.toMinutes(rawOffset % HOURS.toMillis(1)), 2);
 
+	}
+
+	public static Blog resolveURL(String url) {
+		if (url.contains("/created/topics")) {
+			Blog blog = new PersonalBlog();
+			blog.url_name = SU.sub(url, "/profile/", "/");
+			return blog;
+		}
+		if (url.contains("/blog/")) {
+			Blog blog = new Blog();
+			blog.url_name = SU.bsub(url, "/blog/", "");
+			return blog;
+		}
+		System.err.println("Cannot resolve as blog: " + url);
+		return null;
 	}
 }
