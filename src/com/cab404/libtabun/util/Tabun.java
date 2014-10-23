@@ -50,6 +50,7 @@ public class Tabun {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
 
+		calendar.setTimeZone(TimeZone.getTimeZone("GMT+4:00"));
 		int day = Integer.parseInt(split.get(0));
 		int month = months.indexOf(split.get(1));
 		int year = Integer.parseInt(split.get(2).substring(0, 4));
@@ -76,6 +77,7 @@ public class Tabun {
 		List<String> in_day = SU.split(split.get(1).substring(0, 8), ":");
 		String in_timezone = split.get(1).substring(8);
 
+		calendar.setTimeZone(TimeZone.getTimeZone("GMT" + in_timezone));
 		calendar.set(
 				Integer.parseInt(in_year.get(0)),
 				Integer.parseInt(in_year.get(1)) - 1,
@@ -84,7 +86,6 @@ public class Tabun {
 				Integer.parseInt(in_day.get(1)),
 				Integer.parseInt(in_day.get(2))
 		);
-		calendar.setTimeZone(TimeZone.getTimeZone("GMT" + in_timezone));
 		return calendar;
 	}
 
