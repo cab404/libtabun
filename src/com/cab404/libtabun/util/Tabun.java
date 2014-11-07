@@ -84,7 +84,7 @@ public class Tabun {
 				Integer.parseInt(in_day.get(1)),
 				Integer.parseInt(in_day.get(2))
 		);
-		calendar.setTimeZone(TimeZone.getTimeZone("GMT" + in_timezone));
+		calendar.setTimeZone(TimeZone.getTimeZone("UTC" + in_timezone));
 		return calendar;
 	}
 
