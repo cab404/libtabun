@@ -70,7 +70,6 @@ public class Tabun {
 	// 2014-02-12T21:20:13+04:00
 	@SuppressWarnings("MagicConstant")
 	public static Calendar parseSQLDate(String date) {
-		System.out.println(date);
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
 		List<String> split = SU.split(date, "T");
