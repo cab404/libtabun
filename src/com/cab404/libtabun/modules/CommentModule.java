@@ -30,6 +30,8 @@ public class CommentModule extends ModuleImpl<Comment> {
 
         if (type != Mode.LIST)
             comment.id = U.parseInt(page.get(0).get("id").replace("comment_id_", ""));
+//        else
+//            System.out.println(page);
 
         try {
             comment.text = page.getContents(page.xPathFirstTag("section/div/div&class=*text*")).trim();
@@ -37,7 +39,10 @@ public class CommentModule extends ModuleImpl<Comment> {
             comment.deleted = true;
         }
 
-        Tag info_block = page.xPathFirstTag("ul&class=comment-info");
+        Tag info_block =
+                type == Mode.LIST ?
+                        page.xPathFirstTag("div/ul&class=comment-info") :
+                        page.xPathFirstTag("ul&class=comment-info");
 
         if (info_block == null) {
 
@@ -50,6 +55,8 @@ public class CommentModule extends ModuleImpl<Comment> {
             Tag parent = info.xPathFirstTag("li&class=*parent*/a");
             if (parent == null)
                 comment.parent = 0;
+            else if (type == Mode.LIST)
+                comment.parent = U.parseInt(SU.bsub(parent.get("href"), "comments/", ""));
             else
                 comment.parent = U.parseInt(SU.bsub(parent.get("onclick"), ",", ");"));
 
@@ -73,7 +80,13 @@ public class CommentModule extends ModuleImpl<Comment> {
 
 
         }
-
+        if (type == Mode.LIST) {
+            try {
+                System.out.println(comment.toJSON());
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return comment;
     }
 

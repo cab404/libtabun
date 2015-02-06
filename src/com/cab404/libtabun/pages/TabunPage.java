@@ -21,7 +21,7 @@ public class TabunPage extends Page {
     public CommonInfo c_inf;
 
     {
-        setMultithreadMode(true);
+        setMultithreadMode(false);
     }
 
     public static final int

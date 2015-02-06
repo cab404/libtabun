@@ -28,6 +28,20 @@ public class CommentListTest extends Test {
         };
         page.fetch(profile);
 
+        page = new TabunPage() {
+            @Override
+            protected void bindParsers(ModularBlockParser base) {
+                super.bindParsers(base);
+                base.bind(new CommentModule(CommentModule.Mode.LIST), BLOCK_COMMENT);
+            }
+
+            @Override
+            public String getURL() {
+                return "/profile/cab404/favourites/comments";
+            }
+
+        };
+        page.fetch(profile);
 
     }
 
