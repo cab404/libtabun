@@ -19,16 +19,19 @@ public class StreamPage extends TabunPage {
     }
 
 
-    @Override public String getURL() {
+    @Override
+    public String getURL() {
         return "/stream/all";
     }
 
-    @Override protected void bindParsers(ModularBlockParser base) {
+    @Override
+    protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
         base.bind(new StreamItemModule(), BLOCK_STREAM_ITEM);
     }
 
-    @Override public void handle(Object object, int key) {
+    @Override
+    public void handle(Object object, int key) {
         switch (key) {
             case BLOCK_STREAM_ITEM:
                 stream.add((StreamItem) object);

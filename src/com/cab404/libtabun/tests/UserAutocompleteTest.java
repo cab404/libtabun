@@ -11,7 +11,8 @@ import com.cab404.moonlight.util.tests.Test;
 public class UserAutocompleteTest extends Test {
 
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         TabunPage tabunPage = new TabunPage();
         tabunPage.fetch(profile);
         UserAutocompleteRequest req = new UserAutocompleteRequest("Orhide").exec(profile);

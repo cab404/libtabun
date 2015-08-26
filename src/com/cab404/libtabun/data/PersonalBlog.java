@@ -6,7 +6,8 @@ package com.cab404.libtabun.data;
  * @author cab404
  */
 public class PersonalBlog extends Blog {
-	@Override public String resolveURL() {
-		return "/profile/" + url_name + "/created/topics";
-	}
+    @Override
+    public String resolveURL() {
+        return "/profile/" + url_name + "/created/topics";
+    }
 }

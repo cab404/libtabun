@@ -23,19 +23,24 @@ public class TalkBellRequest extends LSRequest {
     }
 
 
-	@Override protected void onRedirect(String to) {
-		/* Не должно быть никаких редиректов. И всё тут. */
-		cancel();
-		super.onRedirect(to);
-	}
+    @Override
+    protected void onRedirect(String to) {
+        /* Не должно быть никаких редиректов. И всё тут. */
+        cancel();
+        super.onRedirect(to);
+    }
 
-    @Override protected void getData(EntrySet<String, String> data) {}
+    @Override
+    protected void getData(EntrySet<String, String> data) {
+    }
 
-    @Override protected String getURL(AccessProfile profile) {
+    @Override
+    protected String getURL(AccessProfile profile) {
         return "/talkbell/";
     }
 
-    @Override protected void handle(JSONObject object) {
+    @Override
+    protected void handle(JSONObject object) {
         if (!(boolean) object.get("bStError")) {
 
             if (object.get("aCommentsStuff") != null)

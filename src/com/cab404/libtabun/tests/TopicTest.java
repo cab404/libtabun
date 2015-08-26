@@ -9,7 +9,8 @@ import com.cab404.moonlight.util.tests.Test;
  */
 public class TopicTest extends Test {
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         TopicPage topicPage;
 
         topicPage = new TopicPage(85919);

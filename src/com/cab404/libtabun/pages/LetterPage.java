@@ -22,17 +22,20 @@ public class LetterPage extends TabunPage {
         comments = new ArrayList<>();
     }
 
-    @Override public String getURL() {
+    @Override
+    public String getURL() {
         return "/talk/read/" + id;
     }
 
-    @Override protected void bindParsers(ModularBlockParser base) {
+    @Override
+    protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
         base.bind(new LetterModule(), BLOCK_LETTER_HEADER);
         base.bind(new CommentModule(CommentModule.Mode.LETTER), BLOCK_COMMENT);
     }
 
-    @Override public void handle(Object object, int key) {
+    @Override
+    public void handle(Object object, int key) {
         switch (key) {
             case BLOCK_LETTER_HEADER:
                 header = (Letter) object;

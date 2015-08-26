@@ -11,7 +11,8 @@ import com.cab404.moonlight.util.tests.Test;
  */
 public class LoginTest extends Test {
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         TabunPage page = new TabunPage();
         page.fetch(profile);
 
@@ -24,14 +25,13 @@ public class LoginTest extends Test {
 
 
         AccessProfile copy = TabunAccessProfile.parseString(profile.serialize());
-	    TabunPage test = new TabunPage();
+        TabunPage test = new TabunPage();
         test.fetch(copy);
 
         assertNonNull("Copied account usage", test.c_inf);
         assertEquals("Username from header", login, test.c_inf.username);
 
     }
-
 
 
 }

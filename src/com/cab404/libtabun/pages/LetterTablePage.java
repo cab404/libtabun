@@ -24,16 +24,19 @@ public class LetterTablePage extends TabunPage {
         letters = new ArrayList<>();
     }
 
-    @Override public String getURL() {
+    @Override
+    public String getURL() {
         return "/talk/inbox/page" + page;
     }
 
-    @Override protected void bindParsers(ModularBlockParser base) {
+    @Override
+    protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
         base.bind(new LetterLabelModule(), BLOCK_LETTER_LABEL);
     }
 
-    @Override public void handle(Object object, int key) {
+    @Override
+    public void handle(Object object, int key) {
         switch (key) {
             case BLOCK_LETTER_LABEL:
                 //noinspection unchecked

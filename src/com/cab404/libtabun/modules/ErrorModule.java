@@ -11,19 +11,21 @@ import com.cab404.moonlight.parser.Tag;
  */
 public class ErrorModule extends ModuleImpl<TabunError> {
 
-	@Override public TabunError extractData(HTMLTree page, AccessProfile profile) {
-		String err_msg = page.xPathStr("h2/span");
+    @Override
+    public TabunError extractData(HTMLTree page, AccessProfile profile) {
+        String err_msg = page.xPathStr("h2/span");
 
-		if (err_msg == null) return null;
+        if (err_msg == null) return null;
 
-		if ("404".equals(err_msg)) return TabunError.NOT_FOUND;
-		if ("Нет доступа".equals(err_msg)) return TabunError.ACCESS_DENIED;
+        if ("404".equals(err_msg)) return TabunError.NOT_FOUND;
+        if ("Нет доступа".equals(err_msg)) return TabunError.ACCESS_DENIED;
 
-		return TabunError.UNKNOWN;
-	}
+        return TabunError.UNKNOWN;
+    }
 
-	@Override public boolean doYouLikeIt(Tag tag) {
-		return tag.get("class").equals("content-error");
-	}
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
+        return tag.get("class").equals("content-error");
+    }
 
 }

@@ -5,14 +5,11 @@ import com.cab404.libtabun.requests.LoginRequest;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.util.exceptions.ResponseFail;
 import org.apache.http.Header;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -21,18 +18,14 @@ import org.apache.http.params.HttpParams;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.*;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import static com.cab404.libtabun.requests.LSRequest.LS_KEY_ENTRY;
 import static com.cab404.libtabun.requests.LSRequest.LS_KEY_LEN;
@@ -108,18 +101,18 @@ public class TabunAccessProfile extends AccessProfile {
     public HttpResponse exec(HttpRequestBase request, boolean follow, int timeout) {
         try {
             HttpClient client = new DefaultHttpClient();
- //           SSLSocketFactory.getSocketFactory().setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
- //           XTrustProvider.install();
+            //           SSLSocketFactory.getSocketFactory().setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            //           XTrustProvider.install();
 
 
- //           Scheme ssl = new Scheme("https", fct, 443);
- //           SchemeRegistry schemeRegistry = client.getConnectionManager().getSchemeRegistry();
- //           List<String> schemeNames = schemeRegistry.getSchemeNames();
- //           Map<String, Scheme> schemes = new HashMap<>();
- //           for (String name : schemeNames)
- //               schemes.put(name, schemeRegistry.get(name));
- //           schemes.put("https", ssl);
- //           schemeRegistry.setItems(schemes);
+            //           Scheme ssl = new Scheme("https", fct, 443);
+            //           SchemeRegistry schemeRegistry = client.getConnectionManager().getSchemeRegistry();
+            //           List<String> schemeNames = schemeRegistry.getSchemeNames();
+            //           Map<String, Scheme> schemes = new HashMap<>();
+            //           for (String name : schemeNames)
+            //               schemes.put(name, schemeRegistry.get(name));
+            //           schemes.put("https", ssl);
+            //           schemeRegistry.setItems(schemes);
 
             client.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
             client.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);

@@ -18,16 +18,19 @@ public class BlogListPage extends TabunPage {
         blogs = new ArrayList<>();
     }
 
-    @Override public String getURL() {
+    @Override
+    public String getURL() {
         return "/blogs/page" + page;
     }
 
-    @Override protected void bindParsers(ModularBlockParser base) {
+    @Override
+    protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
         base.bind(new BlogLabelModule(), BLOCK_BLOG_INFO);
     }
 
-    @Override public void handle(Object object, int key) {
+    @Override
+    public void handle(Object object, int key) {
         switch (key) {
             case BLOCK_BLOG_INFO:
                 blogs.add((Blog) object);

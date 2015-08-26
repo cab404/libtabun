@@ -12,7 +12,8 @@ import com.cab404.moonlight.util.tests.Test;
  */
 public class LetterTest extends Test {
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         LetterTablePage letters = new LetterTablePage(1);
         letters.fetch(profile);
 

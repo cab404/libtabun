@@ -27,7 +27,8 @@ public class TopicModule extends ModuleImpl<Topic> {
         this.mode = mode;
     }
 
-    @Override public Topic extractData(HTMLTree page, AccessProfile profile) {
+    @Override
+    public Topic extractData(HTMLTree page, AccessProfile profile) {
         Topic label = new Topic();
         label.text = page.xPathStr("div&class=*text").trim();
 
@@ -78,7 +79,8 @@ public class TopicModule extends ModuleImpl<Topic> {
         return label;
     }
 
-    @Override public boolean doYouLikeIt(Tag tag) {
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
         return "article".equals(tag.name);
     }
 

@@ -13,7 +13,8 @@ import com.cab404.moonlight.util.U;
  */
 public class BlogLabelModule extends ModuleImpl<Blog> {
 
-    @Override public Blog extractData(HTMLTree page, AccessProfile profile) {
+    @Override
+    public Blog extractData(HTMLTree page, AccessProfile profile) {
         Blog blog = new Blog();
 
         if ("th".equals(page.get(1).name)) {
@@ -41,7 +42,8 @@ public class BlogLabelModule extends ModuleImpl<Blog> {
         return blog;
     }
 
-    @Override public boolean doYouLikeIt(Tag tag) {
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
         return "tr".equals(tag.name);
     }
 

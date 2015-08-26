@@ -1,12 +1,12 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.CommonInfo;
+import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
-import com.cab404.moonlight.util.SU;
-import com.cab404.moonlight.util.U;
 import com.cab404.moonlight.parser.HTMLTree;
 import com.cab404.moonlight.parser.Tag;
-import com.cab404.moonlight.framework.AccessProfile;
+import com.cab404.moonlight.util.SU;
+import com.cab404.moonlight.util.U;
 
 /**
  * Окошко юзера сверху страницы.
@@ -15,7 +15,8 @@ import com.cab404.moonlight.framework.AccessProfile;
  */
 public class CommonInfoModule extends ModuleImpl<CommonInfo> {
 
-    @Override public CommonInfo extractData(HTMLTree page, AccessProfile profile) {
+    @Override
+    public CommonInfo extractData(HTMLTree page, AccessProfile profile) {
         CommonInfo info = new CommonInfo();
 
         Tag tag = page.xPathFirstTag("ul/li/a&class=new-*");
@@ -41,7 +42,8 @@ public class CommonInfoModule extends ModuleImpl<CommonInfo> {
         return info;
     }
 
-    @Override public boolean doYouLikeIt(Tag tag) {
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
         return "div".equals(tag.name) && "dropdown-user".equals(tag.get("class"));
     }
 

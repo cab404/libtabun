@@ -13,22 +13,24 @@ import com.cab404.moonlight.util.SU;
 
 public class LSKeyModule extends ModuleImpl<String> {
 
-	@Override public String extractData(HTMLTree page, AccessProfile profile) {
-		String js = page.getContents(page.get(0));
-		if (!js.contains("LIVESTREET_SECURITY_KEY")) return null;
-		finish();
+    @Override
+    public String extractData(HTMLTree page, AccessProfile profile) {
+        String js = page.getContents(page.get(0));
+        if (!js.contains("LIVESTREET_SECURITY_KEY")) return null;
+        finish();
 
-		return SU.sub(
-				js,
-				"LIVESTREET_SECURITY_KEY = '",
-				"';"
-		);
+        return SU.sub(
+                js,
+                "LIVESTREET_SECURITY_KEY = '",
+                "';"
+        );
 
-	}
+    }
 
 
-	@Override public boolean doYouLikeIt(Tag tag) {
-		return "script".equals(tag.name);
-	}
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
+        return "script".equals(tag.name);
+    }
 
 }
