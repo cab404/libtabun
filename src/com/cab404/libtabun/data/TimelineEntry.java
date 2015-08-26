@@ -8,11 +8,11 @@ import com.cab404.libtabun.util.JSONable;
  * @author cab404
  */
 public class TimelineEntry extends JSONable {
-	@JSONField
-	public Profile commenter;
-	@JSONField
-	public Topic topic;
-	@JSONField
-	public int comment_id;
+    @JSONField
+    public Profile commenter;
+    @JSONField
+    public Topic topic;
+    @JSONField
+    public int comment_id;
 
 }

@@ -16,18 +16,21 @@ import java.util.List;
  */
 public class PostCreationBlogSelectorListModule extends ModuleImpl<List<Blog>> {
 
-	@Override public List<Blog> extractData(HTMLTree page, AccessProfile profile) {
-		ArrayList<Blog> data = new ArrayList<>();
+    @Override
+    public List<Blog> extractData(HTMLTree page, AccessProfile profile) {
+        ArrayList<Blog> data = new ArrayList<>();
 
-		for (Tag tag : page.xPath("option")) {
-			Blog blog = new Blog();
-			blog.name = page.getContents(tag);
-			blog.id = Integer.parseInt(tag.get("value"));
-		}
+        for (Tag tag : page.xPath("option")) {
+            Blog blog = new Blog();
+            blog.name = page.getContents(tag);
+            blog.id = Integer.parseInt(tag.get("value"));
+        }
 
-		return null;
-	}
-	@Override public boolean doYouLikeIt(Tag tag) {
-		return "select".equals(tag.name) && "blog_id".equals(tag.get("name"));
-	}
+        return null;
+    }
+
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
+        return "select".equals(tag.name) && "blog_id".equals(tag.get("name"));
+    }
 }

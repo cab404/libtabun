@@ -13,7 +13,8 @@ import com.cab404.moonlight.util.SU;
  */
 public class LetterModule extends ModuleImpl<Letter> {
 
-    @Override public Letter extractData(HTMLTree page, AccessProfile profile) {
+    @Override
+    public Letter extractData(HTMLTree page, AccessProfile profile) {
         Letter letter = new Letter();
 
         letter.title = SU.deEntity(page.xPathStr("header/h1").trim());
@@ -32,7 +33,8 @@ public class LetterModule extends ModuleImpl<Letter> {
         return letter;
     }
 
-    @Override public boolean doYouLikeIt(Tag tag) {
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
         return "article".equals(tag.name) && tag.get("class").contains("topic-type-talk");
     }
 

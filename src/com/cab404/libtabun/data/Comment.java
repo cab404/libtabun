@@ -10,27 +10,27 @@ import java.util.Calendar;
  * @author cab404
  */
 public class Comment extends JSONable {
-	@JSONField
-	public String text = "";
-	@JSONField
-	public Profile author;
-	@JSONField
-	public int votes, parent = 0;
-	@JSONField
-	public boolean deleted = false;
+    @JSONField
+    public String text = "";
+    @JSONField
+    public Profile author;
+    @JSONField
+    public int votes, parent = 0;
+    @JSONField
+    public boolean deleted = false;
 
-	@JSONField
-	public boolean is_new = false;
-	@JSONField
-	public boolean in_favs = false;
+    @JSONField
+    public boolean is_new = false;
+    @JSONField
+    public boolean in_favs = false;
 
-	@JSONField
-	public Calendar date;
-	@JSONField
-	public int id;
+    @JSONField
+    public Calendar date;
+    @JSONField
+    public int id;
 
-	public Comment() {
-		author = new Profile();
-	}
+    public Comment() {
+        author = new Profile();
+    }
 
 }

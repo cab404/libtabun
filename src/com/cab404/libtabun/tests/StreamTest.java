@@ -9,7 +9,8 @@ import com.cab404.moonlight.util.tests.Test;
  */
 public class StreamTest extends Test {
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         StreamPage page = new StreamPage();
         page.fetch(profile);
         assertLess("Что-то есть в потоке", 0, page.stream.size());

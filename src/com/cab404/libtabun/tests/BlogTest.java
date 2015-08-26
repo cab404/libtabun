@@ -10,7 +10,8 @@ import com.cab404.moonlight.util.tests.Test;
  */
 public class BlogTest extends Test {
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         BlogPage blogPage = new BlogPage(new Blog("test_blog"));
         blogPage.fetch(profile);
 

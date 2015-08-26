@@ -11,12 +11,14 @@ import com.cab404.moonlight.util.U;
  */
 public class CommentNumModule extends ModuleImpl<Integer> {
 
-    @Override public Integer extractData(HTMLTree page, AccessProfile profile) {
+    @Override
+    public Integer extractData(HTMLTree page, AccessProfile profile) {
         finish();
         return U.parseInt(page.getContents(0));
     }
 
-    @Override public boolean doYouLikeIt(Tag tag) {
+    @Override
+    public boolean doYouLikeIt(Tag tag) {
         return "span".equals(tag.name) && "count-comments".equals(tag.get("id"));
     }
 

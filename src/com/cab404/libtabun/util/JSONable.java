@@ -20,95 +20,95 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JSONable {
 
-	private static Map<Class, Map<Field, String>> forms_cached = new ConcurrentHashMap<>();
-	private static final String NULL_NAME = "NOMINAL";
+    private static Map<Class, Map<Field, String>> forms_cached = new ConcurrentHashMap<>();
+    private static final String NULL_NAME = "NOMINAL";
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public @interface JSONField {
-		String value() default NULL_NAME;
-	}
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface JSONField {
+        String value() default NULL_NAME;
+    }
 
-	private Map<Field, String> generateForm() {
-		ConcurrentHashMap<Field, String> form = new ConcurrentHashMap<>();
+    private Map<Field, String> generateForm() {
+        ConcurrentHashMap<Field, String> form = new ConcurrentHashMap<>();
 
-		for (Field field : getClass().getDeclaredFields())
-			if (field.isAnnotationPresent(JSONField.class)) {
-				String name = field.getAnnotation(JSONField.class).value();
+        for (Field field : getClass().getDeclaredFields())
+            if (field.isAnnotationPresent(JSONField.class)) {
+                String name = field.getAnnotation(JSONField.class).value();
 
-				if (name.equals(NULL_NAME))
-					form.put(field, field.getName());
-				else
-					form.put(field, name);
+                if (name.equals(NULL_NAME))
+                    form.put(field, field.getName());
+                else
+                    form.put(field, name);
 
-			}
+            }
 
-		return form;
-	}
+        return form;
+    }
 
-	@SuppressWarnings("unchecked")
-	private Object jsonize(Object val)
-	throws IllegalAccessException {
-		if (val == null)
-			return null;
+    @SuppressWarnings("unchecked")
+    private Object jsonize(Object val)
+            throws IllegalAccessException {
+        if (val == null)
+            return null;
 
-		if (val.getClass().isEnum()) {
-			return ((Enum) val).name();
-		}
+        if (val.getClass().isEnum()) {
+            return ((Enum) val).name();
+        }
 
-		if (val instanceof JSONable)
-			return ((JSONable) val).toJSON();
+        if (val instanceof JSONable)
+            return ((JSONable) val).toJSON();
 
-		if (val instanceof Boolean)
-			return val;
+        if (val instanceof Boolean)
+            return val;
 
-		if (val instanceof CharSequence || val instanceof Number)
-			return val;
+        if (val instanceof CharSequence || val instanceof Number)
+            return val;
 
-		if (val instanceof Calendar)
-			return Tabun.toSQLDate((Calendar) val);
+        if (val instanceof Calendar)
+            return Tabun.toSQLDate((Calendar) val);
 
-		if (val instanceof Map.Entry) {
-			JSONObject e = new JSONObject();
-			e.put("k", jsonize(((Map.Entry) val).getKey()));
-			e.put("v", jsonize(((Map.Entry) val).getValue()));
-			return e;
-		}
+        if (val instanceof Map.Entry) {
+            JSONObject e = new JSONObject();
+            e.put("k", jsonize(((Map.Entry) val).getKey()));
+            e.put("v", jsonize(((Map.Entry) val).getValue()));
+            return e;
+        }
 
-		if (val instanceof List) {
-			List list = (List) val;
-			JSONArray array = new JSONArray();
-			for (Object object : list)
-				array.add(jsonize(object));
-			return array;
-		}
+        if (val instanceof List) {
+            List list = (List) val;
+            JSONArray array = new JSONArray();
+            for (Object object : list)
+                array.add(jsonize(object));
+            return array;
+        }
 
-		throw new RuntimeException("Not jsonable: " + val.getClass());
-	}
+        throw new RuntimeException("Not jsonable: " + val.getClass());
+    }
 
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSON()
-	throws IllegalAccessException {
-		Map<Field, String> form;
-		if (!forms_cached.containsKey(getClass()))
-			forms_cached.put(getClass(), generateForm());
-		form = forms_cached.get(getClass());
+    @SuppressWarnings("unchecked")
+    public JSONObject toJSON()
+            throws IllegalAccessException {
+        Map<Field, String> form;
+        if (!forms_cached.containsKey(getClass()))
+            forms_cached.put(getClass(), generateForm());
+        form = forms_cached.get(getClass());
 
-		JSONObject json = new JSONObject();
+        JSONObject json = new JSONObject();
 
-		for (Map.Entry<Field, String> e : form.entrySet()) {
-			Object val = e.getKey().get(this);
-			String key = e.getValue();
+        for (Map.Entry<Field, String> e : form.entrySet()) {
+            Object val = e.getKey().get(this);
+            String key = e.getValue();
 
-			if (val == null)
-				continue;
-			if (val instanceof List && ((List) val).isEmpty())
-				continue;
+            if (val == null)
+                continue;
+            if (val instanceof List && ((List) val).isEmpty())
+                continue;
 
-			json.put(key, jsonize(val));
-		}
+            json.put(key, jsonize(val));
+        }
 
-		return json;
-	}
+        return json;
+    }
 
 }

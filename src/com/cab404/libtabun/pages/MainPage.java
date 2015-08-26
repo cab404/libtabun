@@ -9,16 +9,19 @@ import com.cab404.moonlight.framework.ModularBlockParser;
 public class MainPage extends TabunPage {
     public String quote;
 
-    @Override public String getURL() {
+    @Override
+    public String getURL() {
         return "/";
     }
 
-    @Override protected void bindParsers(ModularBlockParser base) {
+    @Override
+    protected void bindParsers(ModularBlockParser base) {
         super.bindParsers(base);
         base.bind(new QuoteModule(), BLOCK_QUOTE);
     }
 
-    @Override public void handle(Object object, int key) {
+    @Override
+    public void handle(Object object, int key) {
         switch (key) {
             case BLOCK_QUOTE:
                 this.quote = (String) object;

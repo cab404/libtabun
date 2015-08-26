@@ -17,100 +17,109 @@ import java.util.Map;
  * @author cab404
  */
 public abstract class LSRequest extends ShortRequest {
-	protected boolean success = false;
+    protected boolean success = false;
 
-	public static final String LS_KEY_ENTRY = "LIVESTREET_SECURITY_KEY", PHPID_ENTRY = "PHPSESSID";
-	public static final int LS_KEY_LEN = 32;
-
-
-	public String msg = null;
-	public String title = null;
+    public static final String LS_KEY_ENTRY = "LIVESTREET_SECURITY_KEY", PHPID_ENTRY = "PHPSESSID";
+    public static final int LS_KEY_LEN = 32;
 
 
-	@Override protected void handleResponse(String response) {
-		JSONObject jsonObject = MessageFactory.processJSONwithMessage(response);
-		success = !(boolean) jsonObject.get("bStateError");
-		msg = (String) jsonObject.get("sMsg");
-		title = (String) jsonObject.get("sMsgTitle");
-		handle(jsonObject);
-	}
-
-	protected boolean isMultipart() {return false;}
-	protected boolean isChunked() {
-		return false;
-	}
-
-	protected void handle(JSONObject object) {}
-
-	protected abstract void getData(EntrySet<String, String> data);
-	protected abstract String getURL(AccessProfile profile);
-
-	private LivestreetKey key;
-	@Override protected HttpRequestBase getRequest(AccessProfile profile) {
-
-		EntrySet<String, String> data = new EntrySet<>();
-		data.put("security_ls_key", key.key);
-		getData(data);
-
-		String url = getURL(profile);
-
-		RequestBuilder request = RequestBuilder
-				.post(url, profile)
-				.addReferer(url);
-
-		if (isMultipart()) {
-
-			request
-					.MultipartRequest(data, isChunked());
-
-		} else {
-
-			StringBuilder request_body = new StringBuilder();
-			for (Map.Entry<String, String> e : data)
-				request_body
-						.append('&')
-						.append(SU.rl(e.getKey()))
-						.append('=')
-						.append(SU.rl(e.getValue()));
-
-			request
-					.XMLRequest()
-					.setBody(request_body.toString(), isChunked());
-		}
-
-		return request.build();
-	}
-
-	/**
-	 * Возвращает bStateError из принятого json-а.
-	 */
-	public boolean success() {
-		return success;
-	}
+    public String msg = null;
+    public String title = null;
 
 
-	@Deprecated
-	public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
-		return exec(profile);
-	}
+    @Override
+    protected void handleResponse(String response) {
+        JSONObject jsonObject = MessageFactory.processJSONwithMessage(response);
+        success = !(boolean) jsonObject.get("bStateError");
+        msg = (String) jsonObject.get("sMsg");
+        title = (String) jsonObject.get("sMsgTitle");
+        handle(jsonObject);
+    }
 
-	@Deprecated
-	public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
-		return exec(profile);
-	}
+    protected boolean isMultipart() {
+        return false;
+    }
 
-	/**
-	 * Just like {@link LSRequest#fetch(AccessProfile)}, but chain-y
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends LSRequest> T exec(AccessProfile profile) {
-		fetch(profile);
-		return ((T) this);
-	}
+    protected boolean isChunked() {
+        return false;
+    }
 
-	@Override public void fetch(AccessProfile profile) {
-		this.key = new LivestreetKey(profile.cookies.get(LS_KEY_ENTRY));
-		super.fetch(profile);
-	}
+    protected void handle(JSONObject object) {
+    }
+
+    protected abstract void getData(EntrySet<String, String> data);
+
+    protected abstract String getURL(AccessProfile profile);
+
+    private LivestreetKey key;
+
+    @Override
+    protected HttpRequestBase getRequest(AccessProfile profile) {
+
+        EntrySet<String, String> data = new EntrySet<>();
+        data.put("security_ls_key", key.key);
+        getData(data);
+
+        String url = getURL(profile);
+
+        RequestBuilder request = RequestBuilder
+                .post(url, profile)
+                .addReferer(url);
+
+        if (isMultipart()) {
+
+            request
+                    .MultipartRequest(data, isChunked());
+
+        } else {
+
+            StringBuilder request_body = new StringBuilder();
+            for (Map.Entry<String, String> e : data)
+                request_body
+                        .append('&')
+                        .append(SU.rl(e.getKey()))
+                        .append('=')
+                        .append(SU.rl(e.getValue()));
+
+            request
+                    .XMLRequest()
+                    .setBody(request_body.toString(), isChunked());
+        }
+
+        return request.build();
+    }
+
+    /**
+     * Возвращает bStateError из принятого json-а.
+     */
+    public boolean success() {
+        return success;
+    }
+
+
+    @Deprecated
+    public <T extends LSRequest> T exec(AccessProfile profile, LivestreetKey key) {
+        return exec(profile);
+    }
+
+    @Deprecated
+    public <T extends LSRequest> T exec(AccessProfile profile, TabunPage page) {
+        return exec(profile);
+    }
+
+    /**
+     * Just like {@link LSRequest#fetch(AccessProfile)}, but chain-y
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends LSRequest> T exec(AccessProfile profile) {
+        fetch(profile);
+        return ((T) this);
+    }
+
+    @Override
+    public void fetch(AccessProfile profile) {
+        this.key = new LivestreetKey(profile.cookies.get(LS_KEY_ENTRY));
+        super.fetch(profile);
+    }
 
 }

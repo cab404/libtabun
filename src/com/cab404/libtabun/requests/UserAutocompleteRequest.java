@@ -20,15 +20,18 @@ public class UserAutocompleteRequest extends LSRequest {
         this.value = value;
     }
 
-    @Override protected void getData(EntrySet<String, String> data) {
+    @Override
+    protected void getData(EntrySet<String, String> data) {
         data.put("value", value);
     }
 
-    @Override protected String getURL(AccessProfile profile) {
+    @Override
+    protected String getURL(AccessProfile profile) {
         return "/ajax/autocompleter/user/";
     }
 
-    @Override protected void handle(JSONObject object) {
+    @Override
+    protected void handle(JSONObject object) {
         super.handle(object);
         names = new ArrayList<>();
         for (Object obj : (JSONArray) object.get("aItems"))

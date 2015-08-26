@@ -10,11 +10,12 @@ import com.cab404.moonlight.util.tests.Test;
  * @author cab404
  */
 public class HellSizedTopicTest extends Test {
-	@Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
 
-		TopicPage topicPage;
+        TopicPage topicPage;
 
-		topicPage = new TopicPage(74547);
-		topicPage.fetch(profile);
-	}
+        topicPage = new TopicPage(74547);
+        topicPage.fetch(profile);
+    }
 }

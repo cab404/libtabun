@@ -10,7 +10,8 @@ import com.cab404.moonlight.util.tests.Test;
  */
 public class TalkBellTest extends Test {
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         TabunPage page = new TabunPage();
         page.fetch(profile);
 

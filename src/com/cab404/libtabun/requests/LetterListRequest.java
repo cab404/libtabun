@@ -21,16 +21,20 @@ public class LetterListRequest extends LSRequest {
         success = true;
     }
 
-    @Override protected void getData(EntrySet<String, String> data) {
+    @Override
+    protected void getData(EntrySet<String, String> data) {
         for (int id : ids)
             data.put("talk_select[" + id + "]", "on");
         data.put("submit_talk_read", action == Action.READ ? "1" : "0");
         data.put("submit_talk_del", action == Action.DELETE ? "1" : "0");
     }
 
-    @Override protected void handleResponse(String response) {}
+    @Override
+    protected void handleResponse(String response) {
+    }
 
-    @Override protected String getURL(AccessProfile profile) {
+    @Override
+    protected String getURL(AccessProfile profile) {
         return "/talk";
     }
 }

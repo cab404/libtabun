@@ -17,11 +17,13 @@ public class CommentEditRequest extends LSRequest {
     }
 
 
-    @Override protected String getURL(AccessProfile profile) {
+    @Override
+    protected String getURL(AccessProfile profile) {
         return "/role_ajax/savecomment/";
     }
 
-    @Override protected void getData(EntrySet<String, String> data) {
+    @Override
+    protected void getData(EntrySet<String, String> data) {
         data.put("commentId", id + "");
         data.put("text", text + "");
     }

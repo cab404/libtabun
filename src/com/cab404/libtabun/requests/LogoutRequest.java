@@ -14,13 +14,15 @@ public class LogoutRequest extends Request {
 
     private boolean success = false;
 
-	@Override protected void onRedirect(String to) {
-		/* Не должно быть никаких редиректов. И всё тут. */
-		cancel();
-		super.onRedirect(to);
-	}
+    @Override
+    protected void onRedirect(String to) {
+        /* Не должно быть никаких редиректов. И всё тут. */
+        cancel();
+        super.onRedirect(to);
+    }
 
-    @Override protected HttpRequestBase getRequest(AccessProfile accessProfile) {
+    @Override
+    protected HttpRequestBase getRequest(AccessProfile accessProfile) {
         if (accessProfile.cookies.containsKey("key")) {
             success = true;
             return new HttpGet("/login/exit?security_ls_key=" + accessProfile.cookies.get("key"));
@@ -32,7 +34,9 @@ public class LogoutRequest extends Request {
         return success;
     }
 
-    @Override public void finished() {}
+    @Override
+    public void finished() {
+    }
 
     public void exec(AccessProfile profile) {
         super.fetch(profile);

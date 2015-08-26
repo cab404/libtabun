@@ -10,7 +10,8 @@ import com.cab404.moonlight.util.tests.Test;
  */
 public class ProfileTest extends Test {
 
-    @Override public void test(AccessProfile profile) {
+    @Override
+    public void test(AccessProfile profile) {
         ProfilePage page = new ProfilePage("test_pony_n1");
         page.fetch(profile);
 
