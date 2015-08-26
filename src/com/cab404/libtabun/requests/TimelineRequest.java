@@ -28,7 +28,7 @@ public class TimelineRequest extends LSRequest {
 		TimelineModule timelineModule = new TimelineModule();
 
 		for (Tag tag : tree)
-			if (timelineModule.doYouLikeIt(tag))
+			if (tag.isOpening() && timelineModule.doYouLikeIt(tag))
 				timeline.add(timelineModule.extractData(tree.getTree(tag), null));
 
 	}

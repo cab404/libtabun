@@ -20,12 +20,12 @@ public class CommonInfoModule extends ModuleImpl<CommonInfo> {
 
         Tag tag = page.xPathFirstTag("ul/li/a&class=new-*");
         if (tag != null) {
-            info.new_messages = U.parseInt(page.getContents(tag));
+            info.new_messages = U.parseInt(page.getContents(tag).trim());
         } else
             info.new_messages = 0;
 
         info.username = page.xPathStr("a&class=username");
-        info.avatar = page.xPathFirstTag("a/img&alt=avatar").get("src");
+        info.avatar = page.xPathFirstTag("a/img&class=avatar").get("src");
         info.strength = U.parseFloat(
                 SU.removeAllTags(
                         page.xPathStr("ul/li/span&class=strength")
