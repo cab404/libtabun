@@ -32,10 +32,9 @@ public class BlogLabelModule extends ModuleImpl<Blog> {
         );
 
         blog.id = U.parseInt(
-                SU.sub(
-                        page.xPathFirstTag("td&class=cell-info/a").get("onclick"),
-                        "showInfoBlog(this,",
-                        ")"
+                SU.bsub(
+                        page.xPathFirstTag("td&class=cell-readers").get("id"),
+                        "blog_user_count_", ""
                 )
         );
 

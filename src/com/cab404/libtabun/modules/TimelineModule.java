@@ -21,7 +21,7 @@ public class TimelineModule extends ModuleImpl<TimelineEntry> {
 		entry.commenter = new Profile();
 		entry.topic = new Topic();
 
-		entry.comment_id = Integer.parseInt(SU.bsub(page.xPathFirstTag("a&class=stream-topic").get("href"), "comments/", ""));
+		entry.comment_id = Integer.parseInt(SU.bsub(page.xPathFirstTag("a&class=stream-topic").get("href"), "#comment", ""));
 		entry.commenter.login = page.xPathStr("p/a&class=author");
 
 		entry.topic.comments = Integer.parseInt(SU.removeAllTags(page.xPathStr("span&class=block-item-comments")));
@@ -35,7 +35,7 @@ public class TimelineModule extends ModuleImpl<TimelineEntry> {
 	}
 
 	@Override public boolean doYouLikeIt(Tag tag) {
-		return "li".equals(tag.name) && "js-title-comment".equals(tag.get("class"));
+		return "li".equals(tag.name);
 	}
 
 }

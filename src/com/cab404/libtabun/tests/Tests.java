@@ -22,7 +22,7 @@ public class Tests {
 		if (args.length == 0) {
 			tests.add(LoginTest.class);
 			tests.add(LetterTest.class);
-			tests.add(TalkBellTest.class);
+//			tests.add(TalkBellTest.class);
 //            tests.add(HiLoadTest.class);
 		}
 		tests.add(ProfileTest.class);
