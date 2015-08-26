@@ -50,7 +50,6 @@ public class Tabun {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
 
-		calendar.setTimeZone(TimeZone.getTimeZone("GMT+3:00"));
 		int day = Integer.parseInt(split.get(0));
 		int month = months.indexOf(split.get(1));
 		int year = Integer.parseInt(split.get(2).substring(0, 4));

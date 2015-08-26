@@ -19,7 +19,7 @@ public class LoginTest extends Test {
         login = requestString("Login");
         password = requestPassword("Password");
 
-        assertEquals("Logged in (long form)", true, new LoginRequest(login, password).exec(profile, page).success());
+        assertEquals("Logged in (long form)", true, new LoginRequest(login, password).exec(profile).success());
         assertEquals("Logged in (short form)", true, new TabunAccessProfile().login(login, password));
 
 
