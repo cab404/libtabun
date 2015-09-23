@@ -10,8 +10,6 @@ import java.util.Calendar;
  * @author cab404
  */
 public class Blog extends JSONable {
-    private static final long serialVersionUID = 0L;
-
     @JSONField
     public String
             name,
