@@ -31,7 +31,7 @@ public class ProfileTest extends Test {
         assertEquals("День рождения", info.get(Profile.UserInfoType.BIRTHDAY), "6 марта 2014");
         assertEquals("Пол", info.get(Profile.UserInfoType.GENDER), "женский");
 
-        assertEquals("Фото", info.photo, "//cdn.everypony.ru/static/local/user_photo_female.png");
+        assertEquals("Фото", info.photo, "https://cdn.everypony.ru/static/local/user_photo_female.png");
     }
 
 }
