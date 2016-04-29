@@ -5,6 +5,7 @@ import com.cab404.libtabun.requests.LoginRequest;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.util.exceptions.ResponseFail;
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -36,13 +37,13 @@ import static com.cab404.libtabun.requests.LSRequest.LS_KEY_LEN;
 public class TabunAccessProfile extends AccessProfile {
 
     public TabunAccessProfile() {
-        super("tabun.everypony.ru", 80);
+        super();
     }
 
-//    @Override
-//    public HttpHost getHost() {
-//        return new HttpHost("tabun.everypony.ru", 443, "https");
-//    }
+    @Override
+    public HttpHost getHost() {
+        return new HttpHost("tabun.everypony.ru", 443, "https");
+    }
 
     @Override
     public synchronized void handleCookies(Header[] headers) {
