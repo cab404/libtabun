@@ -22,6 +22,8 @@ public class RefreshCommentsRequest extends LSRequest {
     private final int id;
     private final int last_comment_id;
 
+    private int self_id_comment;
+
     @Override
     protected void onRedirect(String to) {
         /* Не должно быть никаких редиректов. И всё тут. */
@@ -40,6 +42,8 @@ public class RefreshCommentsRequest extends LSRequest {
         data.put("idTarget", id + "");
         data.put("typeTarget", type.name);
         data.put("idCommentLast", last_comment_id + "");
+        if (self_id_comment != 0)
+            data.put("selfIdComment", self_id_comment + "");
     }
 
     @Override
@@ -58,6 +62,10 @@ public class RefreshCommentsRequest extends LSRequest {
     @Override
     protected String getURL(AccessProfile profile) {
         return "/" + (type.equals(Type.TOPIC) ? "blog" : type.name.toLowerCase()) + "/ajaxresponsecomment/";
+    }
+
+    public void setSelfIdComment(int self_id_comment) {
+        this.self_id_comment = self_id_comment;
     }
 
 }
