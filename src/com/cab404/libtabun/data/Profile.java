@@ -1,6 +1,7 @@
 package com.cab404.libtabun.data;
 
 import com.cab404.libtabun.util.JSONable;
+import com.cab404.libtabun.util.TabunAccessProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,7 @@ public class Profile extends JSONable {
         if (small_icon != null && !small_icon.isEmpty()) uni = small_icon.replace("24x24", "***");
         else if (mid_icon != null && !mid_icon.isEmpty()) uni = mid_icon.replace("48x48", "***");
         else if (big_icon != null && !big_icon.isEmpty()) uni = big_icon.replace("100x100", "***");
+        if (uni.startsWith("//")) uni = TabunAccessProfile.SCHEME + ':' + uni;
 
         small_icon = uni.replace("***", "24x24");
         mid_icon = uni.replace("***", "48x48");

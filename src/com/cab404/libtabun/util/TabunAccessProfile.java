@@ -36,13 +36,15 @@ import static com.cab404.libtabun.requests.LSRequest.LS_KEY_LEN;
  */
 public class TabunAccessProfile extends AccessProfile {
 
+    public static final String SCHEME = "https";
+
     public TabunAccessProfile() {
         super();
     }
 
     @Override
     public HttpHost getHost() {
-        return new HttpHost("tabun.everypony.ru", 443, "https");
+        return new HttpHost("tabun.everypony.ru", 443, SCHEME);
     }
 
     @Override
