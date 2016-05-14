@@ -76,31 +76,6 @@ public class TabunAccessProfile extends AccessProfile {
         return _return;
     }
 
-    SocketFactory fct = new SocketFactory() {
-        @Override
-        public Socket createSocket() throws IOException {
-            try {
-                SSLContext ctx = SSLContext.getInstance("SSL");
-                ctx.init(null, new TrustManager[]{new EasyX509TrustManager(null)}, new SecureRandom());
-                ctx.getSocketFactory().createSocket();
-                return ctx.getSocketFactory().createSocket();
-            } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-
-        @Override
-        public Socket connectSocket(Socket socket, String s, int i, InetAddress inetAddress, int i1, HttpParams httpParams) throws IOException, UnknownHostException, ConnectTimeoutException {
-            return SSLSocketFactory.getSocketFactory().connectSocket(socket, s, i, inetAddress, i1, httpParams);
-        }
-
-        @Override
-        public boolean isSecure(Socket socket) throws IllegalArgumentException {
-            return SSLSocketFactory.getSocketFactory().isSecure(socket);
-        }
-    };
-
     public HttpResponse exec(HttpRequestBase request, boolean follow, int timeout) {
         try {
             HttpClient client = new DefaultHttpClient();

@@ -1,6 +1,7 @@
 package com.cab404.libtabun.modules;
 
 import com.cab404.libtabun.data.LetterLabel;
+import com.cab404.libtabun.util.LS;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.framework.ModuleImpl;
 import com.cab404.moonlight.parser.HTMLTree;
@@ -36,6 +37,7 @@ public class LetterLabelModule extends ModuleImpl<LetterLabel> {
 
         String comments = page.xPathStr("td/span");
         letter.comments = comments == null ? 0 : U.parseInt(comments);
+        letter.date = LS.parseDate(page.xPathStr("td&class=cell-date*").trim());
 
         if (comments == null) return letter;
 

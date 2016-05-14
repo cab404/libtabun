@@ -75,17 +75,10 @@ public class CommentModule extends ModuleImpl<Comment> {
             }
 
             if (type == Mode.LIST) {
-                comment.id = U.parseInt(SU.bsub(info.xPathFirstTag("li&class=*link/a").get("href"), "comments/", ""));
+                comment.id = U.parseInt(SU.bsub(info.xPathFirstTag("li&class=*link/a").get("href"), "comment", ""));
             }
 
 
-        }
-        if (type == Mode.LIST) {
-            try {
-                System.out.println(comment.toJSON());
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
         }
         return comment;
     }

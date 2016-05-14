@@ -33,6 +33,8 @@ public class Tests {
         tests.add(UserAutocompleteTest.class);
         tests.add(BlogListTest.class);
         tests.add(TimelineTest.class);
+        tests.add(CommentListTest.class);
+        tests.add(UserListTest.class);
 //        tests.add(HellSizedTopicTest.class);
 
         launcher.launch(tests);
