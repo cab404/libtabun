@@ -12,10 +12,6 @@ import com.cab404.moonlight.util.tests.Test;
  * @author cab404
  */
 public class UserListTest extends Test {
-    public static void main(String[] args) {
-        TabunAccessProfile tabunAccessProfile = new TabunAccessProfile();
-        new UserListTest().test(tabunAccessProfile);
-    }
 
     @Override
     public void test(AccessProfile accessProfile) {
