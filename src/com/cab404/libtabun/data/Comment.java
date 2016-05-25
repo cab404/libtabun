@@ -18,11 +18,13 @@ public class Comment extends JSONable {
     public int votes, parent = 0;
     @JSONField
     public boolean deleted = false;
-
     @JSONField
     public boolean is_new = false;
     @JSONField
     public boolean in_favs = false;
+
+    @JSONField
+    public String link;
 
     @JSONField
     public Calendar date;

@@ -102,4 +102,19 @@ public class LS {
 
     }
 
+    public static class LinkResolution {
+        public int topic_id;
+        public int comment_id;
+        public String blog_name;
+    }
+    public static LinkResolution resolveTopicLink(String link){
+        LinkResolution resolution = new LinkResolution();
+        if (link.contains("#comment"))
+            resolution.comment_id = Integer.parseInt(SU.bsub(link, "#comment", ""));
+        if (SU.fast_match("*/blog/*/*.html*", link))
+            resolution.blog_name = SU.sub(link, "/blog/", "/");
+        resolution.topic_id = Integer.parseInt(SU.bsub(link, "/", ".html"));
+        return resolution;
+    }
+
 }

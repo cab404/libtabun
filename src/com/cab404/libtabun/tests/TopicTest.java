@@ -28,6 +28,11 @@ public class TopicTest extends Test {
         assertLessOrEquals("Все комментарии загружены", topicPage.header.comments, topicPage.comments.size());
         assertEquals("Имя блога", topicPage.header.blog.name, "/dev/tabun");
         assertEquals("URL-имя блога", topicPage.header.blog.url_name, "technical");
+
+        topicPage = new TopicPage(154530);
+        topicPage.fetch(profile);
+
+        assertLessOrEquals("Все комментарии загружены", topicPage.header.comments, topicPage.comments.size());
     }
 
 }

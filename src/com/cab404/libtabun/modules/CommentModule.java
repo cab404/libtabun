@@ -76,6 +76,7 @@ public class CommentModule extends ModuleImpl<Comment> {
 
             if (type == Mode.LIST) {
                 comment.id = U.parseInt(SU.bsub(info.xPathFirstTag("li&class=*link/a").get("href"), "comment", ""));
+                comment.link = info.xPathFirstTag("li&class=comment-link/a").get("href");
             }
 
 
