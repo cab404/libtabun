@@ -47,9 +47,9 @@ public class TopicAddRequest extends LSCreateRequest {
         data.put("blog_id", topic.blog.id + "");
         data.put("topic_title", topic.title);
         data.put("topic_text", topic.text);
-        data.put("topic_tags", SU.join(topic.tags, ", ").toString());
+        data.put("topic_tags", SU.join(topic.tags, ", "));
         data.put("topic_type", "topic");
-        data.put("topic_forbid_comment", (editable ? 1 : 0)+ "");
+        data.put("topic_forbid_comment", (editable ? 0 : 1)+ "");
         data.put("submit_topic_publish", "");
     }
 
