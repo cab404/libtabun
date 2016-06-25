@@ -9,19 +9,20 @@ import com.cab404.moonlight.util.U;
 /**
  * @author cab404
  */
-public class TopicAddRequest extends LSCreateRequest {
+public class TopicEditRequest extends LSCreateRequest {
 
     private Topic topic;
     public boolean editable = true;
 
-    public TopicAddRequest(Topic topic) {
+    public TopicEditRequest(Topic topic) {
         this.topic = topic;
     }
 
     @Override
     protected void handleResponse(String response) {
-        if (!response.trim().isEmpty())
+        if (!response.trim().isEmpty()) {
             super.handleResponse(response);
+        }
     }
 
     @Override
@@ -39,7 +40,7 @@ public class TopicAddRequest extends LSCreateRequest {
 
     @Override
     protected String getURL(AccessProfile profile) {
-        return "/topic/add";
+        return "/topic/edit/" + topic.id;
     }
 
     @Override
@@ -47,9 +48,9 @@ public class TopicAddRequest extends LSCreateRequest {
         data.put("blog_id", topic.blog.id + "");
         data.put("topic_title", topic.title);
         data.put("topic_text", topic.text);
-        data.put("topic_tags", SU.join(topic.tags, ", ").toString());
+        data.put("topic_tags", SU.join(topic.tags, ", "));
+        data.put("topic_forbid_comment", (editable ? 0 : 1)+ "");
         data.put("topic_type", "topic");
-        data.put("topic_forbid_comment", (editable ? 1 : 0)+ "");
         data.put("submit_topic_publish", "");
     }
 

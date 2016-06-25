@@ -39,7 +39,8 @@ public class TabunPage extends Page {
             BLOCK_ERROR = 290,
             BLOCK_PAGINATION = 291,
             BLOCK_COMMENTS_ENABLED = 292,
-            BLOCK_USER_LIST = 293
+            BLOCK_USER_LIST = 293,
+            BLOCK_BLOG_ID = 294;
     ;
 
     @Override
