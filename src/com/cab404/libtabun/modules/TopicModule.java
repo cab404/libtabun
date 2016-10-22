@@ -68,7 +68,7 @@ public class TopicModule extends ModuleImpl<Topic> {
                 label.tags.add(page.getContents(tag));
         }
 
-        label.in_favourites = page.getTagByID("fav_topic_*").get("class").contains("active");
+        label.in_favourites = page.xPathFirstTag("footer/ul/li/div&class=*favourite*").get("class").contains("active");
 
         if (mode == Mode.LIST) {
             label.comments = U.parseInt(page.xPathStr("footer/ul/li&class=topic-info-comments/a/span"));
