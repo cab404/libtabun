@@ -23,6 +23,10 @@ public class BlogModule extends ModuleImpl<Blog> {
             // Метка закрытого блога.
             blog.restricted = page.xPathFirstTag("h2/i") != null;
             // Продолжим позже.
+
+            Tag tag = page.xPathUnique("div&id=vote_area_blog_*");
+            blog.id = U.parseInt(SU.bsub(tag.get("id"), "blog_", ""));
+
             return null;
         } else {
             blog.about = page.xPathStr("div/div/div&class=blog-description").trim();
@@ -30,18 +34,6 @@ public class BlogModule extends ModuleImpl<Blog> {
             blog.rating = U.parseFloat(page.getContents(page.xPath("div/div/ul/li/strong").get(3)));
             blog.creation_date = Tabun.parseDate(page.xPathStr("div/div/ul/li/strong"));
             blog.url_name = SU.sub(page.xPathFirstTag("div/div/ul/li/span/a").get("href"), "blog/", "/users");
-
-            try {
-                blog.id = U.parseInt(SU.bsub(page.xPathFirstTag("footer&id=blog-footer/button&id=button-blog-*").get("id"), "-", ""));
-            } catch (NullPointerException e) {
-                try {
-                    /* Значит мы имеем дело с дыратором/админом блога. Будем доставать по-иному */
-                    blog.id = U.parseInt(SU.sub(page.xPathFirstTag("div/div/ul/li/a&class=edit").get("href"), "edit/", "/"));
-                } catch (NullPointerException ex) {
-					/* Значит нифига это не админ, а незалогиненый юзер. Нунафиг. */
-                    blog.id = -1;
-                }
-            }
         }
 
         return blog;
@@ -49,7 +41,7 @@ public class BlogModule extends ModuleImpl<Blog> {
 
     @Override
     public boolean doYouLikeIt(Tag tag) {
-        return ("div".equals(tag.name) && ("blog-top".equals(tag.get("class")) || "blog".equals(tag.get("id"))));
+        return "div".equals(tag.name) && ("blog-top".equals(tag.get("class")) || "blog".equals(tag.get("id")));
     }
 
 }
