@@ -6,6 +6,11 @@ import com.cab404.libtabun.util.TabunAccessProfile;
 import com.cab404.moonlight.framework.AccessProfile;
 import com.cab404.moonlight.util.tests.Test;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 /**
  * @author cab404
  */
@@ -17,8 +22,14 @@ public class LoginTest extends Test {
         page.fetch(profile);
 
         String login, password;
-        login = requestString("Login");
-        password = requestPassword("Password");
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("credentials.txt"));
+            login = reader.readLine();
+            password = reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         assertEquals("Logged in (long form)", true, new LoginRequest(login, password).exec(profile).success());
         assertEquals("Logged in (short form)", true, new TabunAccessProfile().login(login, password));

@@ -21,6 +21,8 @@
 				executable="${jdk.bin}"
 				destdir="${build.dir}"
 				srcdir="${src.dir}"
+				source="7"
+				target="7"
 				>
 
 			<include name="com/**/*.java"/>
@@ -61,6 +63,8 @@
 				executable="${jdk.bin}"
 				destdir="${build.dir}"
 				srcdir="${src.dir}"
+				source="7"
+				target="7"
 				>
 
 			<include name="com/**/*.java"/>
